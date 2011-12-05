@@ -2,7 +2,7 @@
 <!-- saved from url=(0014)about:internet -->
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">	
     <head>
-        <title>WPS turbulences application</title>
+        <title>JMI Turbulences application</title>
         <meta name="google" value="notranslate" />         
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<!-- Include CSS to eliminate any default margins/padding and set the height of the html element and 
@@ -25,11 +25,7 @@
         <script type="text/javascript" src="../client/flex/history/history.js"></script>
         <!-- END Browser History required section -->  
 		
-		<link rel="stylesheet" href="../css/main.css"/>
-		<link rel="stylesheet" href="../css/wps.css" />
-		
-		<script type="text/javascript" src="../client/applet/jquery.js" ></script>
-        <script type="text/javascript" src="../client/applet/jquery.wpsmap.js" ></script>    
+
         <script type="text/javascript" src="../client/flex/swfobject.js"></script>
         <script type="text/javascript">
             // For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. 
@@ -51,7 +47,7 @@
             attributes.name = "wps-flex";
             attributes.align = "middle";
             swfobject.embedSWF(
-                "../client/flex/wps-flex-1.0-SNAPSHOT.swf", "flashContent", 
+                "../client/flex/jmi-flex-1.0-SNAPSHOT.swf", "flashContent", 
                 "100%", "100%", 
                 swfVersionStr, xiSwfUrlStr, 
                 flashvars, params, attributes);
@@ -146,13 +142,13 @@
 	   	
        	<noscript>
             <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%" id="wps-flex">
-                <param name="movie" value="../client/flex/wps-flex-1.0-SNAPSHOT.swf" />
+                <param name="movie" value="../client/flex/jmi-flex-1.0-SNAPSHOT.swf" />
                 <param name="quality" value="high" />
                 <param name="bgcolor" value="#FFFFFF" />
                 <param name="allowScriptAccess" value="sameDomain" />
                 <param name="allowFullScreen" value="true" />
                 <!--[if !IE]>-->
-                <object type="application/x-shockwave-flash" data="../client/flex/wps-flex-1.0-SNAPSHOT.swf" width="100%" height="100%">
+                <object type="application/x-shockwave-flash" data="../client/flex/jmi-flex-1.0-SNAPSHOT.swf" width="100%" height="100%">
                     <param name="quality" value="high" />
                     <param name="bgcolor" value="#FFFFFF" />
                     <param name="allowScriptAccess" value="sameDomain" />

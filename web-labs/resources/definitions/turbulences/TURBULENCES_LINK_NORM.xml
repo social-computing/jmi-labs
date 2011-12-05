@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+
+<!DOCTYPE swatch SYSTEM "swatch.dtd">
+
+<swatch name="TURBULENCES_LINK_NORM">
+
+    <!-- Base Satellite definition -->
+    <sat shape="edgeShp" transfo="noTrf"
+         isBack="true" isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isTip="false" isNoSided="false">
+        <slice inCol="100 100 100" outCol="56 56 56" alpha="1" linewidth="1" />
+    </sat>
+
+    <!-- General purpose Selection -->
+    <!-- Sel sats must be declared before the ones they should hides when they'll be activated -->
+    <sat shape="edgeShp" linkDarkCol="128 0 0" linkNormCol="255 0 0" linkLitCol="255 143 143" selection="search" transfo="noTrf"
+         isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
+        <slice inCol="255 0 0" alpha="1" linewidth="1" />
+    </sat>
+
+    <!-- References -->
+    <shape id="edgeShp" scale="1" anchor="center">
+        <!--point      x="0" y="0"/>
+        <point      x="1" y="0"/-->
+    </shape>
+
+    <shape id="voidShp" scale="0" anchor="center" />
+
+    <transfo id="selTrf" map="interpol" scale="0">
+        <polar dir="0" rad="1.4" />
+    </transfo>
+    <transfo id="baseTrf" map="interpol" scale="0">
+        <polar dir="90" rad="1" />
+    </transfo>
+
+    <font id="selFnt" name="SansSerif" size="10" style="plain" />
+    <transfo id="noTrf" scale="0" map="absolute" />
+</swatch>

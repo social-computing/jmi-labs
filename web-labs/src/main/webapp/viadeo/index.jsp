@@ -51,7 +51,7 @@ if( code == null) { %>
             <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
             var xiSwfUrlStr = "../client/flex/playerProductInstall.swf";
             var flashvars = {};
-            flashvars.wpsserverurl = "http://wps.wps.cloudbees.net/";
+            flashvars.wpsserverurl = "http://server.just-map-it.com/";
             flashvars.wpsplanname = "Viadeo";
             flashvars.authcode = '<%=code%>';
             flashvars.analysisProfile = "GlobalProfile";
@@ -66,7 +66,7 @@ if( code == null) { %>
             attributes.name = "wps-viadeo";
             attributes.align = "middle";
             swfobject.embedSWF(
-                "../client/flex/wps-viadeo-1.0-SNAPSHOT.swf", "flashContent", 
+                "../client/flex/jmi-viadeo-1.0-SNAPSHOT.swf", "flashContent", 
                 "100%", "100%", 
                 swfVersionStr, xiSwfUrlStr, 
                 flashvars, params, attributes);
@@ -97,13 +97,13 @@ if( code == null) { %>
 	   	
        	<noscript>
             <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%" id="wps-flex-demo">
-                <param name="movie" value="../client/flex/wps-facebook-1.0-SNAPSHOT.swf" />
+                <param name="movie" value="../client/flex/jmi-facebook-1.0-SNAPSHOT.swf" />
                 <param name="quality" value="high" />
                 <param name="bgcolor" value="#FFFFFF" />
                 <param name="allowScriptAccess" value="sameDomain" />
                 <param name="allowFullScreen" value="true" />
                 <!--[if !IE]>-->
-                <object type="application/x-shockwave-flash" data="../client/flex/wps-facebook-1.0-SNAPSHOT.swf" width="100%" height="100%">
+                <object type="application/x-shockwave-flash" data="../client/flex/jmi-facebook-1.0-SNAPSHOT.swf" width="100%" height="100%">
                     <param name="quality" value="high" />
                     <param name="bgcolor" value="#FFFFFF" />
                     <param name="allowScriptAccess" value="sameDomain" />

@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+
+<!DOCTYPE dictionary SYSTEM "WPS-dictionary.dtd" >
+
+<dictionary name="turbulences" >
+	<comment>Turbulences friends Plan Dictionary</comment>
+	
+	<entities>
+		<JDBC-entities name="Turbulences entities">		
+			<JDBC-connection catalog="application_db" >
+				<JNDI-data-source>
+					<url>java:comp/env/jdbc/application_db</url>
+				</JNDI-data-source>
+			</JDBC-connection>
+	
+			<JDBC-default-classifier>
+				<JDBC-query2>SELECT id FROM tbl_users</JDBC-query2>
+			</JDBC-default-classifier>
+	
+			<JDBC-property name="Contacts properties" column-name="label">
+				<JDBC-query2>
+				SELECT id, displayName as name, email 
+				FROM tbl_users 
+				WHERE id={scurEntity}
+                </JDBC-query2>
+			</JDBC-property>
+
+			<JDBC-affinity-reader name="JDBC_AffReader">
+				<comment>Affinity Group for a contact</comment>
+				<JDBC-query2>
+				SELECT b.id_contact, count(a.id_contact) 
+				FROM tbl_contacts a 
+				LEFT JOIN tbl_contacts b ON a.id_contact=b.id_contact 
+				WHERE a.id_contact={s$entityId} 
+				GROUP BY b.id_user
+				</JDBC-query2>
+			</JDBC-affinity-reader>
+
+			<JDBC-affinity-reader name="JDBC_DiscoveryAffReader">
+				<comment>Affinity Group for a user</comment>
+				<JDBC-query2>
+				SELECT pc.id, SUM(pc.c) 
+				FROM
+					(
+						SELECT id_contact as id, count(id_contact) as c FROM tbl_contacts WHERE id_user={s$attributeId} GROUP BY id_contact
+						UNION ALL
+						SELECT id_user as id, count(id_user) as c FROM tbl_contacts WHERE id_contact={s$attributeId} GROUP BY id_user
+						UNION ALL
+						SELECT {s$attributeId} as id, 1 as c
+					) pc				
+				GROUP BY id;
+				</JDBC-query2>
+			</JDBC-affinity-reader>
+
+			<JDBC-affinity-reader name="JDBC_GlobalAffReader">
+				<comment>Global Affinity Group</comment>
+				<JDBC-query2>
+					SELECT id, 1 FROM tbl_users
+				</JDBC-query2>
+			</JDBC-affinity-reader>
+	
+			<JDBC-attributes name="JDBC_Profile">
+				<comment>Contact attributes (Get contact attributes = users for one contact)</comment>
+				<JDBC-query2>
+				SELECT pc.id, SUM(pc.c) 
+				FROM
+					(
+						SELECT id_contact as id, count(id_contact) as c FROM tbl_contacts WHERE id_user={scurEntity} GROUP BY id_contact
+						UNION ALL
+						SELECT id_user as id, count(id_user) as c FROM tbl_contacts WHERE id_contact={scurEntity} GROUP BY id_user
+					) pc				
+				GROUP BY id;
+				</JDBC-query2>
+	
+				<JDBC-property name="Users properties" column-name="label" >
+					<JDBC-query2>
+					SELECT id, displayName as name, email
+					FROM tbl_users
+					WHERE id={scurAttribute}
+					</JDBC-query2>
+				</JDBC-property>
+				<JDBC-property name="Belong to properties" column-name="label" multiple-rows="yes" >
+					<JDBC-query2>
+					SELECT u.id as poss_id, u.displayName as poss_name
+					FROM
+						(
+							SELECT id_contact as id, count(id_contact) as c FROM tbl_contacts WHERE id_user={scurAttribute} GROUP BY id_contact
+							UNION ALL
+							SELECT id_user as id, count(id_user) as c FROM tbl_contacts WHERE id_contact={scurAttribute} GROUP BY id_user
+						) pc	
+					LEFT JOIN tbl_users AS u ON u.id = pc.id
+					GROUP BY u.id;
+                    </JDBC-query2>
+				</JDBC-property>
+			</JDBC-attributes>
+			
+		</JDBC-entities>
+	</entities>
+	
+	<env-property name="$web_context" value ="/wps" />
+	
+	<affinity-reader-profile name="AffReader" affinity-reader-ref="JDBC_AffReader" threshold="100" />
+	<affinity-reader-profile name="DiscoveryAffReader" affinity-reader-ref="JDBC_DiscoveryAffReader" threshold="100" />
+	<affinity-reader-profile name="GlobalAffReader" affinity-reader-ref="JDBC_GlobalAffReader" threshold="100" />
+
+	<analysis-profile name="Profile" attributes-ref="JDBC_Profile" type="personal" attribute-size="frequency" attributes-max="300" attributes-base-max="1000">
+		<props-mapping>
+			<entity-props-mapping>
+				<mapping key="ID" 	value="id" />
+				<mapping key="NAME" value="name" />
+			</entity-props-mapping>
+			<attribute-props-mapping>
+				<mapping key="ID" 	value="id" />
+				<mapping key="NAME" value="name" />
+				<mapping key="POSS_ID" 	value="poss_id" />
+				<mapping key="POSS_NAME" value="poss_name" />
+			</attribute-props-mapping>
+		</props-mapping>
+		<entities-recommendation>
+			<mapping key="REC_ID"  		value="id" />
+			<mapping key="REC_NAME"  	value="name" />
+		</entities-recommendation>
+	</analysis-profile>
+
+	<analysis-profile name="DiscoveryProfile" attributes-ref="JDBC_Profile" type="discovery" attribute-size="frequency" attributes-max="80" attributes-base-max="1000" >
+		<props-mapping>
+			<entity-props-mapping>
+				<mapping key="ID" 	value="id" />
+				<mapping key="NAME" value="name" />
+			</entity-props-mapping>
+			<attribute-props-mapping>
+				<mapping key="ID" 	value="id" />
+				<mapping key="NAME" value="name" />
+				<mapping key="POSS_ID" 	value="poss_id" />
+				<mapping key="POSS_NAME" value="poss_name" />
+			</attribute-props-mapping>
+		</props-mapping>
+		<entities-recommendation>
+			<mapping key="REC_ID"  		value="id" />
+			<mapping key="REC_NAME"  	value="name" />
+		</entities-recommendation>
+	</analysis-profile>
+
+	<analysis-profile name="GlobalProfile" attributes-ref="JDBC_Profile" type="global" attribute-size="same" attributes-max="80" >
+		<props-mapping>
+			<entity-props-mapping>
+				<mapping key="ID" 	value="id" />
+				<mapping key="NAME" value="name" />
+			</entity-props-mapping>
+			<attribute-props-mapping>
+				<mapping key="ID" 	value="id" />
+				<mapping key="NAME" value="name" />
+				<mapping key="POSS_ID" 	value="poss_id" />
+				<mapping key="POSS_NAME" value="poss_name" />
+			</attribute-props-mapping>
+		</props-mapping>
+		<entities-recommendation>
+			<mapping key="REC_ID"  		value="id" />
+			<mapping key="REC_NAME"  	value="name" />
+		</entities-recommendation>
+	</analysis-profile>
+
+	<display-profile name="Display" display-empty-links="no" in-color="ffffff" out-color="0" filter-color="56b2ff" >
+		<swatch-segmentation>
+			<attribute-swatch>
+				<norm-swatch default-ref="TURBULENCES_NODE_NORM" />
+				<ref-swatch default-ref="TURBULENCES_NODE_REF" />
+				<active-norm-swatch default-ref="TURBULENCES_NODE_CUR_NORM" />
+				<active-ref-swatch default-ref="TURBULENCES_NODE_CUR_REF" />
+			</attribute-swatch>
+			<link-swatch>
+				<norm-swatch default-ref="TURBULENCES_LINK_NORM" />
+				<ref-swatch default-ref="TURBULENCES_LINK_REF" />
+				<active-norm-swatch default-ref="TURBULENCES_LINK_CUR_NORM" />
+				<active-ref-swatch default-ref="TURBULENCES_LINK_CUR_REF" />
+			</link-swatch>
+		</swatch-segmentation>
+		<selection-swatch name="search" />
+	</display-profile>
+
+	<display-profile name="GlobalDisplay" display-empty-links="no" display-fake-links="no" in-color="ffffff" out-color="0" filter-color="56b2ff" >
+		<swatch-segmentation>
+			<attribute-swatch>
+				<norm-swatch default-ref="TURBULENCES_NODE_NORM" />
+				<ref-swatch default-ref="TURBULENCES_NODE_REF" />
+				<active-norm-swatch default-ref="TURBULENCES_NODE_CUR_NORM" />
+				<active-ref-swatch default-ref="TURBULENCES_NODE_CUR_REF" />
+			</attribute-swatch>
+			<link-swatch>
+				<norm-swatch default-ref="TURBULENCES_LINK_NORM" />
+				<ref-swatch default-ref="TURBULENCES_LINK_REF" />
+				<active-norm-swatch default-ref="TURBULENCES_LINK_CUR_NORM" />
+				<active-ref-swatch default-ref="TURBULENCES_LINK_CUR_REF" />
+			</link-swatch>
+		</swatch-segmentation>
+		<selection-swatch name="search" />
+	</display-profile>
+
+	<segmentation>
+		<analysis-segmentation  default-ref="Profile" />
+		<affinity-reader-segmentation default-ref="AffReader" >
+			<affreader-analysis-mapping analysis-ref="DiscoveryProfile" default-ref="DiscoveryAffReader" />
+			<affreader-analysis-mapping analysis-ref="GlobalProfile" default-ref="GlobalAffReader" />
+		</affinity-reader-segmentation>
+		<display-segmentation default-ref="Display" >
+			<display-analysis-mapping analysis-ref="GlobalProfile" default-ref="GlobalDisplay" />
+		</display-segmentation>
+	</segmentation>
+	
+</dictionary>
