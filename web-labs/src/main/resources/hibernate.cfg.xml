@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<!-- Database connection settings -->
+		<!-- MySQL -->
+ 		<property name="connection.datasource">java:comp/env/jdbc/feeds-db</property>
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        	 
+		<!-- Not recommended in hibernate documentation
+		<property name="connection.autocommit">true</property> --> 
+        <!-- The use of this feature is not recommended, because it has side effects related to session state and data consistency  -->
+		<!-- <property name="hibernate.connection.autoReconnect">true</property>  -->
+		
+		<!-- Cache configuration -->
+		<property name="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory</property>
+		<property name="hibernate.cache.use_query_cache">false</property>
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<property name="net.sf.ehcache.configurationResourceName">ehcache.xml</property>
+		
+		<property name="hbm2ddl.auto">update</property>
+		
+		<!-- For debug only -->
+		<property name="show_sql">true</property>
+		
+		<property name="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+		<property name="current_session_context_class">thread</property>
+
+	</session-factory>
+</hibernate-configuration>
