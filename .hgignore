@@ -1,0 +1,25 @@
+syntax: glob
+
+*~
+.classpath
+.settings
+.project
+.DS_Store
+.flexProperties
+.flexConfig.xml
+.actionScriptProperties
+target
+bin-debug
+bin-release
+build
+libs
+bin
+
+
+syntax: regexp
+
+.orig
+.metadata
+.class
+.jar
+.war
