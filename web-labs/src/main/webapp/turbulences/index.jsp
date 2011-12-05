@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">	
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
     <head>
-        <title>JMI Turbulences application</title>
+        <title>Just Map It! Turbulences</title>
         <meta name="google" value="notranslate" />         
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<!-- Include CSS to eliminate any default margins/padding and set the height of the html element and 

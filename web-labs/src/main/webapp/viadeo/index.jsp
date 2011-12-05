@@ -1,27 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!-- saved from url=(0014)about:internet -->
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">	
-    <head>
-        <title>Social Computing for Viadeo</title>
-        <%
-String code = request.getParameter("code");
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+ <head>
+     <title>Just Map It! Viadeo</title>
+<%String code = request.getParameter("code");
 if( code == null) { %>
 <title>Redirection</title>
 <meta name="robots" content="noindex,follow" />
-<meta http-equiv="refresh" content="0; url=https://secure.viadeo.com/oauth-provider/authorize2?response_type=code&display=popup&lang=en&client_id=SocialComputingMapViTBUC&redirect_uri=http://wps.wps.cloudbees.net/viadeo/index.jsp" />
+<meta http-equiv="refresh" content="0; url=https://secure.viadeo.com/oauth-provider/authorize2?response_type=code&display=popup&lang=en&client_id=SocialComputingMapViTBUC&redirect_uri=http://labs.just-map-it.com/viadeo/index.jsp" />
 </head>
 <body>
 </body>
 </html>
 <%} else {%>
-        <meta name="google" value="notranslate">         
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<!-- Include CSS to eliminate any default margins/padding and set the height of the html element and 
-		     the body element to 100%, because Firefox, or any Gecko based browser, interprets percentage as 
-			 the percentage of the height of its parent container, which has to be set explicitly.  Fix for
-			 Firefox 3.6 focus border issues.  Initially, don't display flashContent div so it won't show 
-			 if JavaScript disabled.
-		-->
         <style type="text/css" media="screen"> 
 			html, body	{ height:100%; }
 			body { margin:0; padding:0; overflow:auto; text-align:center; background-color: #FFFFFF; }   
@@ -97,13 +89,13 @@ if( code == null) { %>
 	   	
        	<noscript>
             <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%" id="wps-flex-demo">
-                <param name="movie" value="../client/flex/jmi-facebook-1.0-SNAPSHOT.swf" />
+                <param name="movie" value="../client/flex/jmi-viadeo-1.0-SNAPSHOT.swf" />
                 <param name="quality" value="high" />
                 <param name="bgcolor" value="#FFFFFF" />
                 <param name="allowScriptAccess" value="sameDomain" />
                 <param name="allowFullScreen" value="true" />
                 <!--[if !IE]>-->
-                <object type="application/x-shockwave-flash" data="../client/flex/jmi-facebook-1.0-SNAPSHOT.swf" width="100%" height="100%">
+                <object type="application/x-shockwave-flash" data="../client/flex/jmi-viadeo-1.0-SNAPSHOT.swf" width="100%" height="100%">
                     <param name="quality" value="high" />
                     <param name="bgcolor" value="#FFFFFF" />
                     <param name="allowScriptAccess" value="sameDomain" />
