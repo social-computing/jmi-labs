@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <!-- Appenders -->
+    <!-- Console log -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d|%-5level|%X{entryPoint}|%logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- Log file -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${logback.path}/labs.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d|%-5level|%X{entryPoint}|%logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- Embedded frameworks & tools -->
+    <logger name="org.apache.commons" level="warn" />
+    <logger name="org.hibernate" level="warn" />
+    <logger name="net.sf.ehcache" level="info" />
+
+
+    <!-- Root logger -->
+    <root level="debug">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
