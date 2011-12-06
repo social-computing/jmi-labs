@@ -5,29 +5,19 @@
 <title>Just Map It! Allocine</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style type="text/css" media="screen">
-html,body {
-	height: 100%;
+img 
+{
+	border: 0;
 }
-
-body {
-	margin: 0;
-	padding: 0;
-	overflow: auto;
-	text-align: center;
-	background-color: #FFFFFF;
-}
-
 object:focus {
 	outline: none;
 }
-
 #flashContent {
 	display: none;
 }
-
 #content {
 	width: 100%;
-	height: 99%;
+	height: 90%;
 	background-color: #FFFFFF;
 }
 </style>
@@ -38,9 +28,6 @@ object:focus {
 	href="../client/flex/history/history.css" />
 <script type="text/javascript" src="../client/flex/history/history.js"></script>
 <!-- END Browser History required section -->
-
-<link rel="stylesheet" href="../css/main.css" />
-
 <script type="text/javascript">
      	function navigate( url, target) {
     		window.open( url, target);
@@ -77,13 +64,12 @@ object:focus {
   </script>
 </head>
 <body>
-
-<%--     	<div id="top"><jsp:include page="top.jsp" /></div> --%>
-<%-- 	    <div id="menu"><jsp:include page="menu.jsp" /></div> --%>
-<!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
-			 JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
-			 when JavaScript is disabled.
-		-->
+<table width="100%" border="0">
+	<tr>
+		<td><a title="Just Map It! Labs" href="./"><img alt="Just Map It! Allocine" src="../images/justmapit_allocine.png" /></a></td>
+		<td align="right"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
+	</tr>
+</table>
 <div id="content">
 <div id="flashContent">
 <p>To view this page ensure that Adobe Flash Player version 10.0.0

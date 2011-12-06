@@ -26,15 +26,16 @@ img
 <body>
 <table width="100%" border="0">
 	<tr>
-		<td><a title="Just Map It! Server" href="./"><img alt="Just Map It! Server" src="./images/justmapit_server.png" /></a></td>
+		<td><a title="Just Map It! Labs" href="./"><img alt="Just Map It! Labs" src="./images/justmapit_labs.png" /></a></td>
 		<td align="right"><a title="Social Computing" href="http://www.social-computing.com" target="_blank"><img
 			alt="Social Computing" src="./images/logo-sc-white.jpg" /></a></td>
 	</tr>
 </table>
 <table width="60%" border="0" style="padding: 100px 0 0 200px">
 	<tr>
-		<td><a title="Just Map It! Viadeo" href="./viadeo"><img alt="Just Map It! Viadeo" src="./images/logo-allocine.png" /></a></td>
 		<td><a title="Just Map It! Allocine" href="./allocine"><img alt="Just Map It! Allocine" src="./images/logo-allocine.jpg" /></a></td>
+		<td><a title="Just Map It! Viadeo" href="./viadeo"><img alt="Just Map It! Viadeo" src="./images/logo-allocine.png" /></a></td>
+		<td><a title="Just Map It! XWiki" href="./"><img alt="Just Map It! XWiki" src="./images/logo-xwiki.png" /></a></td>
 	</tr>
 </table>
 </body>
