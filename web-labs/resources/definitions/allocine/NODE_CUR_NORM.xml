@@ -106,10 +106,10 @@
 	</event>
 
 	<menu id="menu" font="menuFnt">
-		<item label="Display" font="nameFnt" url="javascript:Display({sID})" />
-		<item label="Center" font="nameFnt" url="javascript:Discover({sID},{sNAME})" />
+		<item label="Display" font="nameFnt" url="javascript:navigate({sURL})" />
+		<item label="Center" font="nameFnt" url="javascript:center({sID},{sNAME})" />
 		<separator />
-		<item label="[+30sPOSS_NAME]" url="javascript:Display([sPOSS_ID])" />
+		<item label="[+30sPOSS_NAME]" url="javascript:focus([sPOSS_ID],[sPOSS_NAME])" />
 	</menu>
 
 		<font id="menuFnt" name="Arial" size="11" style="plain" />

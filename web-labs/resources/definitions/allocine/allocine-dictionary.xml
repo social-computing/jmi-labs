@@ -10,6 +10,7 @@
 			<URL-connection>
 				<url>{$allocineserverurl}/rest/allocine/maps/{$kind}.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
+				<url-parameter name="filter">{$filter}</url-parameter>
 			</URL-connection>
 	
 			<REST-entity markup="entities" id="id" >
@@ -40,6 +41,7 @@
 			<attribute-props-mapping>
 				<mapping key="ID" 	value="id" />
 				<mapping key="NAME" value="name" />
+				<mapping key="URL" 	value="url" />
 				<mapping key="POSS_ID" 	value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
@@ -59,6 +61,7 @@
 			<attribute-props-mapping>
 				<mapping key="ID" 	value="id" />
 				<mapping key="NAME" value="name" />
+				<mapping key="URL" 	value="url" />
 				<mapping key="POSS_ID" 	value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
@@ -78,6 +81,7 @@
 			<attribute-props-mapping>
 				<mapping key="ID" 	value="id" />
 				<mapping key="NAME" value="name" />
+				<mapping key="URL" 	value="url" />
 				<mapping key="POSS_ID" 	value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
