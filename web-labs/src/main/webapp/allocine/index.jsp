@@ -107,7 +107,7 @@ $(document).ready(function() {
 <body>
 <table width="100%" border="0">
 	<tr>
-		<td><a title="Just Map It! Labs" href="./"><img alt="Just Map It! Allocine" src="../images/justmapit_allocine.png" /></a></td>
+		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
 		<select id="filter">
 		<option value="outthisweek" >Sorties de la semaine</option>
@@ -124,7 +124,7 @@ $(document).ready(function() {
 		<option value="film_casting" >Film / casting</option>
 		</select>
 		</td>
-		<td align="right"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
+		<td align="right"><a title="Just Map It! Allocine" href="./"><img alt="Just Map It! Allocine" src="../images/justmapit_allocine.png" /></a></td>
 	</tr>
 </table>
 <div id="content">

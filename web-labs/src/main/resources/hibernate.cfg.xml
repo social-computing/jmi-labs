@@ -4,7 +4,7 @@
 	<session-factory>
 		<!-- Database connection settings -->
 		<!-- MySQL -->
- 		<property name="connection.datasource">java:comp/env/jdbc/feeds-db</property>
+ 		<property name="connection.datasource">java:comp/env/jdbc/labs-db</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         	 
 		<!-- Not recommended in hibernate documentation
