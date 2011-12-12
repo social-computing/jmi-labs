@@ -1,8 +1,6 @@
 package com.socialcomputing.labs.allocine;
 
 import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URLConnection;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +20,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
-import com.socialcomputing.wps.server.planDictionnary.connectors.WPSConnectorException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;

@@ -60,7 +60,7 @@
 
     <transfo id="voidTrf" scale="0.01" map="absolute" />
     <transfo id="spotTrf" scale="0.2" map="absolute" />
-    <transfo id="imgTrf" scale="1" map="absolute" />
+    <transfo id="imgTrf" scale="0.87" map="absolute" />
     <transfo id="baseTrf" map="interpol" scale="0">
         <polar dir="90" rad="1" />
     </transfo>
