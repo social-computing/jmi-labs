@@ -6,20 +6,21 @@
 
 <!-- Base -->
 	<sat shape="diskShp" transfo="baseTrf" hover="hoverEvt" click="clickEvt" dblClk="dblClkEvt" isSub="true" isCur="true" isVisible="true" isSuper="true" isRest="true" isBack="false" isTip="false" isNoSided="false">
-		<slice inCol="239 33 37" outCol="189 172 164" alpha="1" linewidth="1" />
-		<slice inCol="238 242 245" outCol="189 172 164" alpha="1" linewidth="1">
+		<slice inCol="255 182 0" outCol="238 242 245" alpha="1" linewidth="1" />
+		<slice inCol="238 242 245" outCol="238 242 245" alpha="1" linewidth="1">
 			<transfo scale=".87" map="absolute" />
 		</slice>
 	</sat>
 
 <!-- Rest Spots -->
 	<sat shape="diskShp" isSub="true" isVisible="true" isSuper="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
-		<slice inCol="90 78 88" outCol="189 172 164" transfo="spotTrf" alpha="1" linewidth="1" />
+		<slice inCol="34 34 34" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
+		<slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={$POSTER}" transfo="voidTrf" alpha="1" linewidth="1" />
 	</sat>
 
 <!-- Cur Spot -->
 	<sat shape="diskShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
-		<slice inCol="90 78 88" outCol="189 172 164" transfo="spotTrf" alpha="1" linewidth="1" />
+		<slice inCol="34 34 34" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
 	</sat>
 
 <!-- Rest Titles -->
@@ -39,8 +40,16 @@
 			<polar dir="0" rad="1.2" />
 		</transfo>
 		<slice alpha="1" linewidth="1">
-			<tip font="selFnt" label="{sNAME}" inCol="@whiteCol" textCol="180 20 32" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
+			<tip font="selFnt" label="{sNAME}" inCol="@whiteCol" textCol="34 34 34" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
 		</slice>
+	</sat>
+
+<!-- Cur Image -->
+	<sat shape="voidShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
+		<transfo map="interpol" scale="0">
+			<polar dir="180" rad="0" />
+		</transfo>
+		<slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={$POSTER}" transfo="imgTrf" alpha="1" linewidth="1" />
 	</sat>
 
 <!-- Cur Title -->
@@ -49,7 +58,7 @@
 			<polar dir="0" rad="1.2" />
 		</transfo>
 		<slice alpha="1" linewidth="1">
-			<tip font="nameFnt" label="{sNAME}" inCol="90 78 88" textCol="@whiteCol" rounded="10" isCorner="true" blur="-1" dir="SW" align="left" isFloating="false" />
+			<tip font="nameFnt" label="{sNAME}" inCol="34 34 34" textCol="@whiteCol" rounded="10" isCorner="true" blur="-1" dir="SW" align="left" isFloating="false" />
 		</slice>
 	</sat>
 
@@ -72,8 +81,9 @@
 	<font id="italicFnt" name="Arial" size="12" style="italic" />
 	<font id="selFnt" name="Arial" size="12" style="bold" />
 
+        <transfo id="voidTrf" scale="0.01" map="absolute" />
 	<transfo id="spotTrf" scale="0.2" map="absolute" />
-	<transfo id="imgTrf" scale="0.4" map="absolute" />
+	<transfo id="imgTrf" scale="1.2" map="absolute" />
 	<transfo id="baseTrf" map="interpol" scale="0">
 		<polar dir="90" rad="1" />
 	</transfo>
@@ -106,8 +116,8 @@
 	</event>
 
 	<menu id="menu" font="menuFnt">
-		<item label="Display" font="nameFnt" url="javascript:navigate({sURL})" />
-		<item label="Center" font="nameFnt" url="javascript:center({sID},{sNAME})" />
+		<item label="Afficher" font="nameFnt" url="javascript:navigate({sID})" />
+		<item label="Centrer" font="nameFnt" url="javascript:center({sID},{sNAME})" />
 		<separator />
 		<item label="[+30sPOSS_NAME]" url="javascript:focus([sPOSS_ID],[sPOSS_NAME])" />
 	</menu>
@@ -116,7 +126,7 @@
 
 	<!-- DblClkEvt event -->
 	<event id="dblClkEvt">
-		<open url="javascript:Discover({sID},{sNAME})" />
+		<open url="javascript:center({sID},{sNAME})" />
 	</event>
 	
 </swatch>

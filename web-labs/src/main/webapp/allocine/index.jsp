@@ -12,8 +12,7 @@ html, body {
 	height: 90%;
 	background-color: #FFFFFF;
 }
-img 
-{
+img {
 	border: 0;
 }
 object:focus {
@@ -41,7 +40,7 @@ $(document).ready(function() {
 	 var params = {};
 	 params.quality = "high";
 	 params.bgcolor = "#FFFFFF";
-	 params.allowscriptaccess = "sameDomain";
+	 params.allowscriptaccess = "always";
 	 params.allowfullscreen = "true";
 	 var attributes = {};
 	 attributes.id = "jmi-allocine";
@@ -75,8 +74,8 @@ $(document).ready(function() {
   function error( error) {
 	Alert( "Sorry, an error occured." + error);
   }
-  function navigate( url) {
- 	 window.open( url, "_blank");
+  function navigate( id) {
+ 	 window.open( "http://www.allocine.fr/film/fichefilm_gen_cfilm=" + id + ".html", "_blank");
   }
   function focus( args) {
 	var parameters = {};
@@ -93,6 +92,7 @@ $(document).ready(function() {
 	document.getElementById("jmi-allocine").compute( parameters);
   }
   function completeParameters( parameters) {
+	 parameters.allowDomain = "*";
 	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";
      //parameters.allocineserverurl = "http://localhost:8080/web-labs";
 	 parameters.wpsserverurl = "http://server.just-map-it.com";

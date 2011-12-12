@@ -8,6 +8,7 @@
 	<entities>
 		<REST-entities name="Allocine" type="json" invert="false">
 			<URL-connection>
+				<!--url>{$wpsserverurl}/data/allocine_film_gender.json</url-->
 				<url>{$allocineserverurl}/rest/allocine/maps/{$kind}.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="filter">{$filter}</url-parameter>
@@ -21,6 +22,7 @@
 	
 			<REST-attribute markup="attributes" id="id" >
 				<REST-property id="name" />
+				<REST-property id="poster" />
 				<REST-property id="poss_id" entity="id" />
 				<REST-property id="poss_name" entity="name" />
 			</REST-attribute>
@@ -41,7 +43,7 @@
 			<attribute-props-mapping>
 				<mapping key="ID" 	value="id" />
 				<mapping key="NAME" value="name" />
-				<mapping key="URL" 	value="url" />
+				<mapping key="POSTER" 	value="poster" />
 				<mapping key="POSS_ID" 	value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
@@ -61,7 +63,7 @@
 			<attribute-props-mapping>
 				<mapping key="ID" 	value="id" />
 				<mapping key="NAME" value="name" />
-				<mapping key="URL" 	value="url" />
+				<mapping key="POSTER" 	value="poster" />
 				<mapping key="POSS_ID" 	value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
@@ -81,7 +83,7 @@
 			<attribute-props-mapping>
 				<mapping key="ID" 	value="id" />
 				<mapping key="NAME" value="name" />
-				<mapping key="URL" 	value="url" />
+				<mapping key="POSTER" 	value="poster" />
 				<mapping key="POSS_ID" 	value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
@@ -92,7 +94,7 @@
 		</entities-recommendation>
 	</analysis-profile>
 
-	<display-profile name="Display" display-empty-links="no" in-color="ffffff" out-color="0" filter-color="56b2ff" >
+	<display-profile name="Display" display-empty-links="no" in-color="ffffff" out-color="0" filter-color="eaeaea" >
 		<swatch-segmentation>
 			<attribute-swatch>
 				<norm-swatch default-ref="ALLOCINE_NODE_NORM" />
@@ -110,7 +112,7 @@
 		<selection-swatch name="search" />
 	</display-profile>
 
-	<display-profile name="GlobalDisplay" display-empty-links="no" display-fake-links="no" in-color="ffffff" out-color="0" filter-color="56b2ff" >
+	<display-profile name="GlobalDisplay" display-empty-links="no" display-fake-links="no" in-color="ffffff" out-color="0" filter-color="eaeaea" >
 		<swatch-segmentation>
 			<attribute-swatch>
 				<norm-swatch default-ref="ALLOCINE_NODE_NORM" />

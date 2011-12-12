@@ -6,20 +6,22 @@
 
 <!-- Base -->
     <sat shape="diskShp" transfo="baseTrf" isBack="true" isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isTip="false" isNoSided="false">
-        <slice inCol="238 242 245" outCol="189 172 164" alpha="1" linewidth="1" />
-        <slice inCol="239 33 37" outCol="189 172 164" alpha="1" linewidth="1">
+        <slice inCol="238 242 245" outCol="34 34 34" alpha="1" linewidth="1" />
+        <slice inCol="255 182 0" outCol="238 242 245" alpha="1" linewidth="1">
             <transfo scale=".87" map="absolute" />
         </slice>
+	<slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={sPOSTER}" transfo="imgTrf" alpha="1" linewidth="1" />
     </sat>
 
 <!-- Sub Spots -->
     <sat shape="diskShp" isSub="true" isSuper="false" isVisible="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
-        <slice inCol="90 78 88" outCol="189 172 164" transfo="spotTrf" alpha="1" linewidth="1" />
+        <slice inCol="34 34 34" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
+        <slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={$POSTER}" transfo="voidTrf" alpha="1" linewidth="1" />
     </sat>
 
 <!-- Super Spot -->
     <sat shape="diskShp" isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
-        <slice inCol="90 78 88" outCol="189 172 164" transfo="spotTrf" alpha="1" linewidth="1" />
+        <slice inCol="34 34 34" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
     </sat>
 
 <!-- Title -->
@@ -28,13 +30,13 @@
             <polar dir="0" rad="1.1" />
         </transfo>
         <slice alpha="1" linewidth="1">
-            <tip font="nameFnt" label="{+20sNAME}" inCol="@whiteCol" textCol="180 20 32" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
+            <tip font="nameFnt" label="{+20.1sNAME}" inCol="255 255 255" outCol="204 204 204" textCol="34 34 34" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
         </slice>
     </sat>
 
     <sat shape="voidShp" selection="search" transfo="titleTrf" isSub="true" isVisible="true" isSuper="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
         <slice alpha="1" linewidth="1">
-            <tip font="selFnt" label="{+20sNAME}" inCol="180 20 32" textCol="@whiteCol" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
+            <tip font="selFnt" label="{+20.1sNAME}" inCol="255 182 0" textCol="@whiteCol" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
         </slice>
     </sat>
 
@@ -56,8 +58,9 @@
     <font id="nameFnt" name="Arial" size="11" style="bold" />
     <font id="selFnt" name="Arial" style="bold" size="11" />
 
+    <transfo id="voidTrf" scale="0.01" map="absolute" />
     <transfo id="spotTrf" scale="0.2" map="absolute" />
-    <transfo id="imgTrf" scale="0.3" map="absolute" />
+    <transfo id="imgTrf" scale="1" map="absolute" />
     <transfo id="baseTrf" map="interpol" scale="0">
         <polar dir="90" rad="1" />
     </transfo>
@@ -68,4 +71,3 @@
     <tip id="textTip" font="nameFnt" label="{+sNAME}" textCol="@blackCol" isCorner="true" blur="-1" rounded="-1" dir="SW" align="left" isFloating="false" />
 
 </swatch>
-

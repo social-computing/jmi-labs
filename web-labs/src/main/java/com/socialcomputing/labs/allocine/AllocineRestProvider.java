@@ -1,33 +1,42 @@
 package com.socialcomputing.labs.allocine;
 
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URLConnection;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
+import com.socialcomputing.wps.server.planDictionnary.connectors.WPSConnectorException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper;
+import com.sun.jersey.api.Responses;
 
-@Path("/allocine/maps")
+@Path("/allocine")
 public class AllocineRestProvider {
 
     public static final String API_KEY = "U29jaWFsQ29tcHV0aW5n";
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @GET
-    @Path("{kind}.json")
+    @Path("maps/{kind}.json")
     @Produces(MediaType.APPLICATION_JSON)
     public String kind(@Context HttpServletRequest request, @PathParam("kind") String kind, @DefaultValue("top:month") @QueryParam("filter") String filter) {
         HttpSession session = request.getSession(true);
@@ -48,6 +57,35 @@ public class AllocineRestProvider {
         return result;
     }
 
+    @GET
+    @Path("image-proxy")
+    @Produces("image/*")
+    public Response getThumbnail( @HeaderParam("Accept-Encoding") String encoding, @HeaderParam("If-Modified-Since") String cache, @HeaderParam("If-Modified-Since") String modified, @HeaderParam("If-None-Match") String match, @QueryParam("url") String url) {
+        UrlHelper urlHelper = new UrlHelper( url);
+        try {
+            urlHelper.addHeader( "Accept-Encoding", encoding);
+            urlHelper.addHeader( "If-Modified-Since", modified);
+            urlHelper.addHeader( "If-None-Match", match);
+            urlHelper.addHeader( "Cache-Control", cache);
+            urlHelper.openConnections();
+            HttpURLConnection connection = (HttpURLConnection) urlHelper.getConnection();
+            String tag = connection.getHeaderField( "Etag");
+            if( tag == null) tag = "";
+            if( tag.startsWith("\"")) tag = tag.substring( 1);
+            if( tag.endsWith("\"")) tag = tag.substring( 0, tag.length()-1);
+            return Response.ok( urlHelper.getStream(), urlHelper.getContentType())
+                .lastModified( new Date( connection.getLastModified()))
+                .tag( tag)
+                .status( connection.getResponseCode())
+                .header( "Content-Length", connection.getContentLength())
+                .build();
+        }
+        catch (Exception e) {
+            Response.status( Responses.NOT_FOUND);
+        }
+        return null;
+    }
+
     private String film_gender(String filter) {
         StoreHelper storeHelper = new StoreHelper();
         try {
@@ -61,6 +99,7 @@ public class AllocineRestProvider {
             for (JsonNode movie : (ArrayNode) node.get("feed").get("movie")) {
                 Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
                 attribute.addProperty("name", movie.get("title").getTextValue());
+                attribute.addProperty("poster", movie.get("poster").get("href").getTextValue());
                 for (JsonNode genre : (ArrayNode) movie.get("genre")) {
                     Entity entity = storeHelper.addEntity( genre.get("code").getValueAsText());
                     entity.addProperty("name", genre.get("$").getTextValue());

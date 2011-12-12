@@ -6,7 +6,7 @@
 
 <!-- Base Satellite definition -->
     <sat shape="edgeShp" hover="hoverEvt" click="clickEvt" isBack="true" isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isTip="false" isNoSided="false">
-        <slice inCol="238 242 245" outCol="20 169 251" alpha="1" linewidth="1" />
+        <slice inCol="249 249 249" outCol="238 242 245" alpha="1" linewidth="1" />
     </sat>
 
     <sat shape="edgeShp" selection="search" isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
@@ -22,7 +22,7 @@
     </shape>
 
     <tooltip id="tooltip" delay="0" length="3000">
-        <tip font="tipFnt" label="[/20sREC_NAME]" inCol="255 255 255" outCol="20 169 251" textCol="34 34 34" align="center" isFloating="true" blur="-1" rounded="10" dir="SW" isCorner="false" />
+        <tip font="tipFnt" label="[/20sREC_NAME]" inCol="255 255 255" outCol="204 204 204" textCol="34 34 34" align="center" isFloating="true" blur="-1" rounded="10" dir="SW" isCorner="false" />
     </tooltip>
 
     <!-- Hover event -->
@@ -42,4 +42,3 @@
 
     <font id="menuFnt" name="Arial" size="11" style="plain" />
 </swatch>
-
