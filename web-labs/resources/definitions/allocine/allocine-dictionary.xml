@@ -34,7 +34,7 @@
 	<affinity-reader-profile name="DiscoveryAffReader" affinity-reader-ref="*" threshold="100" />
 	<affinity-reader-profile name="GlobalAffReader" affinity-reader-ref="*" threshold="100" />
 
-	<analysis-profile name="Profile" attributes-ref="*" type="personal" attribute-size="frequency" attributes-max="80" attributes-base-max="1000">
+	<analysis-profile name="Profile" attributes-ref="*" type="personal" attribute-size="frequency" attributes-max="80" attributes-cluster-max="6" >
 		<props-mapping>
 			<entity-props-mapping>
 				<mapping key="ID" 	value="id" />
@@ -54,7 +54,7 @@
 		</entities-recommendation>
 	</analysis-profile>
 
-	<analysis-profile name="DiscoveryProfile" attributes-ref="*" type="discovery" attribute-size="frequency" attributes-max="80" attributes-base-max="1000" >
+	<analysis-profile name="DiscoveryProfile" attributes-ref="*" type="discovery" attribute-size="frequency" attributes-max="80" attributes-cluster-max="6" >
 		<props-mapping>
 			<entity-props-mapping>
 				<mapping key="ID" 	value="id" />
@@ -74,7 +74,7 @@
 		</entities-recommendation>
 	</analysis-profile>
 
-	<analysis-profile name="GlobalProfile" attributes-ref="*" type="global" attribute-size="same" attributes-max="80" >
+	<analysis-profile name="GlobalProfile" attributes-ref="*" type="global" attribute-size="same" attributes-max="80" attributes-cluster-max="6" >
 		<props-mapping>
 			<entity-props-mapping>
 				<mapping key="ID" 	value="id" />

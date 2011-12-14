@@ -6,22 +6,43 @@
 	<comment>Viadeo Plan Dictionary</comment>
 
 	<entities>
-		<Viadeo-entities name="Viadeo" contact-limit="-1">
+		<REST-entities name="Facebook" type="json" invert="false">
+			<URL-connection>
+				<url>{$viadeoserverurl}/rest/viadeo/maps/{$kind}.json</url>
+				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
+				<url-parameter name="access_token">{$authcode}</url-parameter>
+			</URL-connection>
+	
+			<REST-entity markup="entities" id="id" >
+				<REST-property id="name" />
+				<REST-property id="url" />
+				<REST-property id="poss_id" attribute="id" />
+				<REST-property id="poss_name" attribute="name" />
+			</REST-entity>
+	
+			<REST-attribute markup="attributes" id="id" >
+				<REST-property id="name" />
+				<REST-property id="url" />
+				<REST-property id="poss_id" entity="id" />
+				<REST-property id="poss_name" entity="name" />
+				<REST-property id="poss_url" entity="url" />
+			</REST-attribute>
+			
+		</REST-entities>
+		<!-- Viadeo-entities name="Viadeo" contact-limit="-1">
 			<URL-connection>
 				<url>https://secure.viadeo.com/oauth-provider/access_token2</url>
 				<url-parameter name="code">{$authcode}</url-parameter>
 				<url-parameter name="grant_type">authorization_code</url-parameter>
 				<url-parameter name="client_id">SocialComputingMapViTBUC</url-parameter>
 				<url-parameter name="client_secret">bDKYAIKwD1Lys</url-parameter>
-				<url-parameter name="redirect_uri">http://wps.wps.cloudbees.net/viadeo/index.jsp</url-parameter>
+				<url-parameter name="redirect_uri">http://labs.just-map-it.com/viadeo/index.jsp</url-parameter>
 			</URL-connection>
 			<Viadeo-property id="poss_id" entity="id" />
 			<Viadeo-property id="poss_name" entity="name" />
 			<Viadeo-property id="poss_url" entity="url" />
-		</Viadeo-entities>
+		</Viadeo-entities-->
 	</entities>
-	
-	<env-property name="$web_context" value ="http://wps.wps.cloudbees.net" />
 	
 	<affinity-reader-profile name="AffReader" affinity-reader-ref="*" threshold="100" />
 	<affinity-reader-profile name="DiscoveryAffReader" affinity-reader-ref="*" threshold="100" />
