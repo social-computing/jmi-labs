@@ -39,7 +39,6 @@ object:focus {
 <link rel="stylesheet" type="text/css" href="../client/flex/history/history.css" />
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="../client/flex/history/history.js"></script>
-<link rel="stylesheet" href="../css/main.css"/>
 
 <script type="text/javascript"> 
   function empty() {
@@ -53,24 +52,23 @@ object:focus {
   }
   function focus( args) {
 	var parameters = {};
-	parameters["entityId"] = args[0];
-	parameters["feed"] = args[2];
+	parameters.entityId = args[0];
 	completeParameters( parameters);
 	document.getElementById("jmi-viadeo").compute( parameters);
   }
   function center( args) {
 	var parameters = {};
-	parameters["attributeId"] = args[0];
-	parameters["analysisProfile"] = "DiscoveryProfile";
+	parameters.attributeId = args[0];
+	parameters.analysisProfile = "DiscoveryProfile";
 	completeParameters( parameters);
 	document.getElementById("jmi-viadeo").compute( parameters);
   }
   function completeParameters( parameters) {
 	 parameters.allowDomain = "*";
-	 parameters.wpsserverurl = "http://localhost:8080/jmi-server";
-     parameters.viadeoserverurl = "http://localhost:8080/web-labs";
-	 //parameters.wpsserverurl = "http://server.just-map-it.com";
-     //parameters.allocineserverurl = "http://labs.just-map-it.com";
+	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";
+     //parameters.viadeoserverurl = "http://localhost:8080/web-labs";
+	 parameters.wpsserverurl = "http://server.just-map-it.com";
+     parameters.viadeoserverurl = "http://labs.just-map-it.com";
 	 parameters.wpsplanname = "Viadeo";
 	 parameters.authcode = '<%=authcode%>';
 	 parameters.kind = $('#kind option:selected')[0].value;

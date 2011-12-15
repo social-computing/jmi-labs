@@ -53,17 +53,20 @@
 			<entity-props-mapping>
 				<mapping key="ID" 	value="id" />
 				<mapping key="NAME" value="name" />
+				<mapping key="URL" value="url" />
 			</entity-props-mapping>
 			<attribute-props-mapping>
 				<mapping key="ID" 	value="id" />
 				<mapping key="NAME" value="name" />
 				<mapping key="POSS_ID" 	value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
+				<mapping key="POSS_URL" value="poss_url" />
 			</attribute-props-mapping>
 		</props-mapping>
 		<entities-recommendation>
 			<mapping key="REC_ID"  		value="id" />
 			<mapping key="REC_NAME"  	value="name" />
+			<mapping key="REC_URL" value="url" />
 		</entities-recommendation>
 	</analysis-profile>
 
