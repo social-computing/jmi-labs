@@ -8,7 +8,6 @@
 	<entities>
 		<REST-entities name="Allocine" type="json" invert="false">
 			<URL-connection>
-				<!--url>{$wpsserverurl}/data/allocine_film_gender.json</url-->
 				<url>{$allocineserverurl}/rest/allocine/maps/{$kind}.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="filter">{$filter}</url-parameter>

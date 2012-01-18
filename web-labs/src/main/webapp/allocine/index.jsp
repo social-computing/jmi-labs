@@ -91,6 +91,15 @@ $(document).ready(function() {
 	completeParameters( parameters);
 	document.getElementById("jmi-allocine").compute( parameters);
   }
+  function same( args) {
+		var parameters = {};
+		parameters["attributeId"] = args[0];
+		parameters["analysisProfile"] = "DiscoveryProfile";
+		completeParameters( parameters);
+		parameters.kind = 'film_same';
+		parameters.filter = args[0];
+		document.getElementById("jmi-allocine").compute( parameters);
+  }
   function completeParameters( parameters) {
 	 parameters.allowDomain = "*";
 	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";

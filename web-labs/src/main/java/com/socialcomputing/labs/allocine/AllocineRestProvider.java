@@ -49,6 +49,9 @@ public class AllocineRestProvider {
             else if( kind.equalsIgnoreCase( "film_casting")) {
                 result = film_casting( filter);
             }
+            else if( kind.equalsIgnoreCase( "film_same")) {
+                result = film_same( filter);
+            }
             session.setAttribute( key, result);
         }
         return result;
@@ -153,6 +156,42 @@ public class AllocineRestProvider {
             urlHelper.addParameter( "format", "json");
             urlHelper.addParameter( "count", "200");
             urlHelper.addParameter( "filter", filter);
+            urlHelper.openConnections();
+            JsonNode movies = mapper.readTree(urlHelper.getStream());
+            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
+                Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
+                attribute.addProperty("name", movie.get("title").getTextValue());
+                String directors = movie.get("castingShort").get("directors").getTextValue();
+                for( String director : directors.split( ",")) {
+                    director = director.trim();
+                    Entity entity = storeHelper.addEntity( director);
+                    entity.addProperty("name", director);
+                    entity.addAttribute(attribute, 1);
+                }
+                String actors = movie.get("castingShort").get("actors").getTextValue();
+                for( String actor : actors.split( ",")) {
+                    actor = actor.trim();
+                    Entity entity = storeHelper.addEntity( actor);
+                    entity.addProperty("name", actor);
+                    entity.addAttribute(attribute, 1);
+                }
+            }
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return storeHelper.toJson();
+    }
+
+    private String film_same( String film) {
+        StoreHelper storeHelper = new StoreHelper();
+        try {
+            UrlHelper urlHelper = new UrlHelper( "http://api.allocine.fr/rest/v3/movieList");
+            urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
+            urlHelper.addParameter( "format", "json");
+            urlHelper.addParameter( "count", "200");
+            urlHelper.addParameter( "filter", "similar:" + film);
             urlHelper.openConnections();
             JsonNode movies = mapper.readTree(urlHelper.getStream());
             for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
