@@ -9,7 +9,7 @@ html, body {
 }
 #content {
 	width: 100%;
-	height: 85%;
+	height: 82%;
 	background-color: #FFFFFF;
 }
 img {
@@ -22,8 +22,14 @@ object:focus {
 	display: none;
 }
 </style>
-<%String feed = request.getParameter("feed");
-if( feed == null) feed = "";%>
+<%Boolean persons = (request.getParameter("Persons") != null);
+Boolean organizations = request.getParameter("Organizations") != null;
+Boolean geos = request.getParameter("Geos") != null;
+String feed = request.getParameter("feed");
+if( feed == null) {
+ feed = "";
+ persons = true;
+ }%>
 <!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
 <!-- BEGIN Browser History required section -->
 <link rel="stylesheet" type="text/css" href="../client/flex/history/history.css" />
@@ -70,7 +76,7 @@ $(document).ready(function() {
 	  }
   }
   function empty() {
-	document.getElementById("message").innerHTML = "Sorry, the map is empty. Does the feed contains categories?";
+	document.getElementById("message").innerHTML = "Sorry, the map is empty.";
   }
   function error( error) {
 	document.getElementById("message").innerHTML = "Sorry, an error occured. Is this URL correct? <span class='hidden-message'>" + error + "</span>";
@@ -84,9 +90,8 @@ $(document).ready(function() {
 	JMIF_CompleteParameters( parameters);
 	parameters.entityId = args[0];
 	parameters.feed = args[2];
-	parameters.track = "";
 	document.getElementById("jmi-syllabs").compute( parameters);
-	document.getElementById("message").innerHTML = "<i>Focus on category:</i> " + args[1];
+	document.getElementById("message").innerHTML = "<i>Focus on named entity:</i> " + args[1];
   }
   function JMIF_Center( args)
   {
@@ -95,7 +100,6 @@ $(document).ready(function() {
 	parameters.attributeId = args[0];
 	parameters.feed = args[2];
 	parameters.analysisProfile = "DiscoveryProfile";
-	parameters.track = "";
 	document.getElementById("jmi-syllabs").compute( parameters);
 	document.getElementById("message").innerHTML = "<i>Centered on item:</i> " + args[1];
   }
@@ -106,24 +110,30 @@ function JMIF_CompleteParameters( parameters) {
 	 //parameters.wpsserverurl = "http://server.just-map-it.com";
      //parameters.syllabsserverurl = "http://labs.just-map-it.com";
 	 parameters.wpsplanname = "Syllabs";
-	 parameters.site = "";
+	 parameters.entities = '<%= (persons ? "Person" :"") + "," + (organizations ? "Organization" :"") + "," + (geos ? "Geo" :"")%>';
 	 parameters.jsessionid = '<%=session.getId()%>';
 } 
 </script>
 </head>
 <body>
+<form method="get">
 <table width="100%" border="0">
 	<tr>
-		<td rowspan="2"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
+		<td rowspan="3"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td class="label" ><b>Enter one or more URLs (comma separated):</b></td>
-		<td rowspan="2"align="right"><a title="Just Map It! Syllabs" href="./"><img alt="Just Map It! Syllabs" src="../images/justmapit.png" /></a></td>
+		<td rowspan="3"align="right"><a title="Just Map It! Syllabs" href="./"><img alt="Just Map It! Syllabs" src="../images/justmapit.png" /></a></td>
 	</tr>
 	<tr>
 		<td>
-			<form method="get">
-				<input type="text" name="feed" title="URLs" size="80" value="<%=feed != null ? feed : "" %>" />
-				<input type="submit" value="Just Map It!" />
-			</form>
+			<input type="text" name="feed" title="URLs" size="80" value="<%=feed != null ? feed : "" %>" />
+			<input type="submit" value="Just Map It!" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input type="checkbox" name="Persons" <%=persons ? "checked" : ""%>/>Persons
+			<input type="checkbox" name="Organizations" <%=organizations ? "checked" : ""%>/>Organizations
+			<input type="checkbox" name="Geos" <%=geos ? "checked" : ""%>/>Geo
 		</td>
 	</tr>
 	<tr>
@@ -132,6 +142,7 @@ function JMIF_CompleteParameters( parameters) {
 		</td>
 	</tr>
 </table>
+</form>
 <div id="content">
 <div id="flashContent">
 <p>To view this page ensure that Adobe Flash Player version 10.0.0 or greater is installed.</p>

@@ -38,36 +38,39 @@ public class SyllabsRestProvider {
     @GET
     @Path("maps/map.json")
     @Produces(MediaType.APPLICATION_JSON)
-    public String kind(@Context HttpServletRequest request,  @DefaultValue("") @QueryParam("url") String urls) {
+    public String kind(@Context HttpServletRequest request,  @DefaultValue("") @QueryParam("url") String urls, @DefaultValue("") @QueryParam("entities") String ets) {
         HttpSession session = request.getSession(true);
-        String key = urls;
+        String key = urls + "_" + ets;
         String result = ( String)session.getAttribute( key);
+        String[] entities = ets.split( ",");
         if (result == null || result.length() == 0) {
-           result = feeds( urls);
+           result = feeds( urls, entities);
            session.setAttribute( key, result);
         }
         return result;
     }
 
-    public String feeds( String urlLst) {
+    public String feeds( String urlLst, String[] entities) {
         StoreHelper storeHelper = new StoreHelper();
         List<String> titles = new ArrayList<String>();
         List<String> urls = new ArrayList<String>();
         List<Integer> counts = new ArrayList<Integer>();
-        try {
-            for( String url : urlLst.split( ",")) {
-                url = url.trim();
-                if( !url.startsWith( "http://") && !url.startsWith( "http://")) {
-                    url = "http://" + url;
+        if( entities.length > 0) {
+            try {
+                for( String url : urlLst.split( ",")) {
+                    url = url.trim();
+                    if( !url.startsWith( "http://") && !url.startsWith( "http://")) {
+                        url = "http://" + url;
+                    }
+                    UrlHelper feed = new UrlHelper( url);
+                    feed.openConnections();
+                    read( feed, entities, storeHelper, titles, urls, counts);
+                    feed.closeConnections();
                 }
-                UrlHelper feed = new UrlHelper( url);
-                feed.openConnections();
-                read( feed, storeHelper, titles, urls, counts);
-                feed.closeConnections();
             }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         storeHelper.addGlobal( "FEEDS_TITLES",  titles.toArray());
         storeHelper.addGlobal( "FEEDS_URLS",    urls.toArray());
@@ -75,7 +78,7 @@ public class SyllabsRestProvider {
         return storeHelper.toJson();
     }
 
-    private void read(UrlHelper feed, StoreHelper storeHelper, List<String> titles, List<String> urls, List<Integer> counts) throws WPSConnectorException {
+    private void read(UrlHelper feed, String[] entities, StoreHelper storeHelper, List<String> titles, List<String> urls, List<Integer> counts) throws WPSConnectorException {
         String content = feed.getContentType();
         if( content.contains( "text/html")) {
             // HTML ?
@@ -93,17 +96,17 @@ public class SyllabsRestProvider {
                     String url = tag.getAttributeValue( "href");
                     curFeed.setUrl( url.startsWith( "/") ? feed.getUrl() + url : url);
                     curFeed.openConnections( );
-                    readXml( curFeed, storeHelper, titles, urls, counts);
+                    readXml( curFeed, entities, storeHelper, titles, urls, counts);
                     curFeed.closeConnections();
                 }
             }
         }
         else {
-            readXml( feed, storeHelper, titles, urls, counts);
+            readXml( feed, entities, storeHelper, titles, urls, counts);
         }
     }
     
-    private void readXml(UrlHelper feed, StoreHelper storeHelper, List<String> titles, List<String> urls, List<Integer> counts) throws WPSConnectorException {
+    private void readXml(UrlHelper feed, String[] entities, StoreHelper storeHelper, List<String> titles, List<String> urls, List<Integer> counts) throws WPSConnectorException {
         try {
             org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder(false);
             org.jdom.Document doc = builder.build( feed.getStream());
@@ -111,17 +114,17 @@ public class SyllabsRestProvider {
             
             Element top = root.getChild( "channel");
             if( top != null) {
-                parseRss2( feed.getUrl(), top, storeHelper, urls, titles, counts);
+                parseRss2( feed.getUrl(), entities, top, storeHelper, urls, titles, counts);
             }
             else {
-                parseAtom( feed.getUrl(), root, storeHelper, urls, titles, counts);
+                parseAtom( feed.getUrl(), entities, root, storeHelper, urls, titles, counts);
             }
         } catch (Exception e) {
             throw new WPSConnectorException( "openConnections", e);
         }
     }
     
-    private void parseAtom( String url, Element feed, StoreHelper storeHelper, List<String> urls, List<String> titles, List<Integer> counts) {
+    private void parseAtom( String url, String[] entities, Element feed, StoreHelper storeHelper, List<String> urls, List<String> titles, List<Integer> counts) {
         String title = "";
         int count = 0;
         for( Object o : (List<Object>)feed.getContent()) {
@@ -140,7 +143,7 @@ public class SyllabsRestProvider {
                                 attribute.addProperty( "name", getAtomContent( contentItem));
                         }
                     }
-                    count += extractEntities( attribute.getId(), attribute, storeHelper);
+                    count += extractEntities( attribute.getId(), attribute, entities, storeHelper);
                 }
             }
         }
@@ -164,21 +167,21 @@ public class SyllabsRestProvider {
         return ((Text)item.getContent().get( 0)).getText();
     }
     
-    private void parseRss2( String url, Element channel, StoreHelper storeHelper, List<String> urls, List<String> titles, List<Integer> counts) {
+    private void parseRss2( String url, String[] entities, Element channel, StoreHelper storeHelper, List<String> urls, List<String> titles, List<Integer> counts) {
         String title = channel.getChildText( "title");
         int count = 0;
         for( Element item : (List<Element>)channel.getChildren( "item")) {
             Attribute attribute = storeHelper.addAttribute( item.getChildText( "link"));
             attribute.addProperty( "name", item.getChildText( "title"));
             
-            count += extractEntities( attribute.getId(), attribute, storeHelper);
+            count += extractEntities( attribute.getId(), attribute, entities, storeHelper);
         }
         urls.add( url);
         counts.add( count);
         titles.add( title);
     }
         
-    private int extractEntities( String url, Attribute attribute, StoreHelper storeHelper) {
+    private int extractEntities( String url, Attribute attribute, String[] entities, StoreHelper storeHelper) {
         int count = 0;
         UrlHelper syllabs = new UrlHelper( "http://api.syllabs.com/v0/entities");
         syllabs.addHeader( "API-Key", SYLLABS_API_KEY);
@@ -187,14 +190,16 @@ public class SyllabsRestProvider {
         syllabs.addParameter( "url", url);
         try {
             syllabs.openConnections();
-            JsonNode entities = mapper.readTree( syllabs.getStream()).get("response").get("entities");
-            ArrayNode persons = (ArrayNode)entities.get("Person");
-            if( persons != null) {
-                for (JsonNode person : persons) {
-                    Entity entity = storeHelper.addEntity( person.get( "text").getTextValue());
-                    entity.addProperty( "name", entity.getId());
-                    entity.addAttribute(attribute, person.get( "count").getIntValue());
-                    ++count;
+            JsonNode ets = mapper.readTree( syllabs.getStream()).get("response").get("entities");
+            for( String namedEntity : entities) {
+                ArrayNode persons = (ArrayNode)ets.get( namedEntity);
+                if( persons != null) {
+                    for (JsonNode person : persons) {
+                        Entity entity = storeHelper.addEntity( person.get( "text").getTextValue());
+                        entity.addProperty( "name", entity.getId());
+                        entity.addAttribute(attribute, person.get( "count").getIntValue());
+                        ++count;
+                    }
                 }
             }
             /*ArrayNode organizations = (ArrayNode)entities.get("Organization");

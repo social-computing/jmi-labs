@@ -11,6 +11,7 @@
 				<url>{$syllabsserverurl}/rest/syllabs/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="url">{$feed}</url-parameter>
+				<url-parameter name="entities">{$entities}</url-parameter>
 			</URL-connection>
 	
 			<REST-entity markup="entities" id="id" >
