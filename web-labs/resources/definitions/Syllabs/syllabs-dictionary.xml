@@ -6,7 +6,7 @@
 	<comment>Syllabs Plan Dictionary</comment>
 
 	<entities>
-		<REST-entities name="Syllabs" type="json" invert="false">
+		<REST-entities name="Syllabs" type="json" invert="{$inverted}">
 			<URL-connection>
 				<url>{$syllabsserverurl}/rest/syllabs/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>

@@ -25,6 +25,7 @@ object:focus {
 <%Boolean persons = (request.getParameter("Persons") != null);
 Boolean organizations = request.getParameter("Organizations") != null;
 Boolean geos = request.getParameter("Geos") != null;
+Boolean inverse = request.getParameter("Inverse") != null;
 String feed = request.getParameter("feed");
 if( feed == null) {
  feed = "";
@@ -107,16 +108,17 @@ function JMIF_CompleteParameters( parameters) {
 	 parameters.allowDomain = "*";
 	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";
      //parameters.syllabsserverurl = "http://localhost:8080/web-labs";
-	 parameters.wpsserverurl = "http://server.just-map-it.com";
-     parameters.syllabsserverurl = "http://labs.just-map-it.com";
+	 //parameters.wpsserverurl = "http://server.just-map-it.com";
+     //parameters.syllabsserverurl = "http://labs.just-map-it.com";
 	 parameters.wpsplanname = "Syllabs";
 	 parameters.entities = '<%= (persons ? "Person" :"") + "," + (organizations ? "Organization" :"") + "," + (geos ? "Geo" :"")%>';
+	 parameters.inverted = '<%=inverse%>';
 	 parameters.jsessionid = '<%=session.getId()%>';
 } 
 </script>
 </head>
 <body>
-<form method="get">
+<form id="main" method="get">
 <table width="100%" border="0">
 	<tr>
 		<td rowspan="3"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
@@ -134,6 +136,8 @@ function JMIF_CompleteParameters( parameters) {
 			<input type="checkbox" name="Persons" <%=persons ? "checked" : ""%>/>Persons
 			<input type="checkbox" name="Organizations" <%=organizations ? "checked" : ""%>/>Organizations
 			<input type="checkbox" name="Geos" <%=geos ? "checked" : ""%>/>Geo
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
 		</td>
 	</tr>
 	<tr>
