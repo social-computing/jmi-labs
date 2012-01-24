@@ -108,8 +108,8 @@ function JMIF_CompleteParameters( parameters) {
 	 parameters.allowDomain = "*";
 	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";
      //parameters.syllabsserverurl = "http://localhost:8080/web-labs";
-	 //parameters.wpsserverurl = "http://server.just-map-it.com";
-     //parameters.syllabsserverurl = "http://labs.just-map-it.com";
+	 parameters.wpsserverurl = "http://server.just-map-it.com";
+     parameters.syllabsserverurl = "http://labs.just-map-it.com";
 	 parameters.wpsplanname = "Syllabs";
 	 parameters.entities = '<%= (persons ? "Person" :"") + "," + (organizations ? "Organization" :"") + "," + (geos ? "Geo" :"")%>';
 	 parameters.inverted = '<%=inverse%>';
