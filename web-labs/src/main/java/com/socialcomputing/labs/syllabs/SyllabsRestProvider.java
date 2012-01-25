@@ -143,7 +143,7 @@ public class SyllabsRestProvider {
                                 attribute.addProperty( "name", getAtomContent( contentItem));
                         }
                     }
-                    count += extractEntities( attribute.getId(), attribute, entities, storeHelper);
+                    count += extractTextAndEntities( attribute.getId(), attribute, entities, storeHelper);
                 }
             }
         }
@@ -174,7 +174,7 @@ public class SyllabsRestProvider {
             Attribute attribute = storeHelper.addAttribute( item.getChildText( "link"));
             attribute.addProperty( "name", item.getChildText( "title"));
             
-            count += extractEntities( attribute.getId(), attribute, entities, storeHelper);
+            count += extractTextAndEntities( attribute.getId(), attribute, entities, storeHelper);
         }
         urls.add( url);
         counts.add( count);
@@ -202,15 +202,6 @@ public class SyllabsRestProvider {
                     }
                 }
             }
-            /*ArrayNode organizations = (ArrayNode)entities.get("Organization");
-            if( organizations != null) {
-                for (JsonNode organization : organizations) {
-                    Entity entity = storeHelper.addEntity( organization.get( "text").getTextValue());
-                    entity.addProperty( "name", entity.getId());
-                    entity.addAttribute(attribute, organization.get( "count").getIntValue());
-                    ++count;
-                }
-            }*/
             syllabs.closeConnections();
         }
         catch (Exception e) {
@@ -220,9 +211,47 @@ public class SyllabsRestProvider {
         return count;
     }
     
- /*   public static void main( String[] args ) {
+    private int extractTextAndEntities( String url, Attribute attribute, String[] entities, StoreHelper storeHelper) {
+        int count = 0;
+        UrlHelper syllabsText = new UrlHelper( "http://api.syllabs.com/v0/extract");
+        syllabsText.addHeader( "API-Key", SYLLABS_API_KEY);
+        syllabsText.addHeader( "Accept", "application/json");
+        syllabsText.addParameter( "indent", "false");
+        syllabsText.addParameter( "url", url);
+        try {
+            syllabsText.openConnections();
+            JsonNode textNode = mapper.readTree( syllabsText.getStream()).get("response").get("text");
+            
+            UrlHelper syllabs = new UrlHelper( UrlHelper.Type.POST, "http://api.syllabs.com/v0/entities");
+            syllabs.addHeader( "API-Key", SYLLABS_API_KEY);
+            syllabs.addHeader( "Accept", "application/json");
+            syllabs.addParameter( "indent", "false");
+            syllabs.addParameter( "text", textNode.getTextValue());
+            syllabs.openConnections();
+            JsonNode ets = mapper.readTree( syllabs.getStream()).get("response").get("entities");
+            for( String namedEntity : entities) {
+                ArrayNode persons = (ArrayNode)ets.get( namedEntity);
+                if( persons != null) {
+                    for (JsonNode person : persons) {
+                        Entity entity = storeHelper.addEntity( person.get( "text").getTextValue());
+                        entity.addProperty( "name", entity.getId());
+                        entity.addAttribute(attribute, person.get( "count").getIntValue());
+                        ++count;
+                    }
+                }
+            }
+            syllabs.closeConnections();
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return count;
+    }
+    
+/*    public static void main( String[] args ) {
         SyllabsRestProvider s = new SyllabsRestProvider();
         String url = "http://www.social-computing.com/2012/01/18/just-map-it-days-merci-pour-vos-retours/";
-        s.extractEntities( url, new Attribute(url), new StoreHelper());
+        s.extractTextAndEntities( url, new Attribute(url), null, new StoreHelper());
     }*/
 }
