@@ -29,6 +29,8 @@ import com.sun.jersey.api.Responses;
 @Path("/allocine")
 public class AllocineRestProvider {
 
+    //public static final String API_URL = "http://api.allocine.fr";
+    public static final String API_URL = "http://ext.api.allocine.fr";
     public static final String API_KEY = "U29jaWFsQ29tcHV0aW5n";
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -38,7 +40,7 @@ public class AllocineRestProvider {
     public String kind(@Context HttpServletRequest request, @PathParam("kind") String kind, @DefaultValue("top:month") @QueryParam("filter") String filter) {
         HttpSession session = request.getSession(true);
         String key = kind + "_" + filter;
-        String result = ( String)session.getAttribute( key);
+        String result = null; //( String)session.getAttribute( key);
         if (result == null || result.length() == 0) {
             if( kind.equalsIgnoreCase( "film_gender")) {
                 result = film_gender( filter);
@@ -89,7 +91,7 @@ public class AllocineRestProvider {
     private String film_gender(String filter) {
         StoreHelper storeHelper = new StoreHelper();
         try {
-            UrlHelper urlHelper = new UrlHelper( "http://api.allocine.fr/rest/v3/movieList");
+            UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
             urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
             urlHelper.addParameter( "format", "json");
             urlHelper.addParameter( "count", "200");
@@ -97,14 +99,7 @@ public class AllocineRestProvider {
             urlHelper.openConnections();
             JsonNode node = mapper.readTree(urlHelper.getStream());
             for (JsonNode movie : (ArrayNode) node.get("feed").get("movie")) {
-                Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-                attribute.addProperty("name", movie.get("title").getTextValue());
-                attribute.addProperty("poster", movie.get("poster").get("href").getTextValue());
-                for (JsonNode genre : (ArrayNode) movie.get("genre")) {
-                    Entity entity = storeHelper.addEntity( genre.get("code").getValueAsText());
-                    entity.addProperty("name", genre.get("$").getTextValue());
-                    entity.addAttribute(attribute, 1);
-                }
+                movie_gender( movie, storeHelper);
             }
         }
         catch (Exception e) {
@@ -117,7 +112,7 @@ public class AllocineRestProvider {
     private String film_tag(String filter) {
         StoreHelper storeHelper = new StoreHelper();
         try {
-            UrlHelper urlHelper = new UrlHelper( "http://api.allocine.fr/rest/v3/movieList");
+            UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
             urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
             urlHelper.addParameter( "format", "json");
             urlHelper.addParameter( "count", "200");
@@ -125,20 +120,7 @@ public class AllocineRestProvider {
             urlHelper.openConnections();
             JsonNode movies = mapper.readTree(urlHelper.getStream());
             for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-                attribute.addProperty("name", movie.get("title").getTextValue());
-                
-                UrlHelper urlHelper2 = new UrlHelper( "http://api.allocine.fr/rest/v3/movie");
-                urlHelper2.addParameter( "partner", AllocineRestProvider.API_KEY);
-                urlHelper2.addParameter( "format", "json");
-                urlHelper2.addParameter( "code", attribute.getId());
-                urlHelper2.openConnections();
-                JsonNode movie2 = mapper.readTree(urlHelper2.getStream());
-                for (JsonNode tag : (ArrayNode) movie2.get("movie").get("tag")) {
-                    Entity entity = storeHelper.addEntity( tag.get("code").getValueAsText());
-                    entity.addProperty("name", tag.get("$").getTextValue());
-                    entity.addAttribute(attribute, 1);
-                }
+                movie_tag( movie, storeHelper);
             }
         }
         catch (Exception e) {
@@ -151,7 +133,7 @@ public class AllocineRestProvider {
     private String film_casting(String filter) {
         StoreHelper storeHelper = new StoreHelper();
         try {
-            UrlHelper urlHelper = new UrlHelper( "http://api.allocine.fr/rest/v3/movieList");
+            UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
             urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
             urlHelper.addParameter( "format", "json");
             urlHelper.addParameter( "count", "200");
@@ -159,22 +141,7 @@ public class AllocineRestProvider {
             urlHelper.openConnections();
             JsonNode movies = mapper.readTree(urlHelper.getStream());
             for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-                attribute.addProperty("name", movie.get("title").getTextValue());
-                String directors = movie.get("castingShort").get("directors").getTextValue();
-                for( String director : directors.split( ",")) {
-                    director = director.trim();
-                    Entity entity = storeHelper.addEntity( director);
-                    entity.addProperty("name", director);
-                    entity.addAttribute(attribute, 1);
-                }
-                String actors = movie.get("castingShort").get("actors").getTextValue();
-                for( String actor : actors.split( ",")) {
-                    actor = actor.trim();
-                    Entity entity = storeHelper.addEntity( actor);
-                    entity.addProperty("name", actor);
-                    entity.addAttribute(attribute, 1);
-                }
+                movie_casting( movie, storeHelper);
             }
         }
         catch (Exception e) {
@@ -184,39 +151,103 @@ public class AllocineRestProvider {
         return storeHelper.toJson();
     }
 
-    private String film_same( String film) {
+    private String film_same( String id) {
         StoreHelper storeHelper = new StoreHelper();
         try {
-            UrlHelper urlHelper = new UrlHelper( "http://api.allocine.fr/rest/v3/movieList");
+            UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
             urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
             urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", "similar:" + film);
+            urlHelper.addParameter( "count", "50");
+            urlHelper.addParameter( "filter", "similar:" + id);
             urlHelper.openConnections();
             JsonNode movies = mapper.readTree(urlHelper.getStream());
             for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-                attribute.addProperty("name", movie.get("title").getTextValue());
-                String directors = movie.get("castingShort").get("directors").getTextValue();
-                for( String director : directors.split( ",")) {
-                    director = director.trim();
-                    Entity entity = storeHelper.addEntity( director);
-                    entity.addProperty("name", director);
-                    entity.addAttribute(attribute, 1);
-                }
-                String actors = movie.get("castingShort").get("actors").getTextValue();
-                for( String actor : actors.split( ",")) {
-                    actor = actor.trim();
-                    Entity entity = storeHelper.addEntity( actor);
-                    entity.addProperty("name", actor);
-                    entity.addAttribute(attribute, 1);
-                }
+                movie_same( movie, storeHelper);
             }
+            movie_same( get_movie( id), storeHelper);
         }
         catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return storeHelper.toJson();
+    }
+
+    private void movie_same( JsonNode movie, StoreHelper storeHelper) throws Exception {
+        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
+        attribute.addProperty("name", movie.get("title").getTextValue());
+        attribute.addProperty("poster", get_poster_url( movie));
+
+        UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
+        urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
+        urlHelper.addParameter( "format", "json");
+        urlHelper.addParameter( "count", "10");
+        urlHelper.addParameter( "filter", "similar:" + attribute.getId());
+        urlHelper.openConnections();
+        JsonNode movies = mapper.readTree(urlHelper.getStream());
+        for (JsonNode samemovie : (ArrayNode) movies.get("feed").get("movie")) {
+            Entity entity = storeHelper.addEntity( samemovie.get("code").getValueAsText());
+            entity.addProperty("name", samemovie.get("title").getTextValue());
+            entity.addProperty("poster", get_poster_url( samemovie));
+        }
+    }
+    
+    private void movie_gender( JsonNode movie, StoreHelper storeHelper) throws Exception {
+        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
+        attribute.addProperty("name", movie.get("title").getTextValue());
+        attribute.addProperty("poster", get_poster_url( movie));
+        for (JsonNode genre : (ArrayNode) movie.get("genre")) {
+            Entity entity = storeHelper.addEntity( genre.get("code").getValueAsText());
+            entity.addProperty("name", genre.get("$").getTextValue());
+            entity.addAttribute(attribute, 1);
+        }
+    }
+    
+    private void movie_tag( JsonNode movie, StoreHelper storeHelper) throws Exception {
+        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
+        attribute.addProperty("name", movie.get("title").getTextValue());
+        attribute.addProperty("poster", get_poster_url( movie));
+        
+        JsonNode fullMovie = get_movie( attribute.getId());
+        for (JsonNode tag : (ArrayNode) fullMovie.get("movie").get("tag")) {
+            Entity entity = storeHelper.addEntity( tag.get("code").getValueAsText());
+            entity.addProperty("name", tag.get("$").getTextValue());
+            entity.addAttribute(attribute, 1);
+        }
+    }
+    
+    private void movie_casting( JsonNode movie, StoreHelper storeHelper) {
+        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
+        attribute.addProperty("name", movie.get("title").getTextValue());
+        attribute.addProperty("poster", get_poster_url( movie));
+        
+        String directors = movie.get("castingShort").get("directors").getTextValue();
+        for( String director : directors.split( ",")) {
+            director = director.trim();
+            Entity entity = storeHelper.addEntity( director);
+            entity.addProperty("name", director);
+            entity.addAttribute(attribute, 1);
+        }
+        String actors = movie.get("castingShort").get("actors").getTextValue();
+        for( String actor : actors.split( ",")) {
+            actor = actor.trim();
+            Entity entity = storeHelper.addEntity( actor);
+            entity.addProperty("name", actor);
+            entity.addAttribute(attribute, 1);
+        }
+    }
+    
+    private JsonNode get_movie( String id) throws Exception {
+        UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movie");
+        urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
+        urlHelper.addParameter( "format", "json");
+        urlHelper.addParameter( "code", id);
+        urlHelper.openConnections();
+        return mapper.readTree(urlHelper.getStream()).get("movie");
+    }
+    
+    private String get_poster_url( JsonNode movie) {
+        JsonNode poster = movie.get("poster");
+        return poster  != null ? poster.get("href").getTextValue() : "";
     }
 }
