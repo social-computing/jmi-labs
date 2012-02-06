@@ -33,6 +33,8 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper
 public class SyllabsRestProvider {
     
     private static final String SYLLABS_API_KEY = "ced225f44e11f48070268fb93d28618f";
+    private static final String ALCHEMY_API_KEY = "7ed1479ab6b5d774da661999dee017bacc0c8ba7";
+    
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @GET
@@ -213,14 +215,21 @@ public class SyllabsRestProvider {
     
     private int extractTextAndEntities( String url, Attribute attribute, String[] entities, StoreHelper storeHelper) {
         int count = 0;
-        UrlHelper syllabsText = new UrlHelper( "http://api.syllabs.com/v0/extract");
-        syllabsText.addHeader( "API-Key", SYLLABS_API_KEY);
-        syllabsText.addHeader( "Accept", "application/json");
-        syllabsText.addParameter( "indent", "false");
-        syllabsText.addParameter( "url", url);
+        /* Syllabs Extractor
+        UrlHelper extractor = new UrlHelper( "http://api.syllabs.com/v0/extract");
+        extractor.addHeader( "API-Key", SYLLABS_API_KEY);
+        extractor.addHeader( "Accept", "application/json");
+        extractor.addParameter( "indent", "false");
+        extractor.addParameter( "url", url);*/
+        // http://www.alchemyapi.com
+        UrlHelper extractor = new UrlHelper( "http://access.alchemyapi.com/calls/url/URLGetText");
+        extractor.addParameter( "apikey", ALCHEMY_API_KEY);
+        extractor.addParameter( "outputMode", "json");
+        extractor.addParameter( "url", url);
         try {
-            syllabsText.openConnections();
-            JsonNode textNode = mapper.readTree( syllabsText.getStream()).get("response").get("text");
+            extractor.openConnections();
+            //JsonNode textNode = mapper.readTree( extractor.getStream()).get("response").get("text");
+            JsonNode textNode = mapper.readTree( extractor.getStream()).get("text");
             
             UrlHelper syllabs = new UrlHelper( UrlHelper.Type.POST, "http://api.syllabs.com/v0/entities");
             syllabs.addHeader( "API-Key", SYLLABS_API_KEY);
