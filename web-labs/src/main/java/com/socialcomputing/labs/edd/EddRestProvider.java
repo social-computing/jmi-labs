@@ -1,7 +1,9 @@
 package com.socialcomputing.labs.edd;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.StringReader;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -70,16 +72,20 @@ public class EddRestProvider {
 
     private void read(File file, String[] entities, StoreHelper storeHelper) throws WPSConnectorException {
         try {
-            org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder(false);
-            org.jdom.Document doc = builder.build( file);
-            Element root = doc.getRootElement();
+            char[] buf = new char[(int) file.length()];
+            FileReader fr = new FileReader(file);
+            int count = fr.read(buf);
+            String xml =  new String(buf, 0, count);
+            xml = xml.replaceAll("&nbsp;", " ");
             
+            org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder(false);
+            org.jdom.Document doc = builder.build( new StringReader(xml));
+            Element root = doc.getRootElement();
             Element document = root.getChild("document");
-            int count = 0;
             Attribute attribute = storeHelper.addAttribute( document.getChildText( "docID"));
-            attribute.addProperty( "name", file.getCanonicalPath());
+            attribute.addProperty( "name", file.getName().substring(4));
                 
-            count += extractEntities( attribute, entities, document.getChildText("docText"), storeHelper);
+            extractEntities( attribute, entities, document.getChildText("docText"), storeHelper);
         } catch (Exception e) {
             throw new WPSConnectorException( "openConnections", e);
         }
