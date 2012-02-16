@@ -1,16 +1,13 @@
 package com.socialcomputing.labs.polyspot;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -18,11 +15,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
-import com.socialcomputing.wps.server.planDictionnary.connectors.WPSConnectorException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
@@ -39,47 +34,83 @@ public class PolyspotRestProvider {
     @GET
     @Path("maps/{kind}.json")
     @Produces(MediaType.APPLICATION_JSON)
-    public String kind(@Context HttpServletRequest request, @PathParam("kind") String kind, 
-                       @DefaultValue("") @QueryParam("plsptSession") String plsptSession,
-                       @DefaultValue("top:month") @QueryParam("filter") String filter) {
+    public String kind(@Context HttpServletRequest request,  
+                       @QueryParam("sources") String sources,
+                       @QueryParam("field") String field,
+                       @QueryParam("query") String query) {
         HttpSession session = request.getSession(true);
-        String key = kind + "_" + filter;
-        String result = null; //( String)session.getAttribute( key);
-        if (result == null || result.length() == 0) {
-             if( plsptSession.length() == 0) {
-                 UrlHelper s = new UrlHelper( API_URL);
-                 s.addParameter("command", "createsessionjj");
-                 s.addParameter("r_format", "json");
-                 s.addParameter("login", "admin");
-                 s.addParameter("password", "polyspotdemo");
-                 try {
-                    s.openConnections();
-                    JsonNode resNode = mapper.readTree(s.getStream());
-                    String error = serializeError( resNode);
-                    if( error != null) return error;
-                    plsptSession = resNode.get("sessionid").getTextValue();
+        String plsptSession = ( String)session.getAttribute( "plsptSession");
+        String cookie = ( String)session.getAttribute( "Cookie");
+        StoreHelper data = new StoreHelper();
+        try {
+            if (plsptSession == null) {
+                UrlHelper s = new UrlHelper(API_URL);
+                s.addParameter("command", "createsession");
+                s.addParameter("r_format", "json");
+                s.addParameter("login", "admin");
+                s.addParameter("password", "polyspotdemo");
+                s.openConnections();
+                JsonNode resNode = mapper.readTree(s.getStream());
+                cookie = s.getConnection().getHeaderField("Set-Cookie");
+                cookie = cookie.substring(0, cookie.indexOf(';'));
+                String error = serializeError(resNode);
+                if (error != null)
+                    return error;
+                plsptSession = resNode.get("sessionid").getTextValue();
+                s = new UrlHelper(API_URL);
+                s.addHeader("Cookie", cookie);
+                s.addParameter("command", "initusersecuritycontext");
+                s.addParameter("r_format", "json");
+                s.addParameter("sessionid", plsptSession);
+                s.addParameter("user_uid", "admin");
+                s.openConnections();
+                resNode = mapper.readTree(s.getStream());
+                error = serializeError(resNode);
+                if (error != null)
+                    return error;
+                plsptSession = resNode.get("sessionid").getTextValue();
+                session.setAttribute( "plsptSession", plsptSession);
+                session.setAttribute( "Cookie", cookie);
+            }
+            UrlHelper s = new UrlHelper(API_URL);
+            s = new UrlHelper(API_URL);
+            s.addHeader("Cookie", cookie);
+            s.addParameter("command", "search");
+            s.addParameter("sessionid", plsptSession);
+            s.addParameter("r_format", "json");
+            s.addParameter("q_usr", query);
+            s.addParameter("q_usr_flags", "1");
+            s.addParameter("q_usr_flags", "2");
+            for( String source : sources.split( ",")) {
+                if( source.length() > 0)
+                    s.addParameter("srcid", source);
+            }       
+            s.addParameter("r_fl", field);
+            s.addParameter("r_fl", "_title");
+            s.addParameter("r_nbfetch", "100");
+            s.openConnections();
+            JsonNode resNode = mapper.readTree(s.getStream());
+            String error = serializeError(resNode);
+            if (error != null)
+                return error;
+            ArrayNode items = (ArrayNode) resNode.get( "itemSet");
+            for (JsonNode item : items) {
+                Attribute attribute = data.addAttribute(item.get("_uid").get(0).getTextValue());
+                attribute.addProperty("name", item.get("_title").get(0).getTextValue());
+                ArrayNode fields = (ArrayNode) item.get(field);
+                if( fields != null) {
+                    for( JsonNode ngram : (ArrayNode) item.get(field)) {
+                        Entity entity = data.addEntity( ngram.getTextValue());
+                        entity.addProperty("name", entity.getId());
+                        entity.addAttribute(attribute, 1);
+                    }
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-             }
-            
-            if( kind.equalsIgnoreCase( "film_gender")) {
-                result = film_gender( filter);
             }
-            else if( kind.equalsIgnoreCase( "film_tag")) {
-                result = film_tag( filter);
-            }
-            else if( kind.equalsIgnoreCase( "film_casting")) {
-                result = film_casting( filter);
-            }
-            else if( kind.equalsIgnoreCase( "film_same")) {
-                result = film_same( filter);
-            }
-            session.setAttribute( key, result);
         }
-        return result;
+        catch (Exception e) {
+            return StoreHelper.ErrorToJson(e);
+        }
+        return data.toJson();
     }
 
     @GET
@@ -111,175 +142,10 @@ public class PolyspotRestProvider {
         return null;
     }
 
-    private String film_gender(String filter) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( PolyspotRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", PolyspotRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode node = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) node.get("feed").get("movie")) {
-                movie_gender( movie, storeHelper);
-            }
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return storeHelper.toJson();
-    }
-    
-    private String film_tag(String filter) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( PolyspotRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", PolyspotRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_tag( movie, storeHelper);
-            }
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return storeHelper.toJson();
-    }
-    
-    private String film_casting(String filter) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( PolyspotRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", PolyspotRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_casting( movie, storeHelper);
-            }
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return storeHelper.toJson();
-    }
-
-    private String film_same( String id) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( PolyspotRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", PolyspotRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "50");
-            urlHelper.addParameter( "filter", "similar:" + id);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_same( movie, storeHelper);
-            }
-            movie_same( get_movie( id), storeHelper);
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return storeHelper.toJson();
-    }
-
-    private void movie_same( JsonNode movie, StoreHelper storeHelper) throws Exception {
-        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-        attribute.addProperty("name", movie.get("title").getTextValue());
-        attribute.addProperty("poster", get_poster_url( movie));
-
-        UrlHelper urlHelper = new UrlHelper( PolyspotRestProvider.API_URL + "/rest/v3/movieList");
-        urlHelper.addParameter( "partner", PolyspotRestProvider.API_KEY);
-        urlHelper.addParameter( "format", "json");
-        urlHelper.addParameter( "count", "10");
-        urlHelper.addParameter( "filter", "similar:" + attribute.getId());
-        urlHelper.openConnections();
-        JsonNode movies = mapper.readTree(urlHelper.getStream());
-        for (JsonNode samemovie : (ArrayNode) movies.get("feed").get("movie")) {
-            Entity entity = storeHelper.addEntity( samemovie.get("code").getValueAsText());
-            entity.addProperty("name", samemovie.get("title").getTextValue());
-            entity.addProperty("poster", get_poster_url( samemovie));
-        }
-    }
-    
-    private void movie_gender( JsonNode movie, StoreHelper storeHelper) throws Exception {
-        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-        attribute.addProperty("name", movie.get("title").getTextValue());
-        attribute.addProperty("poster", get_poster_url( movie));
-        for (JsonNode genre : (ArrayNode) movie.get("genre")) {
-            Entity entity = storeHelper.addEntity( genre.get("code").getValueAsText());
-            entity.addProperty("name", genre.get("$").getTextValue());
-            entity.addAttribute(attribute, 1);
-        }
-    }
-    
-    private void movie_tag( JsonNode movie, StoreHelper storeHelper) throws Exception {
-        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-        attribute.addProperty("name", movie.get("title").getTextValue());
-        attribute.addProperty("poster", get_poster_url( movie));
-        
-        JsonNode fullMovie = get_movie( attribute.getId());
-        for (JsonNode tag : (ArrayNode) fullMovie.get("movie").get("tag")) {
-            Entity entity = storeHelper.addEntity( tag.get("code").getValueAsText());
-            entity.addProperty("name", tag.get("$").getTextValue());
-            entity.addAttribute(attribute, 1);
-        }
-    }
-    
-    private void movie_casting( JsonNode movie, StoreHelper storeHelper) {
-        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-        attribute.addProperty("name", movie.get("title").getTextValue());
-        attribute.addProperty("poster", get_poster_url( movie));
-        
-        String directors = movie.get("castingShort").get("directors").getTextValue();
-        for( String director : directors.split( ",")) {
-            director = director.trim();
-            Entity entity = storeHelper.addEntity( director);
-            entity.addProperty("name", director);
-            entity.addAttribute(attribute, 1);
-        }
-        String actors = movie.get("castingShort").get("actors").getTextValue();
-        for( String actor : actors.split( ",")) {
-            actor = actor.trim();
-            Entity entity = storeHelper.addEntity( actor);
-            entity.addProperty("name", actor);
-            entity.addAttribute(attribute, 1);
-        }
-    }
-    
-    private JsonNode get_movie( String id) throws Exception {
-        UrlHelper urlHelper = new UrlHelper( PolyspotRestProvider.API_URL + "/rest/v3/movie");
-        urlHelper.addParameter( "partner", PolyspotRestProvider.API_KEY);
-        urlHelper.addParameter( "format", "json");
-        urlHelper.addParameter( "code", id);
-        urlHelper.openConnections();
-        return mapper.readTree(urlHelper.getStream()).get("movie");
-    }
-    
-    private String get_poster_url( JsonNode movie) {
-        JsonNode poster = movie.get("poster");
-        return poster  != null ? poster.get("href").getTextValue() : "";
-    }
-
     private String serializeError( JsonNode result) {
         if( result.get("code") == null)
             return null;
-        StoreHelper storeHelper = new StoreHelper();
         JsonNode trace = result.get("trace");
-        storeHelper.setError( result.get("code").getValueAsLong(), result.get("message").getTextValue(), trace == null ? "" : trace.getTextValue());
-        return storeHelper.toJson();
+        return StoreHelper.ErrorToJson( result.get("code").getValueAsLong(), result.get("message").getTextValue(), trace == null ? "" : trace.getTextValue());
     }
 }

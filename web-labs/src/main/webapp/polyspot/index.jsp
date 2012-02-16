@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Just Map It! Syllabs</title>
+<title>Just Map It! PolySpot</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style type="text/css" media="screen">
 html, body {
@@ -22,14 +22,16 @@ object:focus {
 	display: none;
 }
 </style>
-<%Boolean persons = (request.getParameter("Persons") != null);
-Boolean organizations = request.getParameter("Organizations") != null;
-Boolean geos = request.getParameter("Geos") != null;
+<%Boolean contacts = (request.getParameter("Contacts") != null);
+Boolean news = request.getParameter("News") != null;
+Boolean wikipedia = request.getParameter("Wikipedia") != null;
 Boolean inverse = request.getParameter("Inverse") != null;
-String feed = request.getParameter("feed");
-if( feed == null) {
- feed = "";
- persons = true;
+String field = request.getParameter("field");
+if( field == null) field = "";
+String query = request.getParameter("query");
+if( query == null) {
+ query = "";
+ news = true;
  }%>
 <!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
 <!-- BEGIN Browser History required section -->
@@ -40,13 +42,14 @@ if( feed == null) {
 <script type="text/javascript" src="../client/flex/swfobject.js"></script>
 <script type="text/javascript"> 
 $(document).ready(function() {
-<%if( feed.length() > 0) {%>
+<%if( query.length() > 0) {%>
 	 var swfVersionStr = "10.0.0";
 	 var xiSwfUrlStr = "../client/flex/playerProductInstall.swf";
 	 var flashvars = {};
 	 JMIF_CompleteParameters( flashvars);
 	 flashvars.analysisProfile = "GlobalProfile";
-	 flashvars.feed = "<%=java.net.URLEncoder.encode(feed, "UTF-8")%>";
+	 flashvars.query = "<%=java.net.URLEncoder.encode(query, "UTF-8")%>";
+	 flashvars.field = "<%=java.net.URLEncoder.encode(field, "UTF-8")%>";
 	 var params = {};
 	 params.quality = "high";
 	 params.bgcolor = "#FFFFFF";
@@ -87,32 +90,35 @@ $(document).ready(function() {
   }
   function JMIF_Focus( args)
   {
+	var map = document.getElementById("jmi-polyspot");
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
 	parameters.entityId = args[0];
-	parameters.feed = args[2];
-	document.getElementById("jmi-polyspot").compute( parameters);
+	parameters.query = map.getProperty("$query");
+	parameters.field = map.getProperty("$field");
+	map.compute( parameters);
 	document.getElementById("message").innerHTML = "<i>Focus on named entity:</i> " + args[1];
   }
   function JMIF_Center( args)
   {
+	var map = document.getElementById("jmi-polyspot");
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
 	parameters.attributeId = args[0];
-	parameters.feed = args[2];
+	parameters.query = map.getProperty("$query");
+	parameters.field = map.getProperty("$field");
 	parameters.analysisProfile = "DiscoveryProfile";
-	document.getElementById("jmi-polyspot").compute( parameters);
+	map.compute( parameters);
 	document.getElementById("message").innerHTML = "<i>Centered on item:</i> " + args[1];
   }
 function JMIF_CompleteParameters( parameters) {
 	 parameters.allowDomain = "*";
-	 parameters.wpsserverurl = "http://localhost:8080/jmi-server";
-     parameters.polyspotserverurl = "http://localhost:8080/web-labs";
-	 //parameters.wpsserverurl = "http://server.just-map-it.com";
-     //parameters.polyspotserverurl = "http://labs.just-map-it.com";
+	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";
+     //parameters.polyspotserverurl = "http://localhost:8080/web-labs";
+	 parameters.wpsserverurl = "http://server.just-map-it.com";
+     parameters.polyspotserverurl = "http://labs.just-map-it.com";
 	 parameters.wpsplanname = "PolySpot";
-	 parameters.kind = "toto";
-	 parameters.entities = '<%= (persons ? "Person" :"") + "," + (organizations ? "Organization" :"") + "," + (geos ? "Geo" :"")%>';
+	 parameters.sources = '<%= (contacts ? "1013" :"") + "," + (news ? "1014" :"") + "," + (wikipedia ? "1015" :"")%>';
 	 parameters.inverted = '<%=inverse%>';
 	 parameters.jsessionid = '<%=session.getId()%>';
 } 
@@ -128,15 +134,21 @@ function JMIF_CompleteParameters( parameters) {
 	</tr>
 	<tr>
 		<td>
-			<input type="text" name="feed" title="URLs" size="80" value="<%=feed != null ? feed : "" %>" />
+			<input type="text" name="query" title="URLs" size="80" value="<%=query != null ? query : "" %>" />
 			<input type="submit" value="Just Map It!" />
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<input type="checkbox" name="Persons" <%=persons ? "checked" : ""%>/>Persons
-			<input type="checkbox" name="Organizations" <%=organizations ? "checked" : ""%>/>Organizations
-			<input type="checkbox" name="Geos" <%=geos ? "checked" : ""%>/>Geo
+			<!--input type="checkbox" name="Contacts" <%=contacts ? "checked" : ""%>/>Contacts-->
+			<input type="checkbox" name="News" <%=news ? "checked" : ""%>/>News
+			<input type="checkbox" name="Wikipedia" <%=wikipedia ? "checked" : ""%>/>Wikipedia
+			<select name="field">
+			  <option value="_ngrams" <%=field.equalsIgnoreCase("_ngrams") ? "selected" : ""%>>ngrams</option>
+			  <option value="semantic-theme-label" <%=field.equalsIgnoreCase("semantic-theme-label") ? "selected" : ""%>>semantic theme</option>
+			  <option value="person-label" <%=field.equalsIgnoreCase("person-label") ? "selected" : ""%>>person label</option>
+			  <option value="organization-organisation-label" <%=field.equalsIgnoreCase("organization-organisation-label") ? "selected" : ""%>>organisation label</option>
+			</select>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
 		</td>

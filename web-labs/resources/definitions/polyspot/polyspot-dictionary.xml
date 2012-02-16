@@ -6,9 +6,13 @@
 	<comment>PolySpot Map Dictionary</comment>
 
 	<entities>
-		<REST-entities name="Syllabs" type="json" invert="{$inverted}">
+		<REST-entities name="PolySpot" type="json" invert="{$inverted}">
 			<URL-connection>
-				<url>{$polyspotserverurl}/rest/polyspot/maps/{$kind}.json</url>
+				<url>{$polyspotserverurl}/rest/polyspot/maps/map.json</url>
+				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
+				<url-parameter name="query">{$query}</url-parameter>
+				<url-parameter name="sources">{$sources}</url-parameter>
+				<url-parameter name="field">{$field}</url-parameter>
 			</URL-connection>
 	
 			<REST-entity markup="entities" id="id" >
