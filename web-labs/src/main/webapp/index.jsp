@@ -31,13 +31,6 @@ img
 			alt="Social Computing" src="./images/logo-sc-white.jpg" /></a></td>
 	</tr>
 </table>
-<table width="60%" border="0" style="padding: 100px 0 0 200px">
-	<tr>
-		<td><a title="Just Map It! Allocine" href="./allocine"><img alt="Just Map It! Allocine" src="./images/logo-allocine.jpg" /></a></td>
-		<td><a title="Just Map It! Viadeo" href="./viadeo"><img alt="Just Map It! Viadeo" src="./images/logo-allocine.png" /></a></td>
-		<td><a title="Just Map It! XWiki" href="./"><img alt="Just Map It! XWiki" src="./images/logo-xwiki.png" /></a></td>
-	</tr>
-</table>
 </body>
 </html>
 
