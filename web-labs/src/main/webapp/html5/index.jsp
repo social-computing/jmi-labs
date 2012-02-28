@@ -28,6 +28,9 @@ function GoMap() {
 				//client: JMI.Map.SWF,
 				parameters: parameters
 			});
+	mapHtml5.addEventListener(JMI.Map.event.READY, function(event) {
+		document.getElementById('titleHtml5').innerHTML = event.map.type;
+	} );
 	mapHtml5.addEventListener(JMI.Map.event.STATUS, function(event) {
 		document.getElementById('statusHtml5').innerHTML = event.message;
 	} );
@@ -47,6 +50,9 @@ function GoMap() {
 				client: JMI.Map.SWF,
 				parameters: parameters
 			});
+	mapFlex.addEventListener(JMI.Map.event.READY, function(event) {
+		document.getElementById('titleFlex').innerHTML = event.map.type;
+	} );
 	mapFlex.addEventListener(JMI.Map.event.STATUS, function(event) {
 		document.getElementById('statusFlex').innerHTML = event.message;
 	} );
@@ -86,13 +92,13 @@ function JMIF_Center(map, args) {
 	</tr>
 </table>
 <div style="position: relative; float: left; ">
-<h1>Html5</h1>
+<h1 id="titleHtml5">Auto</h1>
 <div id="mapHtml5" style="border:1px solid black ;  width: 640px; height: 480px" ></div>
 <div id="statusHtml5" style="width: 600px; overflow:hidden;">&nbsp;</div>
 </div>
 
 <div style="position: relative; float: left; padding-left:20px ">
-<h1>Flex</h1>
+<h1 id="titleFlex">Flash (forced)</h1>
 <div id="mapFlex" style="border:1px solid black ; width: 640px; height: 480px" ></div>
 <div id="statusFlex" style="width: 600px; overflow:hidden;">&nbsp;</div>
 </div>
