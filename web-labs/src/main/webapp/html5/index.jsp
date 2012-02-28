@@ -87,7 +87,7 @@ function JMIF_Center(map, args) {
 <body onload="GoMap()">
 <table width="100%" border="0">
 	<tr>
-		<td><a title="Just Map It! Labs" href="./"><img border="0" alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
+		<td><a title="Just Map It! Labs" href="../"><img border="0" alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td align="right"><a title="Social Computing" href="http://www.social-computing.com" target="_blank"><img border="0" alt="Social Computing" src="../images/logo-sc-white.jpg" /></a></td>
 	</tr>
 </table>

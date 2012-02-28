@@ -31,6 +31,12 @@ img
 			alt="Social Computing" src="./images/logo-sc-white.jpg" /></a></td>
 	</tr>
 </table>
+<table width="60%" border="0" style="padding: 100px 0 0 200px">
+	<tr>
+		<td><a title="Just Map It! Html5" href="./html5"><img alt="Just Map It! Html5" src="./images/html5-logo.png" /></a></td>
+	</tr>
+-</table>
+
 </body>
 </html>
 
