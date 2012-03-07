@@ -112,6 +112,7 @@ $(document).ready(function() {
 	 parameters.jsessionid = '<%=session.getId()%>';
   }
 </script>
+<jsp:include page="../ga.jsp" />
 </head>
 <body>
 <table width="100%" border="0">

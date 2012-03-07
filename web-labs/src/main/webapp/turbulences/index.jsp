@@ -117,6 +117,7 @@
 			}
 	    */
         </script>
+<jsp:include page="../ga.jsp" />
     </head>
     <body>
     

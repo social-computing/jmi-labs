@@ -116,6 +116,7 @@ function JMIF_CompleteParameters( parameters) {
 	 parameters.jsessionid = '<%=session.getId()%>';
 } 
 </script>
+<jsp:include page="../ga.jsp" />
 </head>
 <body>
 <form id="main" method="get">

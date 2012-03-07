@@ -107,6 +107,7 @@ $(document).ready(function() {
 			});
 });	 
 </script>
+<jsp:include page="../ga.jsp" />
 </head>
 <body>
 <table width="100%" border="0">

@@ -22,6 +22,7 @@ img
 	border: 0;
 }
 </style>
+<jsp:include page="./ga.jsp" />
 </head>
 <body>
 <table width="100%" border="0">

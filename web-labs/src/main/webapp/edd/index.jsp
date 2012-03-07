@@ -116,6 +116,7 @@ function JMIF_CompleteParameters( parameters) {
 	 parameters.jsessionid = '<%=session.getId()%>';
 } 
 </script>
+<jsp:include page="../ga.jsp" />
 </head>
 <body>
 <form id="main" method="get">
@@ -130,6 +131,11 @@ function JMIF_CompleteParameters( parameters) {
 			<select name="entreprise" id="entreprise">
 			    <option value="mouilleron" <%=entreprise.equals("mouilleron") ? "selected":"" %>>boulangerie Mouilleron</option>
 			    <option value="fournil" <%=entreprise.equals("fournil") ? "selected":"" %>>le fournil a rebais</option>
+			    <option value="azentis" <%=entreprise.equals("azentis") ? "selected":"" %>>Azentis</option>
+			    <option value="bnf" <%=entreprise.equals("bnf") ? "selected":"" %>>Bibliotheque Nationale de France</option>
+			    <option value="flash" <%=entreprise.equals("flash") ? "selected":"" %>>Flash Copy</option>
+			    <option value="fontenelle" <%=entreprise.equals("fontenelle") ? "selected":"" %>>Fontenelle Microcopie</option>
+			    <option value="lys" <%=entreprise.equals("lys") ? "selected":"" %>>Lys call services</option>
 			</select>
 			<input type="submit" value="Just Map It!" />
 		</td>
