@@ -1,0 +1,37 @@
+<documents>
+<document>
+<docID>201202286232</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>HP XP for FlashCopy Mirroring SoftwareHitachi FlashCopy Mirroring for Mainframe enhances data availability for   mainframe data and improves productivity by providing IBM FlashCopy   compatible ...
+  
+    
+      
+        HP XP for FlashCopy Mirroring Software enhances data
+        availability for mainframe data and improves productivity
+        by providing IBM FlashCopy compatible point-in-time copies
+        within an HP XP Disk Array. As soon as a copy is created,
+        it becomes available for use. The copy can be either
+        virtual or physical. If a virtual copy is specified, it
+        remains a pointer-based copy that only saves the changes
+        from the original. However, if a physical copy is
+        specified, a full copy will be completed in the background
+        while both the source and the copy remain available for
+        access.
+        
+          For additional availability, FlashCopy can be combined
+          with Hitachi ShadowImage for Mainframe, Hitachi TrueCopy
+          for Mainframe, Hitachi Universal Replicator for
+          Mainframe, and HP XP for Compatible Extended Remote
+          Copy.
+        
+      
+    
+  
+</docText><Company>IBM FlashCopy</Company>
+<Company>IBM</Company>
+<Company>Hitachi</Company>
+<Company>Mainframe</Company>
+<Company>Universal</Company>
+</document>
+</documents>

@@ -1,0 +1,326 @@
+<documents>
+<document>
+<docID>2012022821556</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>SVC FlashCopy backups with TSM &#8211; Waldemar Mark DuszykFeb 10, 2009 ... I provided a solution based on SVC flashcopy, which I later modified by removing   all the action from the host whose data was backed up and ...
+  
+    Application backup was taking over four hours and the
+    managemet was getting afraid that the user population will
+    starts riots! No, this is not true at all. At least not all of
+    it. The facts are that the backups was taking over 4 hours
+    during which the application has to be down, so noone could
+    use it. I provided a solution based on SVC flashcopy, which I
+    later modified&nbsp;by removing&nbsp;all the action from the
+    host whose data was backed up&nbsp;and&nbsp;placing
+    it&nbsp;directly on the TSM server.&nbsp; I think, you already
+    know why. Both hosts &#8211; the host whose data had to be backed up
+    and the TSM server are parts of two HACMP clusters. Let me
+    call the TSM servers as TSMP and TSMS, the servers with data
+    to be put on tape are DATAP and DATAS. Both clusters are truly
+    passive ones &#8211; only one host in a the cluster at any given time
+    is the &#8216;primary&#8217; host with running application and a full set
+    of file systems. The whole process is based on 4 scripts.
+    Shown in the following text. But, before you start writting
+    your scripts, you have to involve your SAN administrator (to
+    provide you with ssh keys, which will allow you a password
+    less login to the selected SVC controller. The same SAN
+    administrator has to create a login account on the SVC for the
+    user who will execute the SVC commands controlling the whole
+    process. The commands in these scripts should be manually
+    executed on each host participating in this process. In my
+    case, I executed them by hand on all 4 machines. Only, after I
+    verified that they execute without a problem I knew that I was
+    ready to&nbsp;take the next step.&nbsp;I asked my &nbsp;SAN
+    administrator has to&nbsp;carve LUNS of the identical size as
+    the LUNS (vpath, hdisk) containnig the data that&nbsp;needs to
+    be backed by TSM. These LUNS had to be imported to all
+    4&nbsp;hosts.&nbsp;I checked with the &#8220;cfgmgr&#8221; command that
+    each LUNS&nbsp;was accounted for on every
+    machine.&nbsp;&nbsp;&nbsp;If you want to learn more about SVC
+    this post will not help you, sorry but I have to refer you to
+    an appropriate IBM Redbook.&nbsp;Each of this scripts had one
+    common function i.e the LOGGER which is shown in the following
+    section. This function, shows how the login and command
+    execution on SVC is done.
+  
+  
+    &nbsp;#!/usr/bin/ksh
+    #
+    # this script sets the stage for FlashCopy backups
+    # it is executed from cron before database backup starts
+    # by W.M. Duszyk 10/10/05
+    #
+    DSCLI=&#8217;ssh admin@SVC_IP_address&#8217;
+    LOGGER(){
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &#8220;`date` $@&#8221;
+    &gt;&gt; /tmp/FlashCopyBackup.log.`date | awk &#8216;{print
+    $2$3}&#8217;`
+    }
+    LOGGER &#8220;Preparing FlashCopy&#8221;
+    $DSCLI svctask prestartfcconsistgrp GRP_NAME
+  
+  
+    The command executed aginst SVC controller (svctask
+    presetartfcconsistgrp GRP_NAME) is executed agains a set od
+    LUNS united into a consistency grup named GRP_NAME. You see,
+    the data I want to backup consists of two volume groups, which
+    calls for two like devices to cary the actual flash operations
+    on the SVC end. To ease their administration and access, SAN
+    administrator put them in a construct called a consistency
+    group and he named this union GRP_NAME.&nbsp; The first script
+    show, is executed (via cron) at about midnight. Several
+    minutes later, executes the scripts which freezes the
+    application whose data we want to send to TSM server. This
+    script is divided into 3 sections. The first one freezes the
+    database, the second one starts the TSM backup (dsmc &#8230;..), and
+    finally the last section thaws the application allowing its
+    usage. I modified this script by replacing the line executing
+    the TSM backup with the path and the name of my second
+    scripts. So after the application is in the frozen state my
+    script is called and then the application is thawn. These are
+    the contents of this script:
+  
+  
+    #!/usr/bin/ksh93
+    #
+    # Waldemar Mark Duszyk
+    #
+    DSCLI=&#8217;ssh admin@SVC_IP_Address
+    VG[1]=&#8217;first_vg&#8217;
+    VG[2]=&#8217;second_vg&#8217;
+  
+  
+    FrozenTime=120
+  
+  
+    Logger() {
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &#8220;&#8216;date&#8217; $@&#8221;
+    &gt;&gt; /tmp/FlashCopyBackup.log.&#8217;date | awk &#8216;{print
+    $2$3}&#8221;
+    }
+  
+  
+    ##Data Base is already FROZEN, now its file systems will
+    freeze too.
+  
+  
+    for vg in ${VG[1]} ${VG[2]}
+    do
+    &nbsp; for filesystem in &#8216;lsvg -l $vg | grep -w jfs2 | grep -v
+    grep | awk &#8216;{print
+    $7}&#8221;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp; do
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; chfs -a
+    freeze=$FrozenTime $filesystem
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; F100_log &#8220;File system
+    $filesystem frozen.&#8221;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; done
+    done
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logger
+    &#8220;Starting Consistency Group&#8221;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $DSCLI svctask
+    startfcconsistgrp EPCPRDFC1
+  
+  
+    ## and now the Data Base file systems will be thawn
+    for vg in ${VG[1]} ${VG[2]}
+    do
+    &nbsp; for filesystem in &#8216;lsvg -l $vg | grep -w jfs2 | grep -v
+    grep | awk &#8216;{print $7}&#8221;
+    &nbsp;&nbsp;&nbsp; do
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; chfs -a freeze=0 $filesystem
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logger &#8220;File system
+    $filesystem thawned.&#8221;
+    &nbsp;&nbsp;&nbsp; done
+    done
+  
+  
+    At this moment, the data from the source disks is present in
+    the SVC Consistency Group. It is the backup time! This step is
+    executed on the TSM server not on the machine that needs the
+    backup![/lang-en]
+  
+  
+    #!/usr/bin/ksh93 -x
+    #
+    # Waldemar Mark Duszyk
+    #
+    # Recreate volume groups used by flash copy backup
+    # This script needs FlashCopy environment file created by
+    CheckFlashCopyEnv.
+    # CheckFlashCopyEnv is executed from root&#8217;s cron.
+    # Disk used for Epic Databases should always be bigger then
+    disk used for Journals.
+    # Each host in this cluster needs a public key file named after
+    the host and stored
+    # in /root/.ssh directory.
+    #
+    # This scripts writes two logs into /var/FlashCopy/logs
+    directory.
+    # FlashCopyBackup.log.&#8217;date | awk &#8216;{print $2$3}&#8221; &#8211; operations
+    except dsmc/tsm
+    # FlashCopyTsm.log.&#8217;date | awk &#8216;{print $2$3}&#8221; &#8211; dsmc/tsm
+    report sent to EpicDba&#8217;s
+    #
+    #
+    ## SSH will need publick key called the same as the host
+    name
+    HostName=&#8217;uname -n&#8217;
+    ## ssh command line executed against SVC
+    DSCLI=&#8221;ssh -i /root/.ssh/$HostName
+    admin@SVC_IP_Address&#8220;
+    ## Logs location
+    LOGS=&#8217;/var/FlashCopy/logs&#8217;
+    ## FlashCopy environment file location
+    FlashEnv=/usr/local/bin/FlashCopy/.flashEnv
+    ##################################################################################
+    ## log what is being done function
+  
+  
+    LOGGER(){
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &#8220;&#8216;date&#8217; $@&#8221;
+    &gt;&gt; $LOGS/FlashCopyBackup.log.&#8217;date | awk &#8216;{print
+    $2$3}&#8221;
+    }
+    ##################################################################################
+  
+  
+    ##
+    LOGGER &#8220;Loading FlashCopy disks from $FlashEnv.&#8221;
+    cntr=0
+    set -A DiskArray
+  
+  
+    for disk in &#8216;cat $FlashEnv&#8217;
+    do
+    &nbsp; DiskArray[$cntr]=$disk
+    &nbsp; cntr=$((cntr+1))
+    done
+  
+  
+    # declare disks membership
+  
+  
+    Flash1_vg_disk=${DiskArray[0]}
+    Flash2_vg_disk=${DiskArray[1]}
+    LOGGER &#8220;Flash1_vg_disk is $Flash1_vg_disk&#8221;
+    LOGGER &#8220;Flash2_vg disk is $Flash2_vg_disk&#8221;
+    ##################################################################################
+    LOGGER &#8220;About to start backup, recreating Flash Volume
+    Groups&#8221;
+    /usr/sbin/recreatevg -f -y Flash1_vg -L /Flash -Y Fl
+    $Flash1_vg_disk
+    if [[ $? -ne 0 ]];then
+    &nbsp;&nbsp; LOGGER &#8220;ERROR: Recreatevg for Flash1_vg
+    failed&#8221;
+    fi
+    /usr/sbin/recreatevg -f -y Flash2_vg -L /Flash -Y Fl
+    $Flash2_vg_disk
+    if [[ $? -ne 0 ]];then
+    &nbsp;&nbsp; LOGGER &#8220;ERROR: Recreatevg for Flash2_vg
+    failed&#8221;
+    fi
+    ##################################################################################
+    LOGGER &#8220;Mounting all filesystems for FlashCopy Volume
+    Groups&#8221;
+    for vg in Flash1_vg Flash2_vg
+    &nbsp; do
+    &nbsp;&nbsp;&nbsp; for fs in &#8216;lsvg -l $vg | grep -v jfs2log |
+    grep -w jfs2 | awk &#8216;{print $7}&#8221;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; do
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /usr/sbin/fsck -y $fs
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LOGGER &#8220;Volume Group: $vg
+    mounting $fs&#8221;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /usr/sbin/mount $fs
+    &nbsp;&nbsp;&nbsp; done
+    done
+    ##################################################################################
+    LOGGER &#8220;Backing up filesystems&#8221;
+    echo &#8220;Starting FlashCopy backup: \n\n&#8221; &gt;&gt;
+    $LOGS/FlashCopyTsm.log.&#8217;date | awk &#8216;{print $2$3}&#8221;
+  
+  
+    dsmc i /Fs1 /fs2&nbsp; -subdir=yes &gt;&gt;
+    $LOGS/FlashCopyTsm.log.&#8217;date | awk &#8216;{print $2$3}&#8221;
+  
+  
+    dsmc i /Fs3 /Fl4-subdir=yes &gt;&gt;
+    $LOGS/FlashCopyTsm.log.&#8217;date | awk &#8216;{print $2$3}&#8221;
+  
+  
+    echo &#8220;\nFlashCopy backup ended, bye.n&#8221; &gt;&gt;
+    $LOGS/FlashCopyTsm.log.&#8217;date | awk &#8216;{print $2$3}&#8221;
+  
+  
+    LOGGER &#8220;Finished backing up filesystems&#8221;
+    ##################################################################################
+    LOGGER &#8220;UnMounting filesystems for Flash1_vg&#8221;
+    lsvg -l Flash1_vg | grep -v jfs2log | grep -w jfs2 | awk
+    &#8216;{print $7}&#8217; | xargs -t -n1 umount
+  
+  
+    LOGGER &#8220;UnMounting filesystems for Flash2_vg&#8221;
+    lsvg -l Flash2_vg | grep -v jfs2log | grep -w jfs2 | awk
+    &#8216;{print $7}&#8217; | xargs -t -n1 umount
+    ##################################################################################
+    LOGGER &#8220;Varyoffvg Flash1_vg&#8221;
+    varyoffvg Flash1_vg
+    LOGGER &#8220;Clearing PVID from Flash1_vg_disk&#8221;
+    chdev -l $Flash1_vg_disk -a pv=clear
+  
+  
+    LOGGER &#8220;Exportvg Flash1_vg&#8221;
+    exportvg Flash1_vg
+    LOGGER &#8220;Varyoffvg Flash2_vg&#8221;
+    varyoffvg Flash2_vg
+  
+  
+    LOGGER &#8220;Clearing PVID from Flash2_vg_disk&#8221;
+    chdev -l $Flash2_vg_disk -a pv=clear
+  
+  
+    LOGGER &#8220;Exportvg Flash2_vg&#8221;
+    exportvg Flash2_vg
+  
+  
+    LOGGER &#8220;Stopping FlashCopy&#8221;
+    $DSCLI svctask stopfcconsistgrp EPCPRDFC1
+  
+  
+    sleep 120
+  
+  
+    LOGGER &#8220;Putting FlashCopy Disks On-LINE&#8221;
+    $DSCLI svctask prestartfcconsistgrp EPCPRDFC1
+    #################################################################################
+    LOGGER &#8220;Sending Backup Reports&#8230;..&#8221;
+    #
+    # prepare mail packages
+    #
+    package=$LOGS/FlashCopyTsm.log.&#8217;date | awk &#8216;{print $2$3}&#8221;
+  
+  
+    uuencode $package $package | mail -vs&#8221;FlashCopy backup report&#8221;
+    flash_copy &lt; $LOGS/FlashCopyTsm.log.&#8217;date | awk &#8216;{print
+    $2$3}&#8221;
+    package=$LOGS/FlashCopyBackup.log.&#8217;date | awk &#8216;{print
+    $2$3}&#8221;
+    uuencode $package $package | mail -vs&#8221;FlashCopy operations
+    report&#8221; unixteam &lt; $LOGS/FlashCopyBackup.log.&#8217;date | awk
+    &#8216;{print $2$3}&#8221;
+  
+  
+    LOGGER &#8220;Backup Reports Sent &#8211; we are done, bye.&#8221;
+  
+  
+    This is it! All done and running! A few years before I wrote
+    these scripts for the SVC, I created another set done for
+    HITACHI ShadowImage mechanism which is actually idenentical
+    with FlashCopy. The differences are the names of physical
+    volumes (dlmdrv versus vpath or hdisk) and the name of the
+    commands. If you need more info or a clarification leave it in
+    a comment &#8211; I will respond.
+  
+</docText></document>
+</documents>

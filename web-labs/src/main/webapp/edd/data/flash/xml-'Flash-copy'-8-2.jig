@@ -1,0 +1,34 @@
+<documents>
+<document>
+<docID>2012022817205</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>HDS: Hitachi Compatible Mirroring Software for IBM FlashCopyGet compatible server host-based solution for data backup and replication tasks   on Hitachi storage with Hitachi Compatible Mirroring Software for IBM ...
+  
+    Compatible Host-based Solution
+  
+  
+    Hitachi Compatible Mirroring software for IBM&#174; FlashCopy&#174;
+    provides a server host-based FlashCopy&#174;compatible solution for
+    data backup and replication tasks on Hitachi storage.
+  
+  
+    Operations from Compatible Mirroring for IBM FlashCopy are
+    nondisruptive. This allows the main volume of each FlashCopy
+    pair to remain online to all hosts for both read and write
+    I/O operations. Once established, FlashCopy operations
+    continue to provide unattended point-in-time data backups.
+  
+  
+    Easily integrate and develop data backup and protection tasks
+    on a superior, Hitachi-developed, mainframe-compatible,
+    enterprise storage platform.
+  
+  
+    Explore Hitachi Replication Software
+  
+</docText><Company>Hitachi</Company>
+<Company>IBM FlashCopyGet</Company>
+<Company>IBM</Company>
+</document>
+</documents>

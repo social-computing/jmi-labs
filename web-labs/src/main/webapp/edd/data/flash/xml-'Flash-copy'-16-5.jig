@@ -1,0 +1,70 @@
+<documents>
+<document>
+<docID>201202286768</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>Ilja Coolen \ ICSS &#187; FlashcopyWe don&#39;t use EMC, but the issues we have with M$ VSS and FlashCopy are   about the same. I did some integration of VSS to the IBM San Volume Controller, ...
+  
+    It&#8217;s Friday afternoon where i live, and i took the afternoon
+    off, to be with my wife. Surprise i said when i got home. I
+    surprised only my dog. The kids are in school, and the wife is
+    obviously gone somewhere. So i sit here, with my Senseo
+    coffee, thinking about the discussion i had earlier this
+    morning at work.
+  
+  
+    I wanted to design some flash-copy scripts against our IBM San
+    Volume Controller, in order to perform some flash-copy tasks
+    for the Windows servers. In the forum
+    i already started a new topic about this. So i talked to my
+    partner about how i intended to do it, and what my obstacles
+    were. I wanted to know how the disk (read volume) was mounted
+    on the Windows host. But i had no method in matching the
+    unique ID&#8217;s i got from the SVC tot the disks in the host.
+    Windows doesn&#8217;t keep track of the LUN&#8217;s serial numbers without
+    installing third-party tools. How could I possibly know where
+    to put the target disks. I want them to be easily recognized
+    by the path they are mounted in.
+  
+  
+    An example.
+    The source host (called HOST01) has 2 disks, one is mounted as
+    E: and the other is mounted as F:\Subdir\Mountpoint. Let&#8217;s not
+    make it to complex, and have both volumes comprised out of
+    only one disk, so no spanning here. My target host is another
+    server called HOST02.
+    I want the targets to be recognized by the path on HOST02. All
+    FC targets will be mounted somewhere under the drive letter F:
+    which tells me it are FC volumes. Something psychological i
+    guess. That would then look something like this:
+    HOST02 -&gt; F: \ HOST01 \ E
+    HOST02 -&gt; F: \ HOST01 \ F \ Subdir \ Mountpoint
+  
+  
+    All the information on the paths and drive letters have to be
+    dynamically gathered. Quite the task i tell you. But given my
+    know how, i should be able to pull it off. By doing this, i
+    tried to solve my flash-copy problems on Windows, and
+    simultaneously make a completely new backup design. My partner
+    nods his head. Don&#8217;t make it this complex he said. Just try to
+    pull off the flash-copy first, without considering all the
+    variables. We are in the middle of redesigning our
+    infrastructure anyway. We want to ban the current methods of
+    doing our DR backups, and recoveries. So we are planning on
+    doing a full flash-copy to a remote location of all our data
+    anyway. So, just have the SVC do it to all the LUNs it knows
+    about. Hmm, i think. But i want to make the file level backups
+    easier as well i say.
+    Even though it&#8217;s hard to admit, he&#8217;s got a point there. Why
+    change the complete file level backup methods, when you can
+    have all the data flash-copied with minimal amount of effort?
+    After having accomplished the easy part, you still start on
+    working on the way we process file level backups he said, but
+    there&#8217;s no pressure there. And you know what? He&#8217;s right. So i
+    will probably propose the new insights to my management.
+    Guess those mainframe storage admins have an advantage on the
+    OpenSystems guys when it comes to simplicity. Why do the
+    OpenSystems admins tend to choose to do stuff the hard way?
+  
+</docText></document>
+</documents>

@@ -1,0 +1,56 @@
+<documents>
+<document>
+<docID>20120228662</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>Difference Between "Cold" and "Warm" Flash Copy.Aug 2, 2011 ... When considering your Disaster Recovery Plans and regular back-ups, I&#39;ve been   asked what is the difference between &quot;cold &quot; and &quot;warm&quot; flash ...
+  
+    
+      
+      dcosby
+      Posted: Tue, Aug 2 2011
+      5:25 PM
+    
+  
+  
+    When considering your Disaster Recovery Plans and regular
+    back-ups, I've been asked what is the difference between "cold
+    " and "warm" flash copy.&nbsp; I use the Warm FlashCopy as a
+    best practices for data back-up, and here is why.
+  
+  
+    Warm FlashCopy allows our production servers to continue
+    business as usual, without interruption to any production
+    jobs.&nbsp; This DS8000 SAN option allows for a point-in-time
+    data copy to be made available to our backup servers and then
+    saved to LTO tape nightly.&nbsp; Major benefits are:
+  
+  
+    Point-in-time copy of all data volumes made available
+    
+    
+    Executes is seconds (for us, 3 seconds for 8TB)
+    
+    
+    No production interruption
+    
+    
+    Eliminates "Save Windows "
+    
+    
+    Handled by Storage utility, no replication software needed
+    on production servers
+    
+    
+    Can be scheduled to execute anytime
+    
+    
+  
+  
+    -Mr. Cosby, System Administrator- Estes Express Lines
+  
+  
+    &nbsp;
+  
+</docText></document>
+</documents>

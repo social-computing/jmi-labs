@@ -1,0 +1,74 @@
+<documents>
+<document>
+<docID>2012022818546</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>FlashCopy - Wikipedia, the free encyclopediaFlashCopy is an IBM feature supported on various IBM storage devices that   makes it possible to create, nearly instantaneously, Point in Time copies of entire ...
+  
+    FlashCopy is an IBM
+    feature supported on various IBM storage devices that makes it
+    possible to create, nearly instantaneously, Point in Time copies of entire logical
+    volumes or data sets.[1]
+    The Hitachi Data Systems implementation
+    providing similar function is branded as ShadowImage. Using
+    either implementation, the copies are immediately available
+    for both read and write access.
+  
+  
+    [edit]
+    
+     IBM Enterprise Storage Server (Shark) FlashCopy
+    implementation.
+  
+  
+    [edit]
+    FlashCopy
+    Version 1
+  
+  
+    The first implementation of FlashCopy, Version 1 allowed
+    entire volumes to be instantaneously &#8220;copied&#8221; to another
+    volume by using the facilities of the newer Enterprise Storage
+    Subsystems (ESS).
+  
+  
+    Version 1 of FlashCopy had limitations however. Although the
+    copy or &#8220;flash&#8221; of a volume occurred instantaneously, the
+    FlashCopy commands were issued sequentially and the ESS
+    required a brief moment to establish the new pointers. Because
+    of this minute processing delay, the data residing on two
+    volumes that were FlashCopied are not exactly time consistent.
+  
+  
+    [edit]
+    FlashCopy
+    Version 2
+  
+  
+    FlashCopy Version 2 introduced the ability to flash individual
+    data sets and more recently added support for &#8220;consistency
+    groups&#8221;. FlashCopy consistency groups can be used to help
+    create a consistent point-in-time copy across multiple
+    volumes, and even across multiple ESSs, thus managing the
+    consistency of dependent writes.
+  
+  
+    FlashCopy consistency groups are used in a single-site
+    scenario in order to create a time-consistent copy of data
+    that can then be backed-up and sent off site, or in a
+    multi-site Global Mirror for ESS implementation to
+    force time consistency at the remote site.
+  
+  
+    The implementation of consistency groups is not limited to
+    FlashCopy. Global Mirror for z/Series (formerly
+    known as XRC or eXtended Remote Copy) also creates consistency
+    groups to asynchronously mirror disk data from one site to
+    another over any distance.
+  
+  
+    [edit] References
+  
+
+</docText></document>
+</documents>

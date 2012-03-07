@@ -1,0 +1,163 @@
+<documents>
+<document>
+<docID>201202282104</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>Chaine de certificat interm&#233;diaire - SSL GeneralitesOn Tue, 18 Oct 2011 17:14:38 +0200 Didier Le Gal &lt;support@fontenelle-  microcopie.fr&gt; wrote: Le 24 aou 2010 a 16:51 CEST, Hadrien KOHL a ...
+  
+    Vous devez &#234;tre connect&#233; pour poster de nouveaux messages.
+    Cr&#233;er un compte.
+  
+  
+    
+
+Bonjour,
+
+Il serait bon que Gandi ouvreun page ou sont pr&#233;sents tous les certificats
+jusque la racine. L'AC de Gandi n'est qu'une AC interm&#233;diaire et il faut
+entrer toute la chaine dans certains logiciels (Zimbra sur Tomcat par
+exemple). On doit alors courir chez comodo ou usertrust et faire des tests
+pour trouver les bons. Pas pratique!
+
+  
+  
+    
+
+Bonjour &#224; tous,
+
+Justement je gal&#232;re pour installer mon certificat sur mon serveur Zimbra.
+Je ne comprend pas vraiment cette notion de chaine ???
+
+Je ne peux pas v&#233;rifier mon certificat : 
+openssl verify -CAfile GandiStandardSSLCA.pem www.crt
+www.crt: /C=FR/O=GANDI SAS/CN=Gandi Standard SSL CA
+error 2 at 1 depth lookup:unable to get issuer certificate
+
+me renvoie une erreur ... la m&#234;me qu'avec zmcertmgr de Zimbra !!!
+
+Comment avez-vous contourn&#233; ce probl&#232;me avec Zimbra.
+
+Merci d'avance et bon travail &#224; tous.
+
+Le 29 sep 2009 &#224; 10:55 CEST, Business Development SA a &#233;crit :
+
+    
+      
+
+Bonjour,
+
+Il serait bon que Gandi ouvreun page ou sont pr&#233;sents tous les
+certificats
+jusque la racine. L'AC de Gandi n'est qu'une AC interm&#233;diaire et il faut
+entrer toute la chaine dans certains logiciels (Zimbra sur Tomcat par
+exemple). On doit alors courir chez comodo ou usertrust et faire des tests
+pour trouver les bons. Pas pratique!
+
+    
+  
+  
+    
+
+M&#234;me chose pour moi. Une page avec tous les certificats serait bien plus
+pratique.
+
+  
+  
+    
+
+Le 24 ao&#251; 2010 &#224; 16:51 CEST, Hadrien KOHL a &#233;crit :
+
+    
+      
+
+M&#234;me chose pour moi. Une page avec tous les certificats serait bien plus
+pratique.
+
+    
+    
+
+Meme chose pour moi en plus la doc nous induit en erreur sur un lien
+inexistant.
+
+  
+  
+    
+      Par : Nicolas Chipaux
+    
+    
+    
+      Date : le 20 oct. 2011 &#224; 12:47
+    
+    
+    
+      Sujet : Re: Chaine de certificat
+      intermediaire
+    
+    
+  
+  
+    
+
+On Tue, 18 Oct 2011 17:14:38 +0200
+Didier Le Gal &lt;support@fontenelle-microcopie.fr&gt; wrote:
+
+    
+      
+
+Le 24 aou 2010 a 16:51 CEST, Hadrien KOHL a ecrit :
+
+      
+        
+
+Meme chose pour moi. Une page avec tous les certificats serait bien plus
+pratique.
+
+      
+      
+
+Meme chose pour moi en plus la doc nous induit en erreur sur un lien
+inexistant.
+
+    
+    
+
+Bonjour,
+
+Sur le site de Gandi, sur la page ou vous r&#233;cup&#233;rer votre certificat, vous
+avez un lien pour r&#233;cup&#233;rer les certificats interm&#233;diaires associ&#233;s. 
+
+Dans le cas d'un certificat standard, il vous faudra :
+ * s:/C=FR/O=GANDI SAS/CN=Gandi Stans:/C=SE/O=AddTrust AB/OU=AddTrust
+External TTP Network/CN=AddTrust External CA Rootdard SSL CA
+ * s:/C=US/ST=UT/L=Salt Lake City/O=The USERTRUST
+Network/OU=http://www.usertrust.com/CN=UTN-USERFirst-...
+ * et s:/C=SE/O=AddTrust AB/OU=AddTrust External TTP Network/CN=AddTrust
+External CA Root
+
+Vous pouvez verifier votre chaine de certificat avec la commande openssl : 
+openssl s_client -connect ip.ip.ip.ip:port ou avec le site
+http://www.digicert.com/help/ qui vous pr&#233;sente votre chaine de mani&#232;re
+plus graphique.
+
+    
+
+Nicolas Chipaux
+GANDI - http://www.gandi.net
+
+  
+</docText><Company>SSL</Company>
+<Company>External TTP</Company>
+<Company>Rootdard SSL</Company>
+<Company>Lake</Company>
+<Person>Didier Le Gal</Person>
+<Person>Didier</Person>
+<Person>Hadrien KOHL</Person>
+<Person>Gandi</Person>
+<Person>Nicolas Chipaux</Person>
+<Date>18 Oct 2011</Date>
+<Date>18</Date>
+<Date>2009 &#224; 10:55</Date>
+<Date>2010 &#224; 16:51</Date>
+<Date>le 20 oct. 2011</Date>
+</document>
+</documents>

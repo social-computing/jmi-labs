@@ -1,0 +1,49 @@
+<documents>
+<document>
+<docID>2012022825599</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>Protecting Exchange Server and SQL Server with IBM Tivoli Storage FlashCopy Manager on IBM DS3000, DS4000, DS5000 SeriesA white paper from IBM entitled: Protecting Exchange Server and SQL Server   with IBM Tivoli Storage FlashCopy Manager on IBM DS3000, DS4000, DS5000 ...
+  
+    White Paper Abstract:
+  
+  
+    IBM Tivoli Storage FlashCopy Manager provides the tools and
+    information needed to create and manage volume-level snapshots
+    while the applications that contain data on those volumes
+    remain online.
+  
+  
+    IBM Tivoli Storage FlashCopy Manager performs online backups
+    and restores of Microsoft Exchange Server Storage Groups and
+    SQL Server to local shadow volumes. You can perform backups
+    and restores using a command-line or graphical user interface
+    (GUI) on a Windows Server 2003 or Windows Server 2008
+    system.
+    Tivoli FlashCopy Manager Operations use the Tivoli Storage
+    FlashCopy Manager Application Program Interface (API) to
+    communicate with the FlashCopy Manager server program and use
+    the Exchange API to communicate with the Exchange Server. In
+    addition to using these APIs, Tivoli Storage FlashCopy Manager
+    VSS operations also use the FlashCopy Manager backup-archive
+    client and Microsoft Volume Shadow Copy Service technology to
+    produce an online snapshot (point-in-time consistent copy) of
+    Exchange or SQL data that can be stored on local shadow
+    volumes.
+    This document covers installation of Tivoli Storage FlashCopy
+    Manager for Exchange Server 2007 and SQL Server 2008 on IBM
+    DS3k/4k/5k Storage Subsystem.
+  
+</docText><Company>IBM Tivoli</Company>
+<Company>IBM</Company>
+<Company>Microsoft</Company>
+<Person>Tivoli FlashCopy</Person>
+<Person>Tivoli</Person>
+<Person>FlashCopy</Person>
+<Person>VSS</Person>
+<Location>Tivoli FlashCopy</Location>
+<Location>Tivoli</Location>
+<Function>Manager</Function>
+<Function>Manager Operations</Function>
+</document>
+</documents>

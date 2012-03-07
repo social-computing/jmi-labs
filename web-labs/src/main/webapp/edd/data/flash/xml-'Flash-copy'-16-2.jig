@@ -1,0 +1,67 @@
+<documents>
+<document>
+<docID>201202289197</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>ibm flash copy, hp business copydfreybur@yahoo.com (Doug Freyburger) wrote in message news:&lt;7960d3ee.  0406080727.42c9875a@posting.google.com&gt;... but in either case, we still need ...
+  &gt; yls177 wrote:
+  
+    
+      
+        &gt; &gt;
+        &gt; &gt; hi, basically, both of the above in the subject
+        line achieves the same
+        &gt; &gt; objective using 2 san disks storage for
+        backup/restore. any insights
+        &gt; &gt; to the pros and cons?
+      
+    
+  &gt;
+  &gt; IBM flash copy does a checkpoint of the current state into a
+  copy.
+  &gt; As changes are made, new storage must be consumed in the
+  original
+  &gt; to preserve that snapshot, or is it new blocks must be added
+  to the
+  &gt; snapshot. Anyways, to have a full copy that does not effect
+  the
+  &gt; new changing state, a mirror must be made. So flash copy is
+  fast
+  &gt; to create but it still needs a full mirror if you intend to
+  keep
+  &gt; it around for long. In particular a reverse copy might take
+  a
+  &gt; very short time to restore state or it might be a full
+  reverse
+  &gt; copy depending on the state when the reverse is done.
+  &gt;
+  &gt; HP business copy does a full mirror of the current state
+  into a
+  &gt; copy. As changes are made to the original, the business
+  copy
+  &gt; maintains a record of what blocks change. So a reverse
+  copy
+  &gt; only needs to rewrite the map of changed blocks. Also the
+  next
+  &gt; forward copy only needs to copy the changed blocks. Thus
+  the
+  &gt; initial copy will take a long time, but if your data sees
+  10%
+  &gt; of its blocks change each day, subsequent syncs will take
+  10% as
+  &gt; long as the first.
+  &gt;
+  &gt; The business copy mirror does not consume new storage as
+  changes
+  &gt; are made the way flash, but business copy requires the copy
+  to
+  &gt; be 100% the size of the original. So your trade-off is
+  known
+  &gt; storage requirements that are large vs unknown storage
+  requirements
+  &gt; that might be small.
+</docText><Company>IBM</Company>
+<Company>HP</Company>
+<Person>Doug Freyburger</Person>
+</document>
+</documents>

@@ -1,0 +1,51 @@
+<documents>
+<document>
+<docID>2012022814123</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>baclient VS Flashcopy manager VS copy services integration moduleI&#39;m trying to figure out what the advantages/disadvantages are of using any of the   above 3 methods of performing exchange tdp VSS backups ...
+  I'm going to make an assumption that you want to backup Exchange
+  using a VSS method to TSM. If you want to do this then you will
+  need TSM for Mail, you will also need TSM EE but that is for
+  licensing requirements and TSM for Mail uses it in the
+  background. Without TSM for mail you will not get any
+  integration with the Exchange backups. TSM for Mail will give
+  you 'software VSS' backups. The software VSS backup uses the
+  software VSS provider and extra space on the Exchange volumes to
+  get the backup done.
+  
+    Now, on to Flashcopy manager, FCM. FCM is designed to backup
+    Exchange without TSM and uses the underlying disk to do the
+    flashcopies. So in your case, you would use FCM with the SVC
+    flashcopy and make flashcopy backups. With FCM and the SVC you
+    can do some things like instant restores. You can also
+    flashcopy to another disk array, a unique feature of the SVC.
+  
+  
+    So far we have covered two methods. One using TSM for Mail to
+    do VSS backups of Exchange to TSM without being concerned
+    about disk hardware flashcopies. The second method is using
+    FCM to make Exchange VSS backup using only hardware
+    flashcopies.
+  
+  
+    Now for the FCM and TSM for Mail combination. FCM and TSM for
+    Mail will merge to form one interface to both hardware
+    flashcopy backups and backups to TSM. You can restore from
+    either type of backup. This combination will give the best of
+    both the backup to TSM method and the flashcopy method and a
+    few more tricks. If it was my system, I would be doing this
+    method, especially because of the underlying SVC.
+  
+  
+    Now you may have noticed that the BA Client and the Copy
+    Service Integration module are not mentioned as Exchange
+    backup methods. The BA client will not do Exchange VSS backups
+    and the Copy services integration module is now basically part
+    of FCM. So unfortunately in your note you really only had one
+    method of backing up Exchange, FCM. Now you have three again.
+    Remember, FCM handles flashcopy backup using disk and TSM for
+    Mail gets Exchange backups into TSM.
+  
+</docText></document>
+</documents>

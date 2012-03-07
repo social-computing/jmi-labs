@@ -1,0 +1,142 @@
+<documents>
+<document>
+<docID>2012022824896</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>Flashcopy for Disaster Recovery and Business Continuity by Recovery Specialties, Storage Systems Consultants for z/Series EnvironmentsBusiness Continuity and Disaster Recovery consultants specializing in data   mirroring techniques for large z/Series mainframe storage envronments.
+  
+    FlashCopy is an IBM feature supported on ESS (Enterprise
+    Storage Servers) that allows you to make nearly instantaneous
+    Point in Time copies of entire logical volumes or data sets.
+    The HDS (Hitachi Data Systems) implementation providing
+    similar function is branded as TrueCopy. Using either
+    implementation, the copies are immediately available for both
+    read and write access. Often times, the FlashCopied version of
+    the data is used as input to a backup process allowing a
+    time-consistent copy of the data to be written to tape.
+  
+  
+    There are three distinct stages to FlashCopy operations:
+    Establish, Copy and Withdraw.
+  
+  
+    FlashCopy Establish
+  
+  
+    The FlashCopy Establish occurs very rapidly. It involves just
+    setting up an additional set of pointers within the ESS that
+    describe the FlashCopy relationship. Once the new pointers
+    have been created, both the source and target can be
+    referenced independently. For the application, this equates to
+    the copy being immediately available (via the new
+    pointers) even though no physical data has yet been copied.
+  
+  
+    FlashCopy COPY and NOCOPY
+  
+  
+    There are two variants to the copy operation. The first is
+    &#65533;COPY&#65533; which will begin a physical copy of the source data to
+    the target once the pointers have been established. During the
+    copy operation, if data is required from the target that has
+    not yet been copied from the source, the data will
+    automatically be provided from the source via the pointers
+    without impacting either the application or the copy
+    operation.
+  
+  
+    The second variant is &#65533;NOCOPY&#65533;. The NOCOPY operation does not
+    copy the entire source data to the target, but rather, only
+    copies source data that is about to be changed (on the source
+    volume). Applications accessing the target data automatically
+    access the source data for any information that has not
+    changed since the FlashCopy Establish. For any source data
+    that has changed since the FlashCopy Establish, the original
+    data is read from the target. Both GDPS and FDRinstant invoke
+    FlashCopy using the &#65533;NOCOPY&#65533; mode of operations.
+  
+  
+    FlashCopy Version 1
+  
+  
+    The first implementation of FlashCopy, Version 1 allowed
+    entire volumes to be instantaneously &#65533;copied&#65533; to another
+    volume by using the facilities of the newer Enterprise Storage
+    Subsystems (ESS).
+  
+  
+    Version 1 of FlashCopy had its limitations however. Although
+    the copy (or &#65533;flash&#65533; of a volume occurred instantaneously,
+    the FlashCopy commands were issued sequentially and the ESS
+    required a brief moment to establish the new pointers. Because
+    of this minute processing delay, the data residing on two
+    volumes that were FlashCopied are not exactly time consistent.
+    When FlashCopy is established for several hundred volumes,
+    there is a finite amount of time - a minute or more - between
+    the first and last established, so that copies will not be
+    created at a consistent point-in-time.
+  
+  
+    FlashCopy Version 2
+  
+  
+    FlashCopy Version 2 introduced the ability to flash individual
+    data sets and more recently added support for &#65533;consistency groups&#65533;.
+    FlashCopy consistency groups can be used to help create a
+    consistent point-in-time copy across multiple volumes, and
+    even across multiple ESSs, thus managing the consistency of
+    dependent writes.
+  
+  
+    By using the Freeze FlashCopy Consistency Group option, the
+    disk subsystem will hold off I/O activity to a volume for a
+    brief time period by putting the source volume in an extended
+    long busy state. In this way, a window is created during which
+    dependent write updates will not occur and FlashCopy will use
+    that window to obtain a consistent point-in-time copy of the
+    related volumes. I/O activity resumes when a FlashCopy
+    consistency group is created.
+  
+  
+    FlashCopy consistency groups are used in a single-site
+    scenario in order to create a time-consistent copy of data
+    that can then be backed-up and sent offsite, or in a
+    multi-site Global Mirror for ESS implementation to force time
+    consistency at the remote site.
+  
+  
+    The implementation of consistency groups is not limited to
+    FlashCopy. Global Mirror
+    for z/Series (formerly known as XRC or eXtended Remote
+    Copy) also creates consistency groups to asynchronously mirror
+    disk data from one site to another over any distance. In this
+    implementation, changed data from the production site is
+    time-stamped and asynchronously transmitted to the recovery
+    site. Once at the recovery site, the records are journaled
+    until a time-consistent copy of updates for all volumes are
+    present. Once present, these changes are written to copies of
+    the production volumes, and the process repeats.
+  
+  
+     
+    Recovery Specialties, LLC 
+    &nbsp; Enterprise Storage Solutions,
+    Business Continuity and Disaster Recovery consulting
+    for z/OS environments
+    
+      This document was printed from
+      http://recoveryspecialties.com/
+    
+    &nbsp;
+    Sitemap |
+    Privacy
+    Statement | Personal
+    Information | Ethics Policy
+    | Conflict of
+    Interest Policy
+    Recovery Specialties, LLC. All rights reserved.
+    2007
+  
+  
+</docText></document>
+</documents>

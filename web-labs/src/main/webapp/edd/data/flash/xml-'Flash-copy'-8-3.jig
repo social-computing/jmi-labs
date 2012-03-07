@@ -1,0 +1,610 @@
+<documents>
+<document>
+<docID>2012022829642</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>LasCon Storage - IBM Copy Services FlashCopyFlashCopy is part of the Copy Services offering from IBM. It works on enterprise   subsystems like the DS series and ESS devices. The z/OS version of FlashCopy ...
+   
+   
+  
+  
+    FlashCopy Principles
+  
+  
+    FlashCopy is part of the Copy Services offering from IBM. It
+    works on enterprise subsystems like the DS series and ESS
+    devices. The z/OS version of FlashCopy is emulated by EMC
+    TimeFinder and HDS ShadowImage. In FlashCopy terminology, you
+    copy from a Source volume to a
+    Target volume. The newer version of
+    FlashCopy works on extents, even for a full volume copy. If
+    the data on a volume occupies 5 extents, with free space
+    between the extents, then 5 FlashCopy relationships will be
+    used to copy the data. If the copy would require more than 255
+    extents, then occupied space and free space will be combined
+    to keep the total number of FlashCopy sessions per volume down
+    to 255. Dataset level FlashCopy works on exactly the same
+    principle, except that the extents can be on more than one
+    volume. Just to confuse things, the term "FlashCopy
+    Relationship" is often used to refer to all the individual
+    source / target FlashCopy pairs that are required to form a
+    volume or dataset copy.
+  
+  
+    FlashCopy has three phases, Establish, Copy and Termination.
+  
+  
+    The Establish phase is very fast, it just involves setting up
+    pointers to a bitmap mask. Once it is complete, the source and
+    target disks can be accessed independently. From an
+    application's point of view, the copy is complete once the
+    Establish phase is over. This is sometimes called the T0 data
+    position.
+  
+  
+    The Copy phase works differently, depending on if FlashCopy is
+    running in Copy or NoCopy mode (see the next section for
+    details on these).
+  
+  
+    FlashCopy is controled by one or more bitmaps, which are used
+    to indicate the copy status of the data. A bitmap entry of
+    '1' indicates that track has not been copied yet, and a '0'
+    entry indicates that it has been copied. While the copy is in
+    progress there are three scenarios to consider
+  
+  
+    data read request from target: if the bitmap is '0' then
+    the data is read from target, otherwise it is read from the
+    source.
+    
+    
+    data update request on source: if the bitmap is '0' then
+    original data has already been copied to the target, so this IO
+    is written straight to source. If the bitmap is '1' then the
+    source data is copied over to the target to preserve the time
+    zero position, the bitmap is changed to a '0', then the source
+    track is updated. As all writes are considered complete in
+    cache, this delay does not affect the writing application.
+    
+    
+    data update request on target: If the bitmap is '1' then it
+    is set to '0' to prevent the data from being overwritten by
+    source data in future.
+    
+    
+  
+  
+    The Termination phase either happens automatically once all
+    the source data has been copied over, or as a response to a
+    FCWITHDRAW or rmflash command. At this point, there is no
+    FlashCopy relationship between source and target, they are two
+    independent volumes again. This auto withdrawal can cause
+    problems if you control FlashCopy with GDPS scripts. The
+    scripts do a explicit FlashCopy withdraw, and will get errors
+    if they were previously withdrawn automatically.
+  
+  
+    FlashCopy V2 offers more Withdraw options than the earlier
+    version. For full volume FlashCopy, a target volume can only
+    have one relationship with a source volume, but it can have
+    many source volumes for dataset level FlashCopy. If you
+    specify rmflash for a target volume, then all FlashCopy
+    relationships that are targeting that volume are withdrawn.
+    You can also request that only specific extents be withdrawn,
+    rather than the full relationship. If you specify both source
+    and target volumes on rmflash, then only relationships between
+    that source / target pair are removed.
+  
+  
+    back to top
+  
+  
+  
+    Basic Types of FlashCopy
+  
+  
+    Volume level FlashCopy
+  
+  
+    To copy a full volume, the target volume must be the same size
+    or bigger than the source, have the same logical track format,
+    and any target volume can only be in one FlashCopy
+    relationship at at time. In the original FlashCopy as
+    implemented in the early ESS sharks the volumes needed to be
+    in the same logical subsystem. In current releases of
+    FlashCopy, the source and target volumes must be in the same
+    Storage Complex, but can be in different logical subsystems.
+    If you run a DS8K in LPAR mode then the source
+    and target volumes must be in the same storage LPAR.
+  
+  
+    Dataset level FlashCopy
+  
+  
+    Dataset level FlashCopy is standard on newer subsystems, but
+    only applies to z/OS implementations. It is used by FlashCopy
+    aware utilities like DFDSS. It uses one FlashCopy relationship
+    for every contiguous extent occupied by the dataset. These
+    extents can range from a single track to an entire volume. As
+    it tracks the dataset by extent, this means that the source
+    and target volumes do not need to be the same size, and it is
+    also possible to copy a dataset into the same volume. A copied
+    dataset can be also be on multiple volumes.
+  
+  
+    Copy Mode
+  
+  
+    Copy will physically copy all the data from the source to the
+    target as a background task whether it is updated or not. Once
+    the data copy is complete, the relationship between source and
+    target is broken and the target disk is a T0 replica of the
+    source disk.
+  
+  
+    NoCopy Mode
+  
+  
+    NoCopy mode will only copy data to the target disk when it is
+    updated on the source disk.
+    When using NoCopy, the relationship between source and target
+    is maintained until it is manually terminated, or all the data
+    on the target disk has been updated. GDPS and FDRinstant both
+    use Nocopy mode.
+  
+  
+    back to top
+  
+  
+  
+    Invoking Basic FlashCopy
+  
+  
+    There are several ways to invoke FlashCopy. It can be invoked
+    from the storage subsystem itself using the DS or Storwatch
+    GUI, or by using DS CLI commands. In a Z/OS implementation it
+    can also be invoked with TSO, DFDSS or ICKDSF commands. Both
+    methods also have APIs.
+  
+  
+    CLI commands
+  
+  
+    To explicitly invoke FlashCopy you can use CLI commands. When
+    using CLI commands, you should set up a profile file for every
+    DS8K, and specify the DS8K machine data in that profile. This
+    is explained in the DS8K configuration page.
+  
+  
+    mkflash
+  
+  
+    You use mkflash to set up a FlashCopy relationship like this.
+  
+  
+
+ mkflash 1E04:8E04
+ mkflash -dev IBM.2107-75BS072 -nocp -seqnum 03 -tgtoffline 1E04:8E04
+
+  
+    The first command is the simplest possible. It assumes that
+    you have already defined your storage subsystem device in a
+    profile, and will start a FlashCopy between devices 1E04 and
+    8E04, on the subsystem defined in that profile. Note that this
+    will set up a FlashCopy between two subsystems, you could not
+    do this with the first release of FlashCopy that ran on the
+    old ESS devices.
+    The second command will flash the same two volumes, but it
+    explicitly states that the FlashCopy will run on device
+    75BS072, and will be given a sequence number of 03 for later
+    tracking. The target volume must be offline and it will also
+    run in nocopy mode, copy is the default. If you run either
+    commands, you should see a message "FlashCopy pair 1E04:8E04
+    successfully created."
+  
+  
+    lsflash
+  
+  
+
+ lsflash -dev IBM.2107-75BS072 1E00
+ lsflash -devIBM.2107-75BS072  -l 1E04:8E00
+
+  
+    The first command will display any FlashCopy relationships
+    active on device 1E00. The second command will list only
+    FlashCopy relationships that are active between devices 1E00
+    and 8E00 and will display extra information about these
+    relationships, because the -l parameter is specified. The
+    output looks like this -
+  
+  
+
+ ID          SrcLSS   Sequence Time-       Active     Record-   Persis-   Revert- 
+                         Num      out (secs)   Copy       ing        tent      ible 
+ 1E00:8E00 01        0         120          Disabled  Disabled   Disabled  Disabled 
+
+  
+    rmflash
+  
+  
+    Use the rmflash command to delete a FlashCopy relationship.
+  
+  
+
+ rmflash -dev IBM.2107-75BS072 1E04:8E04
+ rmflash -dev IBM.2107-75BS072 -cp -seqnum 03 1E04:8E04
+
+  
+    The first command will delete all FlashCopy relationships
+    between 1E04 and 8E04
+    The second command will also delete FlashCopy relationships
+    between 1E04 and 8E04, but only those that were defined as
+    sequence number 3. However, the -cp parameter means convert
+    the FlashCopy to a COPY relationship, copy all remaining data
+    from source to target, then delete the relationship.
+  
+  
+    TSO commands
+  
+  
+    To explicitly invoke FlashCopy you can use TSO commands.
+    FCESTABL, FCQUERY, FCWITHDR
+  
+  The command syntax is
+  
+    FCESTABL
+  
+  
+    Establish FlashCopy relationship
+  
+  
+
+ 
+ FCESTABL SDEVN(X'nnnn') TDEVN(X'nnnn') MODE(COPY/NOCOPY) 
+          ONLINTGT(NO/YES)
+
+  
+    SDEVN is the source UCB, the one you are flashing from
+    TDEVN is the target UCB, the one you are flashing to
+    MODE can be COPY or NOCOPY as explained above.
+    ONLINTGT can be NO or YES. If you specify YES, then the data on
+    the volume will be overwritten, and the volume forced offline,
+    because the VOLSER will be a duplicate. You need to be careful
+    with this.
+  
+  
+    FlashCopy V2 introduced a new parameter, XTNTLST, which
+    specifies a list of source and target extent pairs. Each pair
+    describes a FlashCopy relationship between a source volume
+    begin and end track extent, and the corresponding target
+    volume begin and end track extent. You can specify as many
+    extent pairs as you can fit onto a TSO command line like this.
+  
+  
+
+ XTNTLST (01000004 0357000A 13000001 15570007,
+                  02AC0006 02FF000C 18A00000 18F30006)
+
+  
+    Now, can you honestly see anyone dumping a VTOC to get the
+    extent information for a file, then using that to create an
+    extent list as above? This command will be used by value
+    added applications like DFDSS.
+  
+  
+    FCQUERY
+  
+  
+    Query FlashCopy status
+  
+  
+
+FCQUERY DEVN(X'nnnn')
+
+  
+    Output is
+  
+  
+
+ FCQUERY Formatted -2  
+ DEVN    SSID  LSS  CCA   CU    SERIAL          ACT  MAX   XC   PC  CC 
+ A200    EC02  02   00   2105   0000001106118   4    A719  N    S   N
+ FCQUERY COMMAND COMPLETED FOR DEVICE A200. COMPLETION CODE: 00
+
+  
+    Which tells you that CCA 00 has 4 active flash sessions. This
+    represents four extents that are in an active relationship.
+  
+  
+    FCWITHDR
+  
+  
+    Explicitly withdraw a FlashCopy relationship
+  
+  
+
+ FCWITHDR SDEVN(X'nnnn') TDEVN(X'nnnn')
+
+  
+    This will withdraw any active sessions which are active to the
+    specified target device, but will keep active sessions to
+    other targets. If no target is specified, all sessions from
+    the source are withdrawn. You can also withdraw FlashCopy
+    sessions to specific extents
+  
+  
+
+ FCWITHDR SDEVN(9400)TDEVN(9470)
+ XTNTLST(00000000 0100000E 20000000 2100000E)
+
+  
+    Applications and Utilities
+  
+  
+    If the conditions are right, a DFDSS copy job will invoke
+    FlashCopy automatically. If this happens, you should see a
+    message
+  
+  
+
+ ADR806I  (001) - VOLUME COPIED USING A FAST REPLICATION FUNCTION
+
+  
+    IBM supplies a list of conditions that need to be met for
+    DFDSS to invoke FlashCopy, basically, nothing must change the
+    track layout of the dataset. Two conditions are that you
+    should use the NOPACKING keyword so that PDS files are not
+    compressed and use the NOREBLOCKING keyword. Some other DFDSS
+    features are -
+    A full volume DFDSS FlashCopy will only copy used extents.
+    If you do not want to use FlashCopy, then use the
+    FASTREPLICATION(NONE) keyword.
+    DFDSS also have a new keyword, FCNOCOPY which will invoke
+    FlashCopy in NOCOPY mode.
+    If you use DFDSS DEFRAG, then DEFRAG will try to use FlashCopy
+    to move datasets around a disk
+  
+  
+    Several applications invoke FlashCopy through the API.
+    Examples are GDPS or
+    FDRinstant, see the relevant
+    sections for details.
+  
+  
+    DS SM and ESS GUI
+  
+  
+    You can use the DS Storage Mamager or the ESS Storwatch to
+    manage FlashCopy. For the DS SM, select Real Time Manager then
+    FlashCopy. For Storwatch, select Copy Services. The GUIs
+    should then guide you through the FlashCopy process, but have
+    less functionality than the CLI interface.
+  
+  
+    back to top
+  
+  
+  
+    Advanced FlashCopy Functions
+  
+  
+    Multi-relationship FlashCopy
+  
+  
+    Its possible to have up to 12 target copies of any source
+    active at a time, though a target can only have one source.
+    This applies to volume level and most implementations of
+    dataset level Flash. At any given time, a volume or data set
+    can be either a source or target, but not both. There are no
+    special commands for this, just start new FlashCopy sessions
+    as normal.
+  
+  
+    Consistency Groups
+  
+  
+    While the FlashCopy Establish phase is fast, if you are
+    copying several hundred disks, it will take a minute or so to
+    do them all. Databases require their data to be at a
+    consistent point-in-time, and single second difference between
+    two database components can make the database unusable. The
+    FlashCopy Consistency Group uses the freeze function to put
+    all the FlashCopy source volumes in an extended long busy
+    state until the FlashCopy completes over all disks.
+    Consistency groups can span multiple storage systems, but the
+    storage subsystems must all be the same type. That is, you
+    cannot have a DS8K and an ESS800 in the same consistency
+    group.
+    Consistency groups are created by using the mkflash command
+    with the -freeze parameter. This parameter is only available
+    from the GUI or the CLI interface. The command below shows 5
+    volumes being flashcopied within a consistency group. The
+    second command can be used to remove a freeze state. Note that
+    it acts on a subsystem not a volume pair.
+  
+  
+
+ mkflash -dev IBM.2107-75BS072 -seqnum 05 -freeze 1E00:8E00 1E01:8E01 1E02:8E02 1E03:8E03 1E04:8E04
+ unfreezeflash -dev  IBM.2107-75BS072  1E
+
+  
+    Persistent FlashCopy
+  
+  
+    Persistent FlashCopy is not withdrawn automatically when all
+    tracks are copied from source to target, but remains is place
+    until it is stopped by an explicit command. This has three
+    potential uses
+    At volume level, it prevents the target from being overwritten
+    by another FlashCopy, as a target can only be in one
+    FlashCopy relationship at a time (but it does not prevent
+    direct updates to the target of course)
+    Tools like GDPS use command scripts to manage FlashCopy, and
+    these scripts can fail if they issue a command to withdraw a
+    FlashCopy that has already been withdrawn because all the data
+    has been copied over.
+    Persistant copy is required for some advanced flash functions
+    like incremental copy, as bitmap changes must be preserved.
+    The first command below will create a FlashCopy pair in
+    persistant mode, and will also record changes to the target so
+    the FlashCopy can be incrementally refreshed later. The second
+    command can be used to check the persistance and recording
+    status of the same disks.
+  
+  
+
+ mkflash -dev IBM.2107-75BS072 -seqnum 02 -persist -record 1E01:8E01
+ lsflash -dev IBM.2107-75BS072 -seqnum 02 -persist -record 1E01:8E01
+
+  
+    Incremental FlashCopy
+  
+  
+    It can take several hours to make a full Background copy of 10
+    terabytes of data, depending on how busy your subsystem is. If
+    you do this regularly for rapid recovery, then Incremental
+    FlashCopy lets you just refresh the target data with tracks
+    that have changed since the last copy was made. The subsystem
+    requires three bitmaps to manage incremental flash, one to
+    track changes to the source, one to track changes to the
+    target and a third to indicate target tracks that have not
+    been updated yet. Incremental FlashCopy must be in a
+    persistent relationship to allow the subsystem to continue
+    tracking updates to source and target extents. Incremental
+    flash works at volume level only, not for dataset FlashCopy.
+    It must also be invoked from the GUI, or by using the CLI
+    interface,
+  
+  
+    If a Flash is running in Copy mode, then an incremental
+    refresh of the Target device will be placed into a new T0,
+    sometimes called T0'. The effect is as if an complete new
+    FlashCopy has happened, so updates to the source will be
+    copied to the target, and also any updates that were made to
+    the target since the previous T0 will be backed out.
+    If the original FlashCopy was in NoCopy mode, then Refresh
+    converts it to Copy mode.
+    The first command below will set up two FlashCopy pairs in
+    record mode. If you use the record parameter, then the persist
+    parameter is also added as a default. The second command will
+    refresh the FlashCopy incrementally to a new T0'.
+  
+  
+
+ mkflash -dev IBM.2107-75BS072 -record -seqnum 01 0101:0501 0103:0503
+ resyncflash -dev IBM.2107-75BS072 -record -persist -seqnum 01 0101:0501 0103:0503
+
+  
+    Reverse Restore
+  
+  
+    Reverse Restore is an extension of incremental FlashCopy, but
+    instead of creating a new T0 from the source, the source volume
+    is back levelled with updates and orginal data from the
+    target. In this case, the bitmaps are used to identify any
+    tracks that have been updated on the source since T0 so the
+    original data at the target can be copied back, and also any
+    tracks that were updated at the target. The background copy
+    process must be complete before reverse restore can be used.
+    GDPS applications often use a remote FlashCopy session to
+    preserve the remote mirrored data during a Metro Mirror
+    refresh. The problem is that this remote FlashCopy was almost
+    unusable, as GDPS used NOCOPY mode. It would be very useful if
+    this could be changed to persistant FlashCopy and a reverse
+    restore used.
+    The command below does a reverse restore over a single disk
+    pair. Note that when the FlashCopy completes, the target and
+    source pairing is reversed as indicated in the second lsflash
+    command
+  
+  
+
+ reverseflash -dev IBM.2107-75BS072 -record 0103:0503
+ lsflash -dev IBM.2107-75BS072 -seqnum 02 -persist -record 0503:0103
+
+  
+    Fast Reverse Restore
+  
+  
+    Fast Reverse Restore works with Global Mirror. If you start a
+    FlashCopy session with change recording enabled, then you can
+    reverse the direction of the copy and recover the Flashcopy
+    source disk without needing to wait for background copy to
+    complete.
+  
+  
+
+ setflashrevertible -dev IBM.2107-75BS072 0002:0102
+
+  
+    Space Efficient
+  
+  
+    FlashCopy can use space efficient disks, which can be a very
+    cost effective way to get a second copy of data for backup or
+    testing. You need to tell Flascopy that the disks are space
+    efficient by adding the -tgtse parameter.
+  
+  
+
+ mkflash -dev IBM.2107-75FA120 -tgtse 0100:0200
+
+  
+    FlashCopy with other copy services products
+  
+  
+    A FlashCopy source disk can be either a Metro Mirror primary
+    or secondary disk, but a Metro Mirror primary disk cannot be
+    a FlashCopy Target. Either the Flash or the Mirror
+    relationship can be started first, but be aware that a
+    FlashCopy will not be valid until the mirror is complete.
+  
+  
+    Remote Control
+  
+  
+    FlashCopy used to require a dedicated network link if you
+    wanted to send commands to a remote storage subsystem.
+    Commands can be sent over a Metro Mirror or Global Copy PPRC
+    link, which also means that there is no requirement for an
+    operating system at the remote site. The remote FlashCopy
+    Source volume must be a Metro Mirror or a Global Copy
+    secondary volume.
+  
+  
+    Remote FlashCopy CLI commands just include the word remote in
+    the command as shown in the examples below
+  
+  
+
+ mkremoteflash -dev IBM.2107-75BS072 0002:0102
+ rmremoteflash -dev IBM.2107-75BS072 0002:0102
+ lsremoteflash -dev IBM.2107-75BS072 0002:0102
+ resynchremoteflash -dev IBM.2107-75BS072 0002:0102
+ 
+
+  
+    back to top
+  
+  
+  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    VENDOR Showcase
+  
+  
+    
+  
+  
+    
+  
+  
+    Copyright &#169; Lascon Storage Ltd. 2000 to present date. By
+    entering and using this site, you accept the conditions and limitations of use
+  
+    
+   
+  
+</docText></document>
+</documents>

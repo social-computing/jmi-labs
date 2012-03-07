@@ -1,0 +1,93 @@
+<documents>
+<document>
+<docID>201202285409</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>IT Management: Using FlashCopy Version 2 for DB2 UDB for OS/390 & z/OS Object-Level...Aug 1, 2004 ... FlashCopy is an IBM microcode-based technology that comes as an add-on   feature to the more advanced IBM DASD subsystems. Other DASD ...
+  
+    FlashCopy is an IBM microcode-based technology that comes as
+    an add-on feature to the more advanced IBM DASD subsystems.
+    Other DASD manufacturers typically have similar capabilities
+    under different names. This technology lets the DASD subsystem
+    handle some of the data movement task rather than relying on
+    the operating system or programs. FlashCopy is a useful
+    utility for backing up databases and moving large volumes of
+    data quickly at a DASD volume level. FlashCopy Version 2
+    introduces data set level copy.
+  
+  
+    FlashCopy V2 is available for some of the IBM storage
+    subsystems and may already be available now or will soon be
+    available for HDS and EMC subsystems. This article will focus
+    on a technique for using this technology to move&nbsp; DB2
+    objects between databases and subsystems much faster than
+    traditional techniques. Use of this technology will change the
+    way we move our data!
+  
+  
+    Migrating DB2 Data
+  
+  
+    DBAs are moving data continuously to:
+  
+  
+    Copy data from production to test
+    
+    
+    Archive data
+    
+    
+    Snap a copy of the data for separate analysis
+    
+    
+    Clone a database.
+    
+    
+  
+  
+    A DBA can employ several techniques to move DB2 data from one
+    object to another. Among the safest options is an unload/load.
+    Using the DSN1COPY stand-alone utility is more risky. Other
+    utilities can be used for data migration; these include DFDSS,
+    AMS REPRO, and FDR (see the DB2 Administration Guide for the
+    complete list).
+  
+  
+    The DBA begins the process by creating target tablespaces,
+    tables, and indexes that match the source object entirely. The
+    target objects can be in the same or different databases, or
+    even in a different DB2 subsystem.
+  
+  
+    If unload/load is the method chosen, then the DSNTIAUL or
+    equivalent program is used to unload the source tablespace
+    data into flat files. The DB2 LOAD online utility (or
+    equivalent third-party LOAD utility) is then used at the
+    target to populate the tablespace and build the indexes. This
+    is the safest method, since it&#8217;s in DB2&#8217;s control. This method
+    also allows the source tablespaces to be online during the
+    unload process.
+  
+  
+    If DSN1COPY is chosen, the source tablespace and indexspaces
+    can be copied directly from the source to the target. This is
+    significantly faster than the unload/load method, since the
+    data doesn&#8217;t have to be staged in a flat file. Also, indexes
+    can be copied using this technique, which can improve speed.
+    The DBA is responsible for translation of internal DB2 object
+    identifiers. Since DSN1COPY is an offline utility, it requires
+    control of the underlying data sets at the source and target.
+    That means DB2 objects affected must be offline for this
+    process to work. It&#8217;s a trade-off between speed and
+    availability.
+  
+  
+    FlashCopy V2 offers a technique similar to DSN1COPY. However,
+    this technology will dramatically reduce the CPU and elapsed
+    time required to move the data. Using the dfsmsDSS system
+    utility, FlashCopy V2 can be used to quickly copy the data
+    from source to target, and reduce the outages associated with
+    DSN1COPY.
+  
+</docText></document>
+</documents>

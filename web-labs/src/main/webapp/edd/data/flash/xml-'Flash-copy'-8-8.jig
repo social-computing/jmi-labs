@@ -1,0 +1,119 @@
+<documents>
+<document>
+<docID>2012022832279</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>IBM Tivoli Storage FlashCopy Manager TutorialIBM Tivoli Storage FlashCopy Manager work with IBM Storage FlashCopy   Functionality to provide a transaction consistent snapshot that can be used for an ...
+  
+    As databases &amp; mail servers are becoming more critical,
+    crash consistent snapshot is no more doing the trick for the
+    24&#215;7 enterprise. Enterprises are no more able to risk losing
+    these few non committed transactions that might be in
+    processing while the snapshot happen. These missing
+    transactions can be very expensive to lose, or even can render
+    your database snapshot useless.
+  
+  
+    IBM Tivoli Storage FlashCopy Manager work with IBM Storage
+    FlashCopy Functionality to provide a transaction consistent
+    snapshot that can be used for an instantaneous restore at a
+    later time or just to send backup to tape with a very short
+    backup window.
+  
+  
+    As IBM Tivoli Storage FlashCopy Manager has just been released
+    few weeks back &amp; not much resource on it are available, I
+    have decided to share my own guide with you online. Below is
+    the tutorial agenda &amp; I will try to get all these chapters
+    online as soon as possible. My tutorial will focus on
+    protecting MS SQL on DS8000, but it can be used as a guide for
+    most other IBM storages &amp; for protecting MS Exchange as
+    well.
+  
+  
+    
+     1. IBM System Storage DS8000 Copy Services.
+  
+  
+    
+     2. IBM Tivoli FlashCopy Manager for SQL &amp; Microsoft VSS
+    integration.
+  
+  
+    
+     3. IBM System Storage DS8100 Preperation for FCM
+    Installation.
+  
+  
+    
+     4. SQL Host Preperation for FCM Installation.
+  
+  
+    
+     5. IBM Tivoli FlashCopy Manager Installation.
+  
+  
+    
+     6. IBM Tivoli FlashCopy Manager Configuration.
+  
+  
+    
+     7. Tivoli FlashCopy Manager Backup &amp;
+    Restore.
+  
+  
+    
+    8. IBM FlashCopy usage for Cloning.
+  
+  
+    This documentation has highly integrated information
+    from the following resources:
+  
+  
+    IBM Tivoli Storage FlashCopy Manager DataSheet:
+    
+    
+    ftp://ftp.software.ibm.com/common/ssi/pm/sp/n/tid14054usen/TID14054USEN.PDF
+  
+  
+    IBM Tivoli Storage FlashCopy Manager Installation and User&#8217;s
+    Guide for Windows RedBook.
+  
+  
+    In addition, I would like to thank everyone who contributed to
+    make it possible specially:
+  
+  
+    
+      Del Hoobler &#8211; Tivoli Storage
+      Manager Development &#8211; IBM Corporation
+    
+    
+    
+      Chris Zaremba &#8211; TSM Data
+      Protection Client Architect &#8211; IBM Corporation
+    
+    
+    
+      Wiley Wong &#8211; Open Systems Lab (OSL)
+      &#8211; IBM China Systems &amp; Technology Lab (CSTL)
+    
+    
+    
+      Toni Ionescu &#8211; Software Developer
+      &amp; Support &#8211; IBM Romania SRL
+    
+    
+    
+      Khurram Shiraz - Technical
+      Consultant &#8211; Khorafi Business Machines
+    
+    
+    
+      Arshad Munir &#8211; Brands Manager &#8211;
+      Khorafi Business Machines
+    
+    
+  
+</docText></document>
+</documents>

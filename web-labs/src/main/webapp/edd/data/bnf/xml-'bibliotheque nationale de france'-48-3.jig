@@ -1,0 +1,54 @@
+<documents>
+<document>
+<docID>201202284968</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>Picture of Bibliotheque Nationale de France, Paris - The glass tower of the Biblioth&#65533;que Nationale de France in Paris.Picture of Bibliotheque Nationale de France, Paris - The glass tower of the   Biblioth&#232;que Nationale de France in Paris.
+  
+    function getConnection(){ include("dbConfig.php"); 
+    $myConnection=@mysql_connect($host,$user,$password,true) or
+    die("Database not available at the moment".mysql_error());
+    @mysql_select_db($database,$myConnection) or die("Database not
+    available".mysql_error()); return $myConnection; } ?&gt;
+  
+  
+    
+      
+      
+      
+      
+      
+        
+        
+          
+          
+          
+           
+           
+           
+        
+        
+      
+      
+        
+          
+          
+          
+            &#169;Copyright 1995-2012 PlanetWare Inc. All rights
+            reserved.
+            Unauthorized duplication in part or whole without prior
+            written consent prohibited by international laws.
+          
+        
+      
+    
+    
+   
+   
+   
+  
+</docText><Company>PlanetWare</Company>
+<Location>France</Location>
+<Location>Paris</Location>
+</document>
+</documents>

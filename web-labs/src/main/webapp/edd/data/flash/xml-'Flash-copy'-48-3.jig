@@ -1,0 +1,44 @@
+<documents>
+<document>
+<docID>201202287978</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>RAGEFAC.ES &#8212; Blog - No Flash-Copy-To-Clipboard for you. :(No Flash-Copy-To-Clipboard for you. :(. So. This decision was one of the easier   ones: There will be no Copy-to-Clipboard with a Flash-Handler at Ragefac.es.
+  
+    No Flash-Copy-To-Clipboard for you. :(
+  
+  
+    So. This decision was one of the easier ones: There will be no
+    Copy-to-Clipboard with a Flash-Handler at Ragefac.es.&nbsp;We
+    tried. We raged. There is no (for the user) comfortable way to
+    integrate this functionality.&nbsp;
+  
+  
+    Our prefered way to handle this functionality looked a bit
+    like that: A tiny flash-file sits somewhere in the footer
+    waiting for a javascript event, which gives the flash-file
+    some data (in this case an URL) to put in the users clipboard.
+    Next the flash-file would fire some feedback, that it&#8217;s job
+    was done and everything is allright.&nbsp;
+  
+  
+    We liked this because it&#8217;s unobtrusive and simple. 1 quiet
+    flash-file. Nobody likes Flash but we could live with
+    this.&nbsp;
+  
+  
+    But: This isn&#8217;t possible anymore.&nbsp;Since Flash V.10 it&#8217;s
+    no longer possible to copy something to the clipboard without
+    having a real click.event from the user first. Understandable.
+    Security and stuff.
+  
+  
+    The workaround would&#8217;ve looked like this: Over 150 &#8212; by some
+    third-party plugin &#8212; hard-positioned&nbsp;flash-files all over
+    the place. &nbsp;
+  
+  
+    
+  
+</docText></document>
+</documents>

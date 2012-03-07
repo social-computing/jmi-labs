@@ -1,0 +1,197 @@
+<documents>
+<document>
+<docID>2012022821495</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>Copy And Paste Keyframes In An Animation TutorialsFlash Copy And Paste Keyframes In An Animation Tutorials.
+  
+    
+      
+        
+          For the tire to look realistic as it bounces, it should
+          compress slightly on each bounce. You can create this
+          effect by transforming the shape of the tire in Frame 1
+          of the animation, and copying that frame in Frame 30.
+        
+        
+          
+            
+              
+                1.
+              
+            
+            
+              
+                With the Selection tool, select Frame 1 of the
+                TireAnim layer. Then press F6 to add a keyframe.
+                
+                  A new keyframe is added and the playhead moves to
+                  Frame 2.
+                
+              
+            
+          
+          
+            
+              
+                2.
+              
+            
+            
+              
+                Select Frame 1 of the TireAnim layer again.
+              
+            
+          
+          
+            
+              
+                3.
+              
+            
+            
+              
+                In the Tools panel, select the Free Transform tool.
+                
+                  
+                  The tire is selected, and transform handles
+                  appear around it.
+                
+                
+                  
+                
+              
+            
+          
+          
+            
+              
+                4.
+              
+            
+            
+              
+                Select the transformation center point (the small
+                circle near the center of the movie clip) and drag
+                it to the bottom of the tire.
+                
+                  The center point snaps to the lower-middle
+                  transform handle.
+                
+              
+            
+          
+          
+            
+              
+                5.
+              
+            
+            
+              
+                On the Stage, drag the upper-middle transform
+                handle down to slightly compress the tire shape.
+                
+                  If necessary, drag the tire to align it over the
+                  shadow. To view the positioning, drag the
+                  playhead over Frames 1 and 2.
+                
+              
+            
+          
+          
+            
+              
+                6.
+              
+            
+            
+              
+                Save your file.
+                
+                  
+                    Note
+                  
+                  
+                    Always save your document before attempting to
+                    manipulate tweens, including copying, cutting,
+                    and pasting frames. If you make an error, you
+                    can revert to your saved document.
+                  
+                
+              
+            
+          
+          
+            
+              
+                7.
+              
+            
+            
+              
+                Right-click (Windows) or Control-click (Macintosh)
+                Frame 1 of the TireAnim layer and select Copy
+                Frames from the context menu.
+              
+            
+          
+          
+            
+              
+                8.
+              
+            
+            
+              
+                Select Frame 29 of the TireAnim layer and press F6
+                to insert a keyframe.
+              
+            
+          
+          
+            
+              
+                9.
+              
+            
+            
+              
+                In Frame 30 of the TireAnim layer, right-click
+                (Windows) or Control-click (Macintosh) and select
+                Paste Frames from the context menu.
+              
+            
+          
+          
+            
+              
+                10.
+              
+            
+            
+              
+                Select Control &gt; Test Movie to view the
+                animation.
+              
+            
+          
+          
+            
+              
+                11.
+              
+            
+            
+              
+                Close the SWF file window to return to the
+                authoring environment.
+              
+            
+          
+        
+      
+    
+  
+</docText></document>
+</documents>

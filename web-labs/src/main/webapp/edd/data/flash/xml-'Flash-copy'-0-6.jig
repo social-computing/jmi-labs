@@ -1,0 +1,139 @@
+<documents>
+<document>
+<docID>2012022831166</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>FlashCopyYou can make point-in-time, full volume copies of data, with the copies   immediately available for read or write access with the FlashCopy function. You   can use ...
+  
+    You can make point-in-time, full volume copies of data, with
+    the copies immediately available for read or write access with
+    the FlashCopy function. You can use the copy with standard
+    backup tools that are available in your environment to create
+    backup copies on tape.
+  
+  
+    FlashCopy creates a copy of a source volume on the target
+    volume. This copy is called a point-in-time copy. When you
+    initiate a FlashCopy operation, a FlashCopy relationship is
+    created between a source volume and target volume. A FlashCopy
+    relationship is a "mapping" of the FlashCopy source volume and
+    a FlashCopy target volume. This mapping allows a point-in-time
+    copy of that source volume to be copied to the associated
+    target volume. The FlashCopy relationship exists between this
+    volume pair from the time that you initiate a FlashCopy
+    operation until the storage unit copies all data from the
+    source volume to the target volume or you delete the FlashCopy
+    relationship, if it is a persistent FlashCopy.
+  
+  
+    When the data is physically copied, a background process copies
+    tracks from the source volume to the target volume. The amount
+    of time the background copy requires to be completed depends on
+    the following criteria:
+    
+      The amount of data being copied
+      
+      
+      The number of background copy processes that
+      are occurring
+      
+      
+      The other activities that are occurring on
+      the DS8000&#174;
+      
+      
+    
+  
+  
+    Note: FlashCopy services is
+    supported on thin-provisioning (open system) volumes.
+  
+  
+    FlashCopy supports the following copy options:
+    
+      
+        Consistency groups
+      
+      
+      
+        Creates a consistent point-in-time copy of multiple
+        volumes, with negligible host impact. You can enable
+        FlashCopy consistency groups from the command-line
+        interface (DS CLI).
+      
+      
+      
+        Change recording
+      
+      
+      
+        Activates the change recording function on the volume pair
+        that is participating in a FlashCopy relationship. This
+        enables a subsequent refresh to the target volume.
+      
+      
+      
+        Establish FlashCopy on existing Metro
+        Mirror source
+      
+      
+      
+        Provides the ability to establish a FlashCopy relationship
+        where the target volume is also the source of an existing
+        remote mirror and copy source volume. This enables you to
+        create full or incremental point-in-time copies at a local
+        site and then use remote mirroring commands to copy the
+        data to the remote site.
+      
+      
+      
+        Fast reverse
+      
+      
+      
+        Reverses the FlashCopy relationship without waiting for
+        the finish of the background copy of the previous
+        FlashCopy. This option applies to the Global Mirror mode.
+      
+      
+      
+        Inhibit writes to target
+      
+      
+      
+        Ensures that write operations are inhibited on the target
+        volume until a refresh FlashCopy operation is completed.
+      
+      
+      
+        Multiple Relationship FlashCopy
+      
+      
+      
+        Allows a source volume to have multiple target volumes at
+        the same time.
+      
+      
+      
+        Persistent FlashCopy
+      
+      
+      
+        Allows the FlashCopy relationship to remain even after the
+        FlashCopy operation is completed. You must explicitly
+        delete the relationship.
+      
+      
+      
+        Reverse restore
+      
+      
+      
+        Reverses the FlashCopy relationship and copies data from
+        the target volume to the source volume.
+      
+      
+    
+  
+</docText></document>
+</documents>

@@ -1,0 +1,163 @@
+<documents>
+<document>
+<docID>2012022825092</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>IBM Systems Magazine - System FlashCopy Toolkit Could be a LifesaverIn 2007, IBM Lab Services announced a new IBM i toolkit to automate FlashCopy   at the full system level and manage the BRMS environments. This offering, the ...
+  
+    IBM i &gt;
+    Administrator &gt; Backup and Recovery
+  
+  
+    Frequent, complete backups make disaster recovery easier
+  
+  
+  
+  
+    &nbsp;
+  
+  
+    In 2007, IBM Lab Services announced a new IBM i toolkit to
+    automate FlashCopy at the full system level and manage the
+    BRMS environments. This offering, the Full System FlashCopy
+    (FSFC) Toolkit, was built leveraging some well-established
+    functions from IBM&#8217;s iASP-based Copy Services Toolkit.
+  
+  
+    When an IBM i is running entirely on external
+    storage&#8212;including the load source&#8212;performing a FlashCopy of
+    all the disks lets you quickly create a copy of a system.
+    Attaching additional LPAR resources to the new copy of disks
+    and performing key configuration changes to prevent IP and
+    application collisions is all that&#8217;s required to IPL the
+    cloned partition.
+  
+  
+    The components of such an environment are:
+  
+  
+    
+      Source disks, which is typically a
+      production partition. In a hardware replication environment,
+      the FlashCopy can be initiated from a controlling LPAR
+    
+    
+    
+      Source LPAR resources assigned to the
+      source disks
+    
+    
+    
+      Target disks and LPAR resources, which
+      include the disks replicated from the source disks and LPAR
+      resources to run the partition
+    
+    
+    
+      DS Unit that manages the external disks.
+      The FlashCopy source and target disks must be in the same
+      DS unit&#8212;however, the source disks can participate in another
+      hardware replication operation. The FSFC Toolkit has
+      provisions for a secondary DS
+    
+    
+    
+      The primary and secondary HMC Units, which
+      mange the source and target LPAR resources, which can be in
+      separate HMC units
+    
+    
+    
+      A controlling LPAR, which provides all the
+      communication to the storage, the HMC, and source and target
+      LPARs. IP access is the only requirement. It doesn&#8217;t have to
+      be on external disk
+    
+    
+  
+  
+    Benefits
+  
+  
+    The primary reason most users create an identical second LPAR
+    is to perform backups with minimal impact to their production
+    LPAR. It can be used for other purposes, such as development
+    or quality analysis, testing migrations or code updates, PTF
+    levels, or to provide a source for data mining. Some have also
+    used it to create pre-batch snapshots.
+  
+  
+    The process of creating a full system point-in-time image can
+    be complex, involving many steps and coordinating activities
+    between the source and target systems, the storage and the
+    BRMS or save functions. The FSFC Toolkit was designed to
+    simplify this process and provide you with a single command to
+    accomplish the procedure and mask the complexities. This
+    provides a more stable and consistent process that can be
+    reliably duplicated each night to facilitate your backup
+    operations. For most customers this can be scheduled and
+    performed unattended.
+  
+  
+    It&#8217;s important to recognize that the FSFC Toolkit wasn&#8217;t
+    designed to be a high-availability solution. Rather, it focuses
+    on the disaster-recovery aspect by helping you perform
+    backups. Minimizing the impact of backups on the production
+    partition will enable more frequent and more complete backups.
+  
+  
+    Requirements
+  
+  
+    The FSFC Toolkit has some requirements. Most importantly, the
+    source and target LPARs must be running entirely on external
+    disks in an IBM DS8000 or IBM DS6000 storage unit, including
+    the load source.
+  
+  
+    Starting with IBM i 6.1, the FSFC Toolkit supports creating
+    the FlashCopy disks without powering down the source LPAR. For
+    earlier releases, IBM recommends an IPL but supports warm
+    flashes for test purposes.
+  
+  
+    If you&#8217;re using BRMS, the source LPAR shouldn&#8217;t perform any
+    backups until the target LPAR has finished its own backups.
+  
+  
+    &nbsp;
+  
+  
+  
+    
+      Christian Aasland is a software engineer at IBM with the Lab
+      Services and Training team. He delivers solutions and skills
+      transfer related to backup and recovery.
+    
+    
+      More Articles From
+      Christian Aasland
+    
+  
+
+
+  
+  
+    
+    
+      Search our new 2012 Buyer's Guide.
+    
+  
+  
+    
+    
+      Maximize your IT investment with monthly information from
+      THE source...IBM Systems Magazine EXTRA
+      eNewsletter. SUBSCRIBE NOW.
+    
+    
+      View past IBMi EXTRAs here
+    
+  
+</docText></document>
+</documents>

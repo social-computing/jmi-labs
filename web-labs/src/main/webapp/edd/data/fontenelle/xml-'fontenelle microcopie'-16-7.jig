@@ -1,0 +1,376 @@
+<documents>
+<document>
+<docID>201202283801</docID>
+<docDate>20120228</docDate>
+<docSource/>
+<docText>Problem compilation Mac OsFeb 8, 2012... Ing&#233;nieur syst&#232;me et d&#233;veloppement 06.81.14.11.83 Fontenelle Microcopie   Abbaye Saint-Wandrille 76490 Saint-Wandrille 02.35.95.98.48 ...
+  
+  
+  
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hello,
+
+        I have a probleme with one program. I create a certificate list file on
+/tmp/cert_test.pem.
+This program run very well on linux, windows, MacOs leopard(with default
+libssh.dylib) but it don't run on MacOs ( default lib ) snow or openssl
+1.0.0g(static). The program don't find a bad certificat.
+
+I'm looking for running this program on static with openssl 1.0.0g. How
+I compile openssl correctly on Mac Os (leopard)? There are a special
+option ?
+
+
+In fact, I would like compile openssl 1.0.0g on static with a Qt program.
+
+
+
+
+
+Program test (found internet):
+
+    /*
+     * File:   main.cpp
+     *
+     * Licence: GPL2
+     */
+
+    /* Standard headers */
+    #include &lt;stdlib.h&gt;
+    #include &lt;stdio.h&gt;
+    #include &lt;string.h&gt;
+
+    /* OpenSSL headers */
+    #include &lt;openssl/bio.h&gt;
+    #include &lt;openssl/ssl.h&gt;
+    #include &lt;openssl/err.h&gt;
+
+    /**
+     * Simple log function
+     */
+    void slog(char* message) {
+        fprintf(stdout, message);
+    }
+
+
+
+static int q_X509Callback(int ok, X509_STORE_CTX *ctx)
+{
+    if (!ok) {
+        // Store the error and at which depth the error was detected.
+        fprintf(stderr,"ATTENTION N EST PAS OK(It is not OK)\n");
+    }   
+fprintf(stderr,"q_X509Callbackfunction\n");
+    // Always return OK to allow verification to continue. We're handle the
+    // errors gracefully after collecting all errors, after verification has
+    // completed.
+    return 1;
+}
+
+    /**
+     * Print SSL error details
+     */
+    void print_ssl_error(char* message, FILE* out) {
+
+        fprintf(out, message);
+        fprintf(out, "Error: %s\n",
+ERR_reason_error_string(ERR_get_error()));
+        fprintf(out, "%s\n", ERR_error_string(ERR_get_error(), NULL));
+        ERR_print_errors_fp(out);
+    }
+
+    /**
+     * Print SSL error details with inserted content
+     */
+    void print_ssl_error_2(char* message, char* content, FILE* out) {
+
+        fprintf(out, message, content);
+        fprintf(out, "Error: %s\n",
+ERR_reason_error_string(ERR_get_error()));
+        fprintf(out, "%s\n", ERR_error_string(ERR_get_error(), NULL));
+        ERR_print_errors_fp(out);
+    }
+
+    /**
+     * Initialise OpenSSL
+     */
+    void init_openssl() {
+
+        /* call the standard SSL init functions */
+        SSL_load_error_strings();
+        SSL_library_init();
+        ERR_load_BIO_strings();
+        OpenSSL_add_all_algorithms();
+
+        /* seed the random number system - only really nessecary for
+systems without '/dev/random' */
+        /* RAND_add(?,?,?); need to work out a cryptographically
+significant way of generating the seed */
+    }
+
+    /**
+     * Close an unencrypted connection gracefully
+     */
+    int close_connection(BIO* bio) {
+
+        int r = 0;
+
+        r = BIO_free(bio);
+        if (r == 0) {
+            /* Error unable to free BIO */
+        }
+
+        return r;
+    }
+
+    /**
+     * Connect to a host using an unencrypted stream
+     */
+
+    // Register a custom callback to get all verification errors.
+
+    BIO* connect_unencrypted(char* host_and_port) {
+
+        BIO* bio = NULL;
+
+        /* Create a new connection */
+        bio = BIO_new_connect(host_and_port);
+        if (bio == NULL) {
+
+            print_ssl_error("Unable to create a new unencrypted BIO
+object.\n", stdout);
+            return NULL;
+        }
+
+        /* Verify successful connection */
+        if (BIO_do_connect(bio) != 1) {
+
+            print_ssl_error("Unable to connect unencrypted.\n", stdout);
+            close_connection(bio);
+            return NULL;
+        }
+
+        return bio;
+    }
+
+    /**
+     * Connect to a host using an encrypted stream
+     */
+    BIO* connect_encrypted(char* host_and_port, char* store_path, char
+store_type, SSL_CTX** ctx, SSL** ssl) {
+
+        BIO* bio = NULL;
+        int r = 0;
+
+        /* Set up the SSL pointers */
+        *ctx = SSL_CTX_new(SSLv23_client_method());
+        *ssl = NULL;
+
+        /* Load the trust store from the pem location in argv[2] */
+        if (store_type == 'f')
+            r = SSL_CTX_load_verify_locations(*ctx, store_path, NULL);
+        else
+            r = SSL_CTX_load_verify_locations(*ctx, NULL, store_path);
+        if (r == 0) {
+
+            print_ssl_error_2("Unable to load the trust store from
+%s.\n", store_path, stdout);
+            return NULL;
+        }
+
+        /* Setting up the BIO SSL object */
+        bio = BIO_new_ssl_connect(*ctx);
+
+        // Register a custom callback to get all verification errors.
+        X509_STORE_set_verify_cb_func((*ctx)-&gt;cert_store, q_X509Callback);
+        SSL_CTX_set_verify(*ctx, SSL_VERIFY_PEER, q_X509Callback);
+
+
+        BIO_get_ssl(bio, ssl);
+        if (!(*ssl)) {
+
+            print_ssl_error("Unable to allocate SSL pointer.\n", stdout);
+            return NULL;
+        }
+        SSL_set_mode(*ssl, SSL_MODE_AUTO_RETRY);
+
+        /* Attempt to connect */
+        BIO_set_conn_hostname(bio, host_and_port);
+
+        /* Verify the connection opened and perform the handshake */
+        if (BIO_do_connect(bio) &lt; 1) {
+
+            print_ssl_error_2("Unable to connect BIO.%s\n",
+host_and_port, stdout);
+            return NULL;
+        }
+        return bio;
+    }
+
+    /**
+     * Read a from a stream and handle restarts if nessecary
+     */
+    ssize_t read_from_stream(BIO* bio, char* buffer, ssize_t length) {
+
+        ssize_t r = -1;
+
+        while (r &lt; 0) {
+
+            r = BIO_read(bio, buffer, length);
+            if (r == 0) {
+
+                print_ssl_error("Reached the end of the data stream.\n",
+stdout);
+                continue;
+
+            } else if (r &lt; 0) {
+
+                if (!BIO_should_retry(bio)) {
+
+                    print_ssl_error("BIO_read should retry test
+failed.\n", stdout);
+                    continue;
+                }
+
+                /* It would be prudent to check the reason for the retry
+and handle
+                 * it appropriately here */
+            }
+
+        };
+
+        return r;
+    }
+
+    /**
+     * Write to a stream and handle restarts if nessecary
+     */
+    int write_to_stream(BIO* bio, char* buffer, ssize_t length) {
+
+        ssize_t r = -1;
+
+        while (r &lt; 0) {
+
+            r = BIO_write(bio, buffer, length);
+            if (r &lt;= 0) {
+
+                if (!BIO_should_retry(bio)) {
+
+                    print_ssl_error("BIO_read should retry test
+failed.\n", stdout);
+                    continue;
+                }
+
+                /* It would be prudent to check the reason for the retry
+and handle
+                 * it appropriately here */
+            }
+
+        }
+
+        return r;
+    }
+
+    /**
+     * Main SSL demonstration code entry point
+     */
+    int main(int argc, char** argv) {
+
+
+        //char* host_and_port = argv[1]; /* localhost:4422 */
+        //char* server_request = argv[2]; /* "GET / \r\n\r\n" */
+        //char* store_path = argv[3]; /*
+/home/user/projects/sslclient/certificate.pem */
+        //char store_type = argv[4][0]; /* f = file, anything else is a
+directory structure */
+        //char connection_type = argv[5][0]; /* e = encrypted, anything
+else is unencrypted */
+
+        char* host_and_port="www.google.fr:443";
+        char* server_request="GET / \r\n\r\n";
+        char* store_path="/tmp/cert_test.pem";
+        char store_type = 'f';
+        char connection_type = 'e';
+
+        char buffer[4096];
+        buffer[0] = 0;
+
+        BIO* bio;
+        SSL_CTX* ctx = NULL;
+        SSL* ssl = NULL;
+
+        /* initilise the OpenSSL library */
+        init_openssl();
+
+        /* encrypted link */
+        if (connection_type == 'e') {
+
+            if ((bio = connect_encrypted(host_and_port, store_path,
+store_type, &amp;ctx, &amp;ssl)) == NULL)
+                return (EXIT_FAILURE);
+        }
+            /* unencrypted link */
+        else if ((bio = connect_unencrypted(host_and_port)) == NULL)
+            return (EXIT_FAILURE);
+
+        write_to_stream(bio, server_request, strlen(server_request));
+        read_from_stream(bio, buffer, 4096);
+        printf("%s\r\n", buffer);
+
+        if (close_connection(bio) == 0)
+            return (EXIT_FAILURE);
+
+        /* clean up the SSL context resources for the encrypted link */
+        if (connection_type == 'e')
+            SSL_CTX_free(ctx);
+
+        return (EXIT_SUCCESS);
+    }
+
+- -- 
+Christophe VALMIR
+Ing&#233;nieur syst&#232;me et d&#233;veloppement
+06.81.14.11.83
+
+Fontenelle Microcopie
+Abbaye Saint-Wandrille
+76490 Saint-Wandrille
+
+02.35.95.98.48
+02.35.56.63.41 (fax)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iQIcBAEBAgAGBQJPMpveAAoJEKT8WQ0MhwUrtdoP/2Qufh8w4xaKabe+Je5GP8Su
+5+ooyKd2opGhzr6+yZYJkgvlUU51wgHvi7GtWCv2cAFRyIpVSr3En2FYYNsdInSt
+AIrbYlIu7miXoCPd1sbFZz3uliNPWVifMYMmzWlP32w3aRVQi9V7IuCI62FV4PQ2
+8vbMUS22fAysPEJl2Aw9Ko7Ip60OpjE/hSbouyQrPHzOU0/WIp7ZTHMaZs4Uhlo2
+7II4W+PrxWnvV8a3pQAvk6H81Ec8lkDQl5ix4xR8+QdBbL4wpRDg8n8OyZoXPk2x
+zIodIanxwo8v+8yp38JzWiAPjDRL+5AhMuNOcMZTxrB0ZPEIbJz4O3F/5TGlVSuv
+QMcQylLwY5PYJ2/PEsYoj3e9TJ4JcyR/1lEaSTOLPNIvsKCyoCu0EfQZLtJBUBZE
+uN+VjTjK55Pt4aHdz8nsUF1u1A0Rv9GTXp5bu8i8ZqlIWuEYjtfTFTqiptgebgUw
+RP2ae5rB2YV4h+zALj+V/xHaznZqsI+eLRmq1rQwUbQZ7YoGwR/j8zJVojVtlzZP
+QF9Xn3nEBNQiIsC9wgVUE8319Z8OGUdoQ50krsgP76RTeMZG9Nd8u8kWwu93L3+3
+z8K4/fn0m72U/yuRb9hkb7QmrobgfeWqDvvkgDsMMrJEDHGrFZXXTTYrfwPUVnO9
+sMYyW0hiVpjL4cQskX87
+=Cr6P
+-----END PGP SIGNATURE-----
+______________________________________________________________________
+OpenSSL Project                                 http://www.openssl.org
+User Support Mailing List                    openssl-users@openssl.org
+Automated List Manager                           majord...@openssl.org
+
+  
+  
+</docText><Company>OpenSSL</Company>
+<Company>Load</Company>
+<Person>Mac OsFeb</Person>
+<Person>Christophe VALMIR</Person>
+<Function>List Manager</Function>
+<Function>List</Function>
+</document>
+</documents>
