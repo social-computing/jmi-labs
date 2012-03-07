@@ -31,9 +31,9 @@ function GoMap() {
 	mapHtml5.addEventListener(JMI.Map.event.READY, function(event) {
 		document.getElementById('titleHtml5').innerHTML = event.map.type;
 	} );
-	mapHtml5.addEventListener(JMI.Map.event.STATUS, function(event) {
+/*	mapHtml5.addEventListener(JMI.Map.event.STATUS, function(event) {
 		document.getElementById('statusHtml5').innerHTML = event.message;
-	} );
+	} );*/
 	mapHtml5.addEventListener(JMI.Map.event.ACTION, function(event) {
 		window[event.fn](event.map, event.args);
 	} );
@@ -42,6 +42,12 @@ function GoMap() {
 	} );
 	mapHtml5.addEventListener(JMI.Map.event.ERROR, function(event) {
 		document.getElementById("statusHtml5").innerHTML = event.message;
+	} );
+	mapHtml5.addEventListener(JMI.Map.event.ATTRIBUTE_HOVER, function(event) {
+		document.getElementById('statusHtml5').innerHTML = event.attribute.NAME;
+	} );
+	mapHtml5.addEventListener(JMI.Map.event.LINK_HOVER, function(event) {
+		document.getElementById('statusHtml5').innerHTML = event.link._index;
 	} );
 	var mapFlex = JMI.Map({
 				parent: 'mapFlex', 
@@ -53,9 +59,9 @@ function GoMap() {
 	mapFlex.addEventListener(JMI.Map.event.READY, function(event) {
 		document.getElementById('titleFlex').innerHTML = event.map.type;
 	} );
-	mapFlex.addEventListener(JMI.Map.event.STATUS, function(event) {
+	/*mapFlex.addEventListener(JMI.Map.event.STATUS, function(event) {
 		document.getElementById('statusFlex').innerHTML = event.message;
-	} );
+	} );*/
 	mapFlex.addEventListener(JMI.Map.event.ACTION, function(event) {
 		window[event.fn](event.map, event.args);
 	} );
@@ -64,6 +70,12 @@ function GoMap() {
 	} );
 	mapFlex.addEventListener(JMI.Map.event.ERROR, function(event) {
 		document.getElementById("statusFlex").innerHTML = event.message;
+	} );
+	mapFlex.addEventListener(JMI.Map.event.ATTRIBUTE_HOVER, function(event) {
+		document.getElementById('statusFlex').innerHTML = event.attribute.NAME;
+	} );
+	mapFlex.addEventListener(JMI.Map.event.LINK_HOVER, function(event) {
+		document.getElementById('statusFlex').innerHTML = event.link._index;
 	} );
 };
 function JMIF_Navigate(map, url) {
@@ -83,6 +95,7 @@ function JMIF_Center(map, args) {
 	map.compute( parameters);
 }
 </script>
+<jsp:include page="../ga.jsp" />
 </head>
 <body onload="GoMap()">
 <table width="100%" border="0">
