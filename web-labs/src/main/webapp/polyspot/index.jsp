@@ -82,7 +82,6 @@ function GoMap() {
   }
 function JMIF_CompleteParameters( parameters) {
 	 parameters.allowDomain = "*";
-	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";
      //parameters.polyspotserverurl = "http://localhost:8080/web-labs";
      parameters.polyspotserverurl = "http://labs.just-map-it.com";
 	 parameters.map = "PolySpot";

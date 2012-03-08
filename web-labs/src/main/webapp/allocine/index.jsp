@@ -7,110 +7,91 @@
 html, body {
 	height: 100%;
 }
-#content {
+#map {
 	width: 100%;
-	height: 90%;
+	height: 85%;
 	background-color: #FFFFFF;
 }
 img {
 	border: 0;
 }
-object:focus {
-	outline: none;
-}
-#flashContent {
-	display: none;
-}
 </style>
-
-<!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
-<!-- BEGIN Browser History required section -->
-<link rel="stylesheet" type="text/css" href="../client/flex/history/history.css" />
+<link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
+<script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="../client/flex/history/history.js"></script>
-<!-- END Browser History required section -->
-<script type="text/javascript" src="../client/flex/swfobject.js"></script>
 <script type="text/javascript"> 
 $(document).ready(function() {
-	 var swfVersionStr = "10.0.0";
-	 var xiSwfUrlStr = "../client/flex/playerProductInstall.swf";
-	 var flashvars = {};
-	 completeParameters( flashvars);
-	 flashvars.analysisProfile = "GlobalProfile";
-	 var params = {};
-	 params.quality = "high";
-	 params.bgcolor = "#FFFFFF";
-	 params.allowscriptaccess = "always";
-	 params.allowfullscreen = "true";
-	 var attributes = {};
-	 attributes.id = "jmi-allocine";
-	 attributes.name = "jmi-allocine";
-	 attributes.align = "middle";
-	 swfobject.embedSWF(
-	     "../client/flex/jmi-flex-1.0-SNAPSHOT.swf", "flashContent", 
-	     "100%", "100%", 
-	     swfVersionStr, xiSwfUrlStr, 
-	     flashvars, params, attributes);
-	swfobject.createCSS("#flashContent", "display:block;text-align:left;");
+	var parameters = {};
+	completeParameters( parameters);
+	parameters.analysisProfile = "GlobalProfile";
+	var map = JMI.Map({
+				parent: 'map', 
+				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
+				server: 'http://server.just-map-it.com', 
+				//server: 'http://localhost:8080/jmi-server/', 
+				//client: JMI.Map.SWF,
+				parameters: parameters
+			});
+	map.addEventListener(JMI.Map.event.READY, function(event) {
+	} );
+	map.addEventListener(JMI.Map.event.ACTION, function(event) {
+		window[event.fn](event.map, event.args);
+	} );
+	map.addEventListener(JMI.Map.event.EMPTY, function(event) {
+		document.getElementById("message").innerHTML = "Sorry, the map is empty.";
+	} );
+	map.addEventListener(JMI.Map.event.ERROR, function(event) {
+		document.getElementById("message").innerHTML = event.message;
+	} );
 	
-	  $('#kind').change(function(){
+	$('#kind').change(function(){
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
-		 $('#jmi-allocine')[0].compute( parameters);
-		});
-	  $('#filter').change(function(){
+		 $('#map')[0].JMI.compute( parameters);
+	});
+	$('#filter').change(function(){
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
-		 $('#jmi-allocine')[0].compute( parameters);
-		}); 
-});	 
-</script>
-<script type="text/javascript"> 
-  function empty() {
-	Alert("Sorry, the map is empty");
-  }
-  function error( error) {
-	Alert( "Sorry, an error occured." + error);
-  }
-  function navigate( id) {
- 	 window.open( "http://www.allocine.fr/film/fichefilm_gen_cfilm=" + id + ".html", "_blank");
-  }
-  function focus( args) {
+		 $('#map')[0].JMI.compute( parameters);
+	}); 
+});
+function navigate(map, id) {
+	 window.open( "http://www.allocine.fr/film/fichefilm_gen_cfilm=" + id + ".html", "_blank");
+}
+function focus(map, args) {
 	var parameters = {};
 	parameters["entityId"] = args[0];
 	parameters["feed"] = args[2];
 	completeParameters( parameters);
-	document.getElementById("jmi-allocine").compute( parameters);
-  }
-  function center( args) {
+	map.compute( parameters);
+}
+function center(map, args) {
 	var parameters = {};
 	parameters["attributeId"] = args[0];
 	parameters["analysisProfile"] = "DiscoveryProfile";
 	completeParameters( parameters);
-	document.getElementById("jmi-allocine").compute( parameters);
-  }
-  function same( args) {
-		var parameters = {};
-		parameters["attributeId"] = args[0];
-		parameters["analysisProfile"] = "DiscoveryProfile";
-		completeParameters( parameters);
-		parameters.kind = 'film_same';
-		parameters.filter = args[0];
-		document.getElementById("jmi-allocine").compute( parameters);
-  }
-  function completeParameters( parameters) {
-	 parameters.allowDomain = "*";
-	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";
-     //parameters.allocineserverurl = "http://localhost:8080/web-labs";
-	 parameters.wpsserverurl = "http://server.just-map-it.com";
-     parameters.allocineserverurl = "http://labs.just-map-it.com";
-	 parameters.wpsplanname = "Allocine";
-	 parameters.kind = $('#kind option:selected')[0].value;
-	 parameters.filter = $('#filter option:selected')[0].value;
-	 parameters.jsessionid = '<%=session.getId()%>';
-  }
+	map.compute( parameters);
+}
+function same(map, args) {
+	var parameters = {};
+	parameters["attributeId"] = args[0];
+	parameters["analysisProfile"] = "DiscoveryProfile";
+	completeParameters( parameters);
+	parameters.kind = 'film_same';
+	parameters.filter = args[0];
+	map.compute( parameters);
+}
+function completeParameters(parameters) {
+	parameters.allowDomain = "*";
+	//parameters.allocineserverurl = "http://localhost:8080/web-labs";
+	parameters.allocineserverurl = "http://labs.just-map-it.com";
+	parameters.map = "Allocine";
+	parameters.kind = $('#kind option:selected')[0].value;
+	parameters.filter = $('#filter option:selected')[0].value;
+	parameters.jsessionid = '<%=session.getId()%>';
+}
 </script>
 <jsp:include page="../ga.jsp" />
 </head>
@@ -137,14 +118,7 @@ $(document).ready(function() {
 		<td align="right"><a title="Just Map It! Allocine" href="./"><img alt="Just Map It! Allocine" src="../images/justmapit_allocine.png" /></a></td>
 	</tr>
 </table>
-<div id="content">
-<div id="flashContent">
-<p>To view this page ensure that Adobe Flash Player version 10.0.0 or greater is installed.</p>
-<script type="text/javascript"> 
-	var pageHost = ((document.location.protocol == "https:") ? "https://" :	"http://"); 
-	document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='" + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>" ); 
-</script></div>
-<noscript><p>Either scripts and active content are not permitted to run Just Map It! Allocine.</p></noscript>
-</div>
+<div id="message">&nbsp;</div>
+<div id="map"></div>
 </body>
 </html>
