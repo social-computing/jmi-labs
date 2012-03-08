@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Just Map It! clients</title>
+<meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
 <meta property="og:image" content="http://labs.just-map-it.com/images/html5-logo.png" />
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>

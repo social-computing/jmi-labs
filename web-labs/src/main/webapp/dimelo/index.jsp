@@ -3,6 +3,7 @@
 <head>
 <title>Just Map It! Adisseo</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
 <style type="text/css" media="screen">
 html, body {
 	height: 100%;
@@ -21,9 +22,11 @@ img {
 <script type="text/javascript">
 function getParams() {
 	var p = {
-		map: 'dimeloserverurl',
-    	dimeloserverurl: 'https://feeds.just-map-it.com',
-		jsessionid: '<%=session.getId()%>'
+		map: 'Adisseo',
+    	dimeloserverurl: 'http://localhost:8080/web-labs',
+		jsessionid: '<%=session.getId()%>',
+		inverted: false,
+		query: ''
     };
     return p;
 };
@@ -77,7 +80,7 @@ function JMIF_Center(map, args) {
 		<select id="filter">
 		<option value="outthisweek" >Sorties de la semaine</option>
 		<option value="nowshowing" >A l'écran</option>
-		<option value="comingsoon" >Bientôt Ã  l'affiche</option>
+		<option value="comingsoon" >Bientôt à l'affiche</option>
 		<option value="top:week" >Meilleurs films de la semaine</option>
 		<option value="top:month" >Meilleurs films du mois</option>
 		<option value="top:alltimes" >Meilleurs films</option>
@@ -89,7 +92,7 @@ function JMIF_Center(map, args) {
 		<option value="film_casting" >Film / casting</option>
 		</select>
 		</td>
-		<td align="right"><a title="Just Map It! Allocine" href="./"><img alt="Just Map It! Allocine" src="../images/justmapit_allocine.png" /></a></td>
+		<td align="right"><a title="Just Map It! Adisseo" href="./"><img alt="Just Map It! Adisseo" src="../images/justmapit.png" /></a></td>
 	</tr>
 </table>
 <div id="status">&nbsp;</div>

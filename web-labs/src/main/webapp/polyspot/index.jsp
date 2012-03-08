@@ -3,6 +3,7 @@
 <head>
 <title>Just Map It! PolySpot</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
 <style type="text/css" media="screen">
 html, body {
 	height: 100%;
