@@ -89,7 +89,7 @@ public class DimeloRestProvider {
             for (JsonNode idea : (ArrayNode) ideas) {
                 Attribute att = storeHelper.addAttribute(String.valueOf(idea.get("id").getIntValue()));
                 att.addProperty("name", idea.get("title").getTextValue());
-                att.addProperty("link", idea.get("permalink").getTextValue());
+                att.addProperty("url", idea.get("permalink").getTextValue());
                 
                 // Author
                 Entity ent = storeHelper.addEntity(String.valueOf(idea.get("user_id").getIntValue()));

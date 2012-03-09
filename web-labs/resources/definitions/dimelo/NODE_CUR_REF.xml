@@ -103,10 +103,10 @@
     </event>
 
 	<menu id="menu" font="menuFnt">
-		<item label="Afficher" font="nameFnt" url="javascript:JMIF_Navigate({sID})" />
-		<item label="Centrer" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME},{s$feed})" />
+		<item label="Afficher" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
+		<item label="Centrer" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
 		<separator />
-		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME],{s$feed})" />
+		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
 	</menu>
 
 	<font id="menuFnt" name="Arial" size="11" style="plain" />

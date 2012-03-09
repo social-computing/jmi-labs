@@ -67,15 +67,15 @@ function JMIF_Navigate(map, url) {
 function JMIF_Focus(map, args) {
 	var parameters = getParams();
 	parameters.entityId = args[0];
-	parameters.feed = args[2];
 	map.compute( parameters);
+	document.getElementById("status").innerHTML = "<i>Focus on:</i> " + args[1];
 }
 function JMIF_Center(map, args) {
 	var parameters = getParams();
 	parameters.attributeId = args[0];
-	parameters.feed = args[2];
 	parameters.analysisProfile = "DiscoveryProfile";
 	map.compute( parameters);
+	document.getElementById("status").innerHTML = "<i>Centered on:</i> " + args[1];
 }
 </script>
 <jsp:include page="../ga.jsp" />
