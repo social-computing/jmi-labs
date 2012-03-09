@@ -36,7 +36,7 @@ img
 	<tr>
 		<td><a title="Just Map It! Html5" href="./html5"><img alt="Just Map It! Html5" src="./images/html5-logo.png" /></a></td>
 	</tr>
--</table>
+</table>
 
 </body>
 </html>

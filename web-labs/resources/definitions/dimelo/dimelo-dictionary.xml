@@ -2,27 +2,27 @@
 
 <!DOCTYPE dictionary SYSTEM "WPS-dictionary.dtd" >
 
-<dictionary name="Adisseo" >
+<dictionary name="Adisseo">
 	<comment>Adisseo Map Dictionary</comment>
 
 	<entities>
-		<REST-entities name="PolySpot" type="json" invert="{$inverted}">
-			<URL-connection>
+		<REST-entities name="PolySpot" type="json" invert="{$inverted}" class="com.socialcomputing.wps.server.plandictionary.connectors.datastore.file.rest.RESTEntityConnector">
+			<URL-connection type="GET">
 				<url>{$dimeloserverurl}/rest/dimelo/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="query">{$query}</url-parameter>
-				<url-parameter name="sources">{$sources}</url-parameter>
-				<url-parameter name="field">{$field}</url-parameter>
+				<url-parameter name="inverted">{$inverted}</url-parameter>
 			</URL-connection>
 	
-			<REST-entity markup="entities" id="id" >
+			<REST-entity markup="entities" id="id">
 				<REST-property id="name" />
 				<REST-property id="poss_id" attribute="id" />
 				<REST-property id="poss_name" attribute="name" />
 			</REST-entity>
 	
-			<REST-attribute markup="attributes" id="id" >
+			<REST-attribute markup="attributes" id="id">
 				<REST-property id="name" />
+				<REST-property id="url" />
 				<REST-property id="poss_id" entity="id" />
 				<REST-property id="poss_name" entity="name" />
 			</REST-attribute>
@@ -30,71 +30,72 @@
 		</REST-entities>
 	</entities>
 	
-	<affinity-reader-profile name="AffReader" affinity-reader-ref="*" threshold="100" />
-	<affinity-reader-profile name="DiscoveryAffReader" affinity-reader-ref="*" threshold="100" />
-	<affinity-reader-profile name="GlobalAffReader" affinity-reader-ref="*" threshold="100" />
+	<affinity-reader-profile name="AffReader" affinity-reader-ref="*" threshold="100" max-entities="2000" />
+	<affinity-reader-profile name="DiscoveryAffReader" affinity-reader-ref="*" threshold="100" max-entities="2000" />
+	<affinity-reader-profile name="GlobalAffReader" affinity-reader-ref="*" threshold="100" max-entities="2000" />
 
-	<analysis-profile name="Profile" attributes-ref="*" type="personal" attribute-size="frequency" attributes-max="80" attributes-cluster-max="6" >
+	<analysis-profile name="Profile" attributes-ref="*" type="personal" attribute-size="frequency" attributes-max="80" attributes-cluster-max="6" cluster="yes" cluster-level="50" cluster-threshold="20" cluster-type="size" balanced-effect="0" entities-max="100" attributes-base-max="30" attr-link-threshold="10" links-attribute-threshold="3">
 		<props-mapping>
 			<entity-props-mapping>
-				<mapping key="ID" 	value="id" />
+				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
 			</entity-props-mapping>
 			<attribute-props-mapping>
-				<mapping key="ID" 	value="id" />
+				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
-				<mapping key="POSTER" 	value="poster" />
-				<mapping key="POSS_ID" 	value="poss_id" />
+				<mapping key="POSTER" value="poster" />
+				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
 		</props-mapping>
-		<entities-recommendation>
-			<mapping key="REC_ID"  		value="id" />
-			<mapping key="REC_NAME"  	value="name" />
+		<entities-recommendation apply="all" max="10" threshold="20">
+			<mapping key="REC_ID" value="id" />
+			<mapping key="REC_NAME" value="name" />
 		</entities-recommendation>
 	</analysis-profile>
 
-	<analysis-profile name="DiscoveryProfile" attributes-ref="*" type="discovery" attribute-size="frequency" attributes-max="80" attributes-cluster-max="6" >
+	<analysis-profile name="DiscoveryProfile" attributes-ref="*" type="discovery" attribute-size="frequency" attributes-max="80" attributes-cluster-max="6" cluster="yes" cluster-level="50" cluster-threshold="20" cluster-type="size" balanced-effect="0" entities-max="100" attributes-base-max="30" attr-link-threshold="10" links-attribute-threshold="3">
 		<props-mapping>
 			<entity-props-mapping>
-				<mapping key="ID" 	value="id" />
+				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
 			</entity-props-mapping>
 			<attribute-props-mapping>
-				<mapping key="ID" 	value="id" />
+				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
-				<mapping key="POSTER" 	value="poster" />
-				<mapping key="POSS_ID" 	value="poss_id" />
+				<mapping key="URL" value="url" />
+				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
 		</props-mapping>
-		<entities-recommendation>
-			<mapping key="REC_ID"  		value="id" />
-			<mapping key="REC_NAME"  	value="name" />
+		<entities-recommendation apply="all" max="10" threshold="20">
+			<mapping key="REC_ID" value="id" />
+			<mapping key="REC_NAME" value="name" />
 		</entities-recommendation>
 	</analysis-profile>
 
-	<analysis-profile name="GlobalProfile" attributes-ref="*" type="global" attribute-size="same" attributes-max="80" attributes-cluster-max="6" >
+	<analysis-profile name="GlobalProfile" attributes-ref="*" type="global" attribute-size="same" attributes-max="80" attributes-cluster-max="6" cluster="yes" cluster-level="50" cluster-threshold="20" cluster-type="size" balanced-effect="0" entities-max="100" attributes-base-max="30" attr-link-threshold="10" links-attribute-threshold="3">
+
 		<props-mapping>
 			<entity-props-mapping>
-				<mapping key="ID" 	value="id" />
+				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
 			</entity-props-mapping>
 			<attribute-props-mapping>
-				<mapping key="ID" 	value="id" />
+				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
-				<mapping key="POSTER" 	value="poster" />
-				<mapping key="POSS_ID" 	value="poss_id" />
+				<mapping key="POSTER" value="poster" />
+				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 			</attribute-props-mapping>
 		</props-mapping>
-		<entities-recommendation>
-			<mapping key="REC_ID"  		value="id" />
-			<mapping key="REC_NAME"  	value="name" />
+		<entities-recommendation apply="all" max="10" threshold="20">
+			<mapping key="REC_ID" value="id" />
+			<mapping key="REC_NAME" value="name" />
 		</entities-recommendation>
 	</analysis-profile>
 
-	<display-profile name="Display" display-empty-links="no" in-color="ffffff" out-color="0" filter-color="eaeaea" >
+	<display-profile name="Display" display-empty-links="no" in-color="ffffff" out-color="0" filter-color="eaeaea" display-entities="no" display-fake-links="yes">
 		<swatch-segmentation>
 			<attribute-swatch>
 				<norm-swatch default-ref="NODE_NORM" />
@@ -112,7 +113,7 @@
 		<selection-swatch name="search" />
 	</display-profile>
 
-	<display-profile name="GlobalDisplay" display-empty-links="no" display-fake-links="no" in-color="ffffff" out-color="0" filter-color="eaeaea" >
+	<display-profile name="GlobalDisplay" display-empty-links="no" display-fake-links="no" in-color="ffffff" out-color="0" filter-color="eaeaea" display-entities="no">
 		<swatch-segmentation>
 			<attribute-swatch>
 				<norm-swatch default-ref="NODE_NORM" />
@@ -131,12 +132,12 @@
 	</display-profile>
 
 	<segmentation>
-		<analysis-segmentation  default-ref="Profile" />
-		<affinity-reader-segmentation default-ref="AffReader" >
+		<analysis-segmentation default-ref="Profile" />
+		<affinity-reader-segmentation default-ref="AffReader">
 			<affreader-analysis-mapping analysis-ref="DiscoveryProfile" default-ref="DiscoveryAffReader" />
 			<affreader-analysis-mapping analysis-ref="GlobalProfile" default-ref="GlobalAffReader" />
 		</affinity-reader-segmentation>
-		<display-segmentation default-ref="Display" >
+		<display-segmentation default-ref="Display">
 			<display-analysis-mapping analysis-ref="GlobalProfile" default-ref="GlobalDisplay" />
 		</display-segmentation>
 	</segmentation>

@@ -44,12 +44,12 @@
 	</sat>
 
 <!-- Cur Image -->
-	<sat shape="voidShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
+	<!--sat shape="voidShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
 		<transfo map="interpol" scale="0">
 			<polar dir="180" rad="0" />
 		</transfo>
 		<slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={$POSTER}" transfo="imgTrf" alpha="1" linewidth="1" />
-	</sat>
+	</sat-->
 
 <!-- Cur Title -->
 	<sat shape="voidShp" click="clickEvt" dblClk="dblClkEvt" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">

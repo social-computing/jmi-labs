@@ -10,7 +10,6 @@
         <slice inCol="238 242 245" outCol="238 242 245" alpha="1" linewidth="1">
             <transfo scale=".87" map="absolute" />
         </slice>
-	<slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={sPOSTER}" transfo="imgTrf" alpha="1" linewidth="1" />
     </sat>
 
 <!-- Sub Spots -->

@@ -5,11 +5,9 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -29,32 +27,23 @@ import com.sun.jersey.api.Responses;
 @Path("/dimelo")
 public class DimeloRestProvider {
 
-    //public static final String API_URL = "http://api.allocine.fr";
-    public static final String API_URL = "http://ext.api.allocine.fr";
-    public static final String API_KEY = "U29jaWFsQ29tcHV0aW5n";
+    public static final String IDEA_API_URL = "https://open-adisseo.api.ideas.dimelo.com";
+    //public static final String IDEA_API_URL = "https://open-adisseo.api.ideas.dimelo.info:4432";
+    public static final String USER_API_URL = "https://open-adisseo.api.users.dimelo.com";
+    //public static final String USER_API_URL = "https://open-adisseo.api.users.dimelo.info:4433";
+    public static final String ACCESS_TOKEN = "5eba7151e753e9fede13177a3098832f";
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @GET
-    @Path("maps/{kind}.json")
+    @Path("maps/map.json")
     @Produces(MediaType.APPLICATION_JSON)
-    public String kind(@Context HttpServletRequest request, @PathParam("kind") String kind, @DefaultValue("top:month") @QueryParam("filter") String filter) {
+    public String kind(@Context HttpServletRequest request, @QueryParam("query") String query) {
         HttpSession session = request.getSession(true);
-        String key = kind + "_" + filter;
+        String key = query;
         String result = null; //( String)session.getAttribute( key);
         if (result == null || result.length() == 0) {
-            if( kind.equalsIgnoreCase( "film_gender")) {
-                result = film_gender( filter);
-            }
-            else if( kind.equalsIgnoreCase( "film_tag")) {
-                result = film_tag( filter);
-            }
-            else if( kind.equalsIgnoreCase( "film_casting")) {
-                result = film_casting( filter);
-            }
-            else if( kind.equalsIgnoreCase( "film_same")) {
-                result = film_same( filter);
-            }
-            session.setAttribute( key, result);
+            result = extract(query);
+            //session.setAttribute( key, result);
         }
         return result;
     }
@@ -88,168 +77,77 @@ public class DimeloRestProvider {
         return null;
     }
 
-    private String film_gender(String filter) {
+    private String extract(String query) {
         StoreHelper storeHelper = new StoreHelper();
         try {
-            UrlHelper urlHelper = new UrlHelper( DimeloRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", DimeloRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode node = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) node.get("feed").get("movie")) {
-                movie_gender( movie, storeHelper);
+            UrlHelper urlIdeas = new UrlHelper( DimeloRestProvider.IDEA_API_URL + "/1.0/feedbacks");
+            urlIdeas.addParameter( "access_token", DimeloRestProvider.ACCESS_TOKEN);
+            urlIdeas.addParameter( "limit", "50");
+            urlIdeas.addParameter( "search", query);
+            urlIdeas.openConnections();
+            JsonNode ideas = mapper.readTree(urlIdeas.getStream());
+            for (JsonNode idea : (ArrayNode) ideas) {
+                Attribute att = storeHelper.addAttribute(String.valueOf(idea.get("id").getIntValue()));
+                att.addProperty("name", idea.get("title").getTextValue());
+                att.addProperty("link", idea.get("permalink").getTextValue());
+                
+                // Author
+                Entity ent = storeHelper.addEntity(String.valueOf(idea.get("user_id").getIntValue()));
+                ent.addAttribute( att, 1);
+                // Comments
+                UrlHelper urlComments = new UrlHelper( DimeloRestProvider.IDEA_API_URL + "/1.0/feedbacks/" + att.getId() + "/comments");
+                urlComments.addParameter( "access_token", DimeloRestProvider.ACCESS_TOKEN);
+                urlComments.openConnections();
+                JsonNode commments = mapper.readTree(urlComments.getStream());
+                for (JsonNode comment : (ArrayNode) commments) {
+                    if( comment.has("user_id")) {
+                        ent = storeHelper.addEntity(String.valueOf(comment.get("user_id").getIntValue()));
+                        ent.addAttribute( att, 1);
+                    }
+                }
+                urlComments.closeConnections();
+                // Votes
+                UrlHelper urlVotes = new UrlHelper( DimeloRestProvider.IDEA_API_URL + "/1.0/feedbacks/" + att.getId() + "/comments");
+                urlVotes.addParameter( "access_token", DimeloRestProvider.ACCESS_TOKEN);
+                urlVotes.openConnections();
+                JsonNode votes = mapper.readTree(urlVotes.getStream());
+                for (JsonNode vote : (ArrayNode) votes) {
+                    if( vote.has("user_id")) {
+                        ent = storeHelper.addEntity(String.valueOf(vote.get("user_id").getIntValue()));
+                        ent.addAttribute( att, 1);
+                    }
+                }
+                urlVotes.closeConnections();
+            }
+            urlIdeas.closeConnections();
+/*            StringBuilder idUsers = new StringBuilder("[");
+            boolean first = true;
+            for( Entity ent : storeHelper.getEntities().values()) {
+                if( first)
+                    first = false;
+                else
+                    idUsers.append(',');
+                idUsers.append(ent.getId());
+                ent.addProperty("name", ent.getId());
+            }
+            idUsers.append(']');*/
+            for( Entity ent : storeHelper.getEntities().values()) {
+                UrlHelper urlUsers = new UrlHelper( DimeloRestProvider.USER_API_URL + "/1.0/users");
+                urlUsers.addParameter( "access_token", DimeloRestProvider.ACCESS_TOKEN);
+                //urlUsers.addParameter( "ids", idUsers.toString());
+                urlUsers.addParameter( "ids", ent.getId());
+                urlUsers.openConnections();
+                JsonNode users = mapper.readTree(urlUsers.getStream());
+                for (JsonNode user : (ArrayNode) users) {
+                    //Entity ent = storeHelper.getEntity(String.valueOf(user.get("id").getIntValue()));
+                    ent.addProperty("name", user.get("firstname").getTextValue() + " " + user.get("lastname").getTextValue());        
+                }
+                urlUsers.closeConnections();
             }
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return StoreHelper.ErrorToJson(e);
         }
         return storeHelper.toJson();
-    }
-    
-    private String film_tag(String filter) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( DimeloRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", DimeloRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_tag( movie, storeHelper);
-            }
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return storeHelper.toJson();
-    }
-    
-    private String film_casting(String filter) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( DimeloRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", DimeloRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_casting( movie, storeHelper);
-            }
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return storeHelper.toJson();
-    }
-
-    private String film_same( String id) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( DimeloRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", DimeloRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "50");
-            urlHelper.addParameter( "filter", "similar:" + id);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_same( movie, storeHelper);
-                Thread.sleep( 3000);
-            }
-            movie_same( get_movie( id), storeHelper);
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return storeHelper.toJson();
-    }
-
-    private void movie_same( JsonNode movie, StoreHelper storeHelper) throws Exception {
-        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-        attribute.addProperty("name", movie.get("title").getTextValue());
-        attribute.addProperty("poster", get_poster_url( movie));
-
-        UrlHelper urlHelper = new UrlHelper( DimeloRestProvider.API_URL + "/rest/v3/movieList");
-        urlHelper.addParameter( "partner", DimeloRestProvider.API_KEY);
-        urlHelper.addParameter( "format", "json");
-        urlHelper.addParameter( "count", "20");
-        urlHelper.addParameter( "filter", "similar:" + attribute.getId());
-        urlHelper.openConnections();
-        JsonNode movies = mapper.readTree(urlHelper.getStream());
-        for (JsonNode samemovie : (ArrayNode) movies.get("feed").get("movie")) {
-            Entity entity = storeHelper.addEntity( samemovie.get("code").getValueAsText());
-            entity.addProperty("name", samemovie.get("title").getTextValue());
-            entity.addProperty("poster", get_poster_url( samemovie));
-            entity.addAttribute(attribute, 1);
-        }
-    }
-    
-    private void movie_gender( JsonNode movie, StoreHelper storeHelper) throws Exception {
-        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-        attribute.addProperty("name", movie.get("title").getTextValue());
-        attribute.addProperty("poster", get_poster_url( movie));
-        for (JsonNode genre : (ArrayNode) movie.get("genre")) {
-            Entity entity = storeHelper.addEntity( genre.get("code").getValueAsText());
-            entity.addProperty("name", genre.get("$").getTextValue());
-            entity.addAttribute(attribute, 1);
-        }
-    }
-    
-    private void movie_tag( JsonNode movie, StoreHelper storeHelper) throws Exception {
-        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-        attribute.addProperty("name", movie.get("title").getTextValue());
-        attribute.addProperty("poster", get_poster_url( movie));
-        
-        JsonNode fullMovie = get_movie( attribute.getId());
-        for (JsonNode tag : (ArrayNode) fullMovie.get("movie").get("tag")) {
-            Entity entity = storeHelper.addEntity( tag.get("code").getValueAsText());
-            entity.addProperty("name", tag.get("$").getTextValue());
-            entity.addAttribute(attribute, 1);
-        }
-    }
-    
-    private void movie_casting( JsonNode movie, StoreHelper storeHelper) {
-        Attribute attribute = storeHelper.addAttribute( movie.get("code").getValueAsText());
-        attribute.addProperty("name", movie.get("title").getTextValue());
-        attribute.addProperty("poster", get_poster_url( movie));
-        
-        String directors = movie.get("castingShort").get("directors").getTextValue();
-        for( String director : directors.split( ",")) {
-            director = director.trim();
-            Entity entity = storeHelper.addEntity( director);
-            entity.addProperty("name", director);
-            entity.addAttribute(attribute, 1);
-        }
-        String actors = movie.get("castingShort").get("actors").getTextValue();
-        for( String actor : actors.split( ",")) {
-            actor = actor.trim();
-            Entity entity = storeHelper.addEntity( actor);
-            entity.addProperty("name", actor);
-            entity.addAttribute(attribute, 1);
-        }
-    }
-    
-    private JsonNode get_movie( String id) throws Exception {
-        UrlHelper urlHelper = new UrlHelper( DimeloRestProvider.API_URL + "/rest/v3/movie");
-        urlHelper.addParameter( "partner", DimeloRestProvider.API_KEY);
-        urlHelper.addParameter( "format", "json");
-        urlHelper.addParameter( "code", id);
-        urlHelper.openConnections();
-        return mapper.readTree(urlHelper.getStream()).get("movie");
-    }
-    
-    private String get_poster_url( JsonNode movie) {
-        JsonNode poster = movie.get("poster");
-        return poster  != null ? poster.get("href").getTextValue() : "";
     }
 }

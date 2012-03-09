@@ -17,41 +17,49 @@ img {
 	border: 0;
 }
 </style>
+<%Boolean inverse = request.getParameter("Inverse") != null;
+String query = request.getParameter("query");
+if( query == null) {
+    query = "";
+ }%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
 function getParams() {
 	var p = {
 		map: 'Adisseo',
-    	dimeloserverurl: 'http://localhost:8080/web-labs',
+    	dimeloserverurl: 'http://labs.just-map-it.com',
+    	//dimeloserverurl: 'http://192.168.1.11:8080/web-labs',
 		jsessionid: '<%=session.getId()%>',
-		inverted: false,
-		query: ''
+		inverted: <%=inverse%>,
+		query: '<%=query%>'
     };
     return p;
 };
 function GoMap() {
 	var parameters = getParams();
 	parameters.analysisProfile='GlobalProfile';
-	var map = JMI.Map({
-				parent: 'map', 
-				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-				//server: 'http://server.just-map-it.com', 
-				server: 'http://localhost:8080/jmi-server/', 
-				//client: JMI.Map.SWF,
-				parameters: parameters
-			});
-	map.addEventListener(JMI.Map.event.READY, function(event) {
-	} );
-	map.addEventListener(JMI.Map.event.ACTION, function(event) {
-		window[event.fn](event.map, event.args);
-	} );
-	map.addEventListener(JMI.Map.event.EMPTY, function(event) {
-		document.getElementById("status").innerHTML = 'Map is empty.';
-	} );
-	map.addEventListener(JMI.Map.event.ERROR, function(event) {
-		document.getElementById("status").innerHTML = event.message;
-	} );
+	if( parameters.query.length > 0) {
+		var map = JMI.Map({
+					parent: 'map', 
+					swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
+					server: 'http://server.just-map-it.com', 
+					//server: 'http://192.168.1.11:8080/jmi-server/', 
+					//client: JMI.Map.SWF,
+					parameters: parameters
+				});
+		map.addEventListener(JMI.Map.event.READY, function(event) {
+		} );
+		map.addEventListener(JMI.Map.event.ACTION, function(event) {
+			window[event.fn](event.map, event.args);
+		} );
+		map.addEventListener(JMI.Map.event.EMPTY, function(event) {
+			document.getElementById("status").innerHTML = 'Map is empty.';
+		} );
+		map.addEventListener(JMI.Map.event.ERROR, function(event) {
+			document.getElementById("status").innerHTML = event.message;
+		} );
+	};
 };
 function JMIF_Navigate(map, url) {
 	window.open( url, "_blank");
@@ -73,28 +81,19 @@ function JMIF_Center(map, args) {
 <jsp:include page="../ga.jsp" />
 </head>
 <body onload="GoMap()">
+<form id="main" method="get">
 <table width="100%" border="0">
 	<tr>
 		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
-		<select id="filter">
-		<option value="outthisweek" >Sorties de la semaine</option>
-		<option value="nowshowing" >A l'écran</option>
-		<option value="comingsoon" >Bientôt à l'affiche</option>
-		<option value="top:week" >Meilleurs films de la semaine</option>
-		<option value="top:month" >Meilleurs films du mois</option>
-		<option value="top:alltimes" >Meilleurs films</option>
-		<option value="worst" >Les pires films</option>
-		</select>
-		<select id="kind">
-		<option value="film_gender" >Film / genre</option>
-		<option value="film_tag" >Film / tag</option>
-		<option value="film_casting" >Film / casting</option>
-		</select>
+			<input type="text" name="query" title="Query" size="80" value="<%=query%>" />
+			<input type="submit" value="Just Map It!" />
+			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
 		</td>
 		<td align="right"><a title="Just Map It! Adisseo" href="./"><img alt="Just Map It! Adisseo" src="../images/justmapit.png" /></a></td>
 	</tr>
 </table>
+</form>
 <div id="status">&nbsp;</div>
 <div id="map"></div>
 </body>
