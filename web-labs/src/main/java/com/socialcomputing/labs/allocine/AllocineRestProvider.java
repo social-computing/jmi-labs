@@ -103,8 +103,7 @@ public class AllocineRestProvider {
             }
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return StoreHelper.ErrorToJson(e);
         }
         return storeHelper.toJson();
     }
@@ -124,8 +123,7 @@ public class AllocineRestProvider {
             }
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return StoreHelper.ErrorToJson(e);
         }
         return storeHelper.toJson();
     }
@@ -145,8 +143,7 @@ public class AllocineRestProvider {
             }
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return StoreHelper.ErrorToJson(e);
         }
         return storeHelper.toJson();
     }
@@ -163,12 +160,12 @@ public class AllocineRestProvider {
             JsonNode movies = mapper.readTree(urlHelper.getStream());
             for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
                 movie_same( movie, storeHelper);
+                Thread.sleep( 3000);
             }
             movie_same( get_movie( id), storeHelper);
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return StoreHelper.ErrorToJson(e);
         }
         return storeHelper.toJson();
     }
@@ -181,7 +178,7 @@ public class AllocineRestProvider {
         UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
         urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
         urlHelper.addParameter( "format", "json");
-        urlHelper.addParameter( "count", "10");
+        urlHelper.addParameter( "count", "20");
         urlHelper.addParameter( "filter", "similar:" + attribute.getId());
         urlHelper.openConnections();
         JsonNode movies = mapper.readTree(urlHelper.getStream());
@@ -189,6 +186,7 @@ public class AllocineRestProvider {
             Entity entity = storeHelper.addEntity( samemovie.get("code").getValueAsText());
             entity.addProperty("name", samemovie.get("title").getTextValue());
             entity.addProperty("poster", get_poster_url( samemovie));
+            entity.addAttribute(attribute, 1);
         }
     }
     

@@ -39,7 +39,7 @@ public class EddRestProvider {
     public String kind(@Context HttpServletRequest request,  @DefaultValue("") @QueryParam("entities") String ets, @DefaultValue("") @QueryParam("entreprise") String entreprise) {
         HttpSession session = request.getSession(true);
         String key = entreprise + "_" + ets;
-        String result = null;//( String)session.getAttribute( key);
+        String result = ( String)session.getAttribute( key);
         String path = session.getServletContext().getRealPath("/edd/data/");
         if (result == null || result.length() == 0) {
            String[] entities = ets.split( ",");

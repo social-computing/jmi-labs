@@ -59,6 +59,7 @@ function GoMap() {
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 			document.getElementById("status").innerHTML = event.message;
 		} );
+		map.compute( parameters);
 	};
 };
 function JMIF_Navigate(map, url) {

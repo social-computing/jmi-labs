@@ -10,7 +10,7 @@ html, body {
 }
 #map {
 	width: 100%;
-	height: 82%;
+	height: 75%;
 	background-color: #FFFFFF;
 }
 img {
@@ -31,31 +31,39 @@ if( query == null) {
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
+var t1 = 'Initial map', t2 = 'Search:<%=query%>';
+function breadcrumbTitles() {
+	return { 'shortTitle': t1, 'longTitle': t2};
+}
 function GoMap() {
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
 	parameters.analysisProfile = "GlobalProfile";
 	parameters.query = "<%=java.net.URLEncoder.encode(query, "UTF-8")%>";
 	parameters.field = "<%=java.net.URLEncoder.encode(field, "UTF-8")%>";
-	var map = JMI.Map({
-				parent: 'map', 
-				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-				server: 'http://server.just-map-it.com', 
-				//server: 'http://localhost:8080/jmi-server/', 
-				//client: JMI.Map.SWF,
-				parameters: parameters
-			});
-	map.addEventListener(JMI.Map.event.READY, function(event) {
-	} );
-	map.addEventListener(JMI.Map.event.ACTION, function(event) {
-		window[event.fn](event.map, event.args);
-	} );
-	map.addEventListener(JMI.Map.event.EMPTY, function(event) {
-		document.getElementById("message").innerHTML = "Sorry, the map is empty.";
-	} );
-	map.addEventListener(JMI.Map.event.ERROR, function(event) {
-		document.getElementById("message").innerHTML = event.message;
-	} );
+	if( parameters.query.length > 0) {
+		var map = JMI.Map({
+					parent: 'map', 
+					swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
+					server: 'http://server.just-map-it.com', 
+					//server: 'http://localhost:8080/jmi-server/', 
+					//client: JMI.Map.SWF,
+					parameters: parameters
+				});
+		map.addEventListener(JMI.Map.event.READY, function(event) {
+		} );
+		map.addEventListener(JMI.Map.event.ACTION, function(event) {
+			window[event.fn](event.map, event.args);
+		} );
+		map.addEventListener(JMI.Map.event.EMPTY, function(event) {
+			document.getElementById("message").innerHTML = "Sorry, the map is empty.";
+		} );
+		map.addEventListener(JMI.Map.event.ERROR, function(event) {
+			document.getElementById("message").innerHTML = event.message;
+		} );
+		var breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,breadcrumbTitles);
+		map.compute( parameters);
+	}
 };
   function JMIF_Navigate( url) {
  	 window.open( url, "_blank");
@@ -67,6 +75,8 @@ function GoMap() {
 	parameters.entityId = args[0];
 	parameters.query = map.getProperty("$query");
 	parameters.field = map.getProperty("$field");
+	t1 = "Focus";
+	t2 = "Focus on named entity: " + args[1];
 	map.compute( parameters);
 	document.getElementById("message").innerHTML = "<i>Focus on named entity:</i> " + args[1];
   }
@@ -78,6 +88,8 @@ function GoMap() {
 	parameters.query = map.getProperty("$query");
 	parameters.field = map.getProperty("$field");
 	parameters.analysisProfile = "DiscoveryProfile";
+	t1 = "Centered";
+	t2 = "Centered on item: " + args[1];
 	map.compute( parameters);
 	document.getElementById("message").innerHTML = "<i>Centered on item:</i> " + args[1];
   }
@@ -99,7 +111,7 @@ function JMIF_CompleteParameters( parameters) {
 	<tr>
 		<td rowspan="3"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td class="label" ><b>Enter one or more URLs (comma separated):</b></td>
-		<td rowspan="3"align="right"><a title="Just Map It! Syllabs" href="./"><img alt="Just Map It! Syllabs" src="../images/justmapit.png" /></a></td>
+		<td rowspan="3"align="right"><a title="Just Map It! Polyspot" href="./"><img alt="Just Map It! Syllabs" src="../images/justmapit.png" /></a></td>
 	</tr>
 	<tr>
 		<td>
@@ -129,6 +141,7 @@ function JMIF_CompleteParameters( parameters) {
 	</tr>
 </table>
 </form>
+<div id="breadcrumb"></div>
 <div id="map"></div>
 </body>
 </html>

@@ -6,7 +6,7 @@
 	<comment>Adisseo Map Dictionary</comment>
 
 	<entities>
-		<REST-entities name="PolySpot" type="json" invert="{$inverted}" class="com.socialcomputing.wps.server.plandictionary.connectors.datastore.file.rest.RESTEntityConnector">
+		<REST-entities name="PolySpot" type="json" invert="{$inverted}" >
 			<URL-connection type="GET">
 				<url>{$dimeloserverurl}/rest/dimelo/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>

@@ -51,6 +51,8 @@ function GoMap() {
 	mapHtml5.addEventListener(JMI.Map.event.LINK_HOVER, function(event) {
 		//document.getElementById('statusHtml5').innerHTML = event.link._index;
 	} );
+	var breadcrumbHtml5 = new JMI.extensions.Breadcrumb('breadcrumbHtml5',mapHtml5);
+	mapHtml5.compute(parameters);
 	mapFlex = JMI.Map({
 				parent: 'mapFlex', 
 				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
@@ -79,6 +81,8 @@ function GoMap() {
 	mapFlex.addEventListener(JMI.Map.event.LINK_HOVER, function(event) {
 		//document.getElementById('statusFlex').innerHTML = event.link._index;
 	} );
+	var breadcrumbFlex = new JMI.extensions.Breadcrumb('breadcrumbFlex',mapFlex);
+	mapFlex.compute(parameters);
 };
 function JMIF_Navigate(map, url) {
 	window.open( url, "_blank");
@@ -125,12 +129,14 @@ function search(value) {
 <div>Search: <input onkeyup="search(this.value)"/><span id="res"></span></div>
 <div style="position: relative; float: left; ">
 <h1 id="titleHtml5">Auto</h1>
+<h1 id="breadcrumbHtml5">&nbsp;</h1>
 <div id="mapHtml5" style="border:1px solid black ;  width: 640px; height: 480px" ></div>
 <div id="statusHtml5" style="width: 600px; overflow:hidden;">&nbsp;</div>
 </div>
 
 <div style="position: relative; float: left; padding-left:20px ">
 <h1 id="titleFlex">Flash (forced)</h1>
+<h1 id="breadcrumbFlex">&nbsp;</h1>
 <div id="mapFlex" style="border:1px solid black ; width: 640px; height: 480px" ></div>
 <div id="statusFlex" style="width: 600px; overflow:hidden;">&nbsp;</div>
 </div>

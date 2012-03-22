@@ -44,6 +44,7 @@ $(document).ready(function() {
 	map.addEventListener(JMI.Map.event.ERROR, function(event) {
 		document.getElementById("message").innerHTML = event.message;
 	} );
+	map.compute( parameters);
 	
 	$('#kind').change(function(){
 		 var parameters = {};
