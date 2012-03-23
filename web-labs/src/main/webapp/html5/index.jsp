@@ -51,7 +51,7 @@ function GoMap() {
 	mapHtml5.addEventListener(JMI.Map.event.LINK_HOVER, function(event) {
 		//document.getElementById('statusHtml5').innerHTML = event.link._index;
 	} );
-	var breadcrumbHtml5 = new JMI.extensions.Breadcrumb('breadcrumbHtml5',mapHtml5);
+	var breadcrumbHtml5 = new JMI.extensions.Breadcrumb('breadcrumbHtml5',mapHtml5,{'thumbnail':{}});
 	mapHtml5.compute(parameters);
 	mapFlex = JMI.Map({
 				parent: 'mapFlex', 
@@ -81,7 +81,7 @@ function GoMap() {
 	mapFlex.addEventListener(JMI.Map.event.LINK_HOVER, function(event) {
 		//document.getElementById('statusFlex').innerHTML = event.link._index;
 	} );
-	var breadcrumbFlex = new JMI.extensions.Breadcrumb('breadcrumbFlex',mapFlex);
+	var breadcrumbFlex = new JMI.extensions.Breadcrumb('breadcrumbFlex',mapFlex,{'thumbnail':{}});
 	mapFlex.compute(parameters);
 };
 function JMIF_Navigate(map, url) {

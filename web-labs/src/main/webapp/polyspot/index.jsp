@@ -31,7 +31,7 @@ if( query == null) {
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
-var t1 = 'Initial query', t2 = 'Search: <%=query%>';
+var breadcrumb, t1 = 'Initial query', t2 = 'Search: <%=query%>';
 function breadcrumbTitles() {
 	return { 'shortTitle': t1, 'longTitle': t2};
 }
@@ -47,10 +47,10 @@ function GoMap() {
 					swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
 					server: 'http://server.just-map-it.com', 
 					//server: 'http://localhost:8080/jmi-server/', 
-					//client: JMI.Map.SWF,
-					parameters: parameters
+					//client: JMI.Map.SWF
 				});
 		map.addEventListener(JMI.Map.event.READY, function(event) {
+			//document.getElementById("message").innerHTML = breadcrumb.cuurent().longTitle;
 		} );
 		map.addEventListener(JMI.Map.event.ACTION, function(event) {
 			window[event.fn](event.map, event.args);
@@ -61,7 +61,7 @@ function GoMap() {
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 			document.getElementById("message").innerHTML = event.message;
 		} );
-		var breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles});
+		//breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles,'thumbnail':{}});
 		map.compute( parameters);
 	}
 };
@@ -78,7 +78,6 @@ function GoMap() {
 	t1 = "Focus";
 	t2 = "Focus on named entity: " + args[1];
 	map.compute( parameters);
-	document.getElementById("message").innerHTML = "<i>Focus on named entity:</i> " + args[1];
   }
   function JMIF_Center(map,args)
   {
@@ -91,7 +90,6 @@ function GoMap() {
 	t1 = "Centered";
 	t2 = "Centered on item: " + args[1];
 	map.compute( parameters);
-	document.getElementById("message").innerHTML = "<i>Centered on item:</i> " + args[1];
   }
 function JMIF_CompleteParameters( parameters) {
 	 parameters.allowDomain = "*";

@@ -45,8 +45,7 @@ function GoMap() {
 					swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
 					server: 'http://server.just-map-it.com', 
 					//server: 'http://192.168.1.11:8080/jmi-server/', 
-					//client: JMI.Map.SWF,
-					parameters: parameters
+					//client: JMI.Map.SWF
 				});
 		map.addEventListener(JMI.Map.event.READY, function(event) {
 		} );

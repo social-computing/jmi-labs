@@ -34,8 +34,7 @@ $(document).ready(function() {
 				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
 				server: 'http://server.just-map-it.com', 
 				//server: 'http://localhost:8080/jmi-server/', 
-				//client: JMI.Map.SWF,
-				parameters: parameters
+				//client: JMI.Map.SWF
 			});
 	map.addEventListener(JMI.Map.event.READY, function(event) {
 	} );
@@ -50,14 +49,14 @@ $(document).ready(function() {
 	} );
 	t1 = $('#filter option:selected')[0].label;
 	t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
-	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles});
+	//breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles,'thumbnail':{}});
 	map.compute( parameters);
 	
 	$('#kind').change(function(){
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
-		 breadcrumb.flush();
+		 //breadcrumb.flush();
 		 t1 = $('#filter option:selected')[0].label;
 		 t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 		 $('#map')[0].JMI.compute( parameters);
@@ -66,7 +65,7 @@ $(document).ready(function() {
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
-		 breadcrumb.flush();
+		 //breadcrumb.flush();
 		 t1 = $('#filter option:selected')[0].label;
 		 t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 		 $('#map')[0].JMI.compute( parameters);
