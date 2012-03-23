@@ -31,7 +31,7 @@ if( query == null) {
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
-var t1 = 'Initial map', t2 = 'Search:<%=query%>';
+var t1 = 'Initial query', t2 = 'Search: <%=query%>';
 function breadcrumbTitles() {
 	return { 'shortTitle': t1, 'longTitle': t2};
 }
@@ -61,7 +61,7 @@ function GoMap() {
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 			document.getElementById("message").innerHTML = event.message;
 		} );
-		var breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,breadcrumbTitles);
+		var breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles});
 		map.compute( parameters);
 	}
 };
@@ -110,7 +110,7 @@ function JMIF_CompleteParameters( parameters) {
 <table width="100%" border="0">
 	<tr>
 		<td rowspan="3"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
-		<td class="label" ><b>Enter one or more URLs (comma separated):</b></td>
+		<td class="label" ><b>Enter query:</b></td>
 		<td rowspan="3"align="right"><a title="Just Map It! Polyspot" href="./"><img alt="Just Map It! Syllabs" src="../images/justmapit.png" /></a></td>
 	</tr>
 	<tr>
@@ -141,7 +141,7 @@ function JMIF_CompleteParameters( parameters) {
 	</tr>
 </table>
 </form>
-<div id="breadcrumb"></div>
+<div id="breadcrumb">&nbsp;</div>
 <div id="map"></div>
 </body>
 </html>

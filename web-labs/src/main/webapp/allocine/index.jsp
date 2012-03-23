@@ -10,7 +10,7 @@ html, body {
 }
 #map {
 	width: 100%;
-	height: 85%;
+	height: 80%;
 	background-color: #FFFFFF;
 }
 img {
@@ -21,6 +21,10 @@ img {
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"> 
+var breadcrumb, t1, t2;
+function breadcrumbTitles() {
+	return { 'shortTitle': t1, 'longTitle': t2};
+}
 $(document).ready(function() {
 	var parameters = {};
 	completeParameters( parameters);
@@ -44,18 +48,27 @@ $(document).ready(function() {
 	map.addEventListener(JMI.Map.event.ERROR, function(event) {
 		document.getElementById("message").innerHTML = event.message;
 	} );
+	t1 = $('#filter option:selected')[0].label;
+	t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
+	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles});
 	map.compute( parameters);
 	
 	$('#kind').change(function(){
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
+		 breadcrumb.flush();
+		 t1 = $('#filter option:selected')[0].label;
+		 t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 		 $('#map')[0].JMI.compute( parameters);
 	});
 	$('#filter').change(function(){
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
+		 breadcrumb.flush();
+		 t1 = $('#filter option:selected')[0].label;
+		 t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 		 $('#map')[0].JMI.compute( parameters);
 	}); 
 });
@@ -65,8 +78,9 @@ function navigate(map, id) {
 function focus(map, args) {
 	var parameters = {};
 	parameters["entityId"] = args[0];
-	parameters["feed"] = args[2];
 	completeParameters( parameters);
+	t1 = "Focus";
+	t2 = "Focus on item: " + args[1];
 	map.compute( parameters);
 }
 function center(map, args) {
@@ -74,6 +88,8 @@ function center(map, args) {
 	parameters["attributeId"] = args[0];
 	parameters["analysisProfile"] = "DiscoveryProfile";
 	completeParameters( parameters);
+	t1 = "Centered";
+	t2 = "Centered on item: " + args[1];
 	map.compute( parameters);
 }
 function same(map, args) {
@@ -121,6 +137,7 @@ function completeParameters(parameters) {
 	</tr>
 </table>
 <div id="message">&nbsp;</div>
+<div id="breadcrumb">&nbsp;</div>
 <div id="map"></div>
 </body>
 </html>
