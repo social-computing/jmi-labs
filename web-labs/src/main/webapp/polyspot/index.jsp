@@ -61,7 +61,7 @@ function GoMap() {
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 			document.getElementById("message").innerHTML = event.message;
 		} );
-		//breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles,'thumbnail':{}});
+		breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles,'thumbnail':{}});
 		map.compute( parameters);
 	}
 };

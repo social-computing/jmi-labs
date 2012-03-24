@@ -49,14 +49,14 @@ $(document).ready(function() {
 	} );
 	t1 = $('#filter option:selected')[0].label;
 	t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
-	//breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles,'thumbnail':{}});
+	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles});
 	map.compute( parameters);
 	
 	$('#kind').change(function(){
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
-		 //breadcrumb.flush();
+		 breadcrumb.flush();
 		 t1 = $('#filter option:selected')[0].label;
 		 t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 		 $('#map')[0].JMI.compute( parameters);
@@ -65,7 +65,7 @@ $(document).ready(function() {
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
-		 //breadcrumb.flush();
+		 breadcrumb.flush();
 		 t1 = $('#filter option:selected')[0].label;
 		 t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 		 $('#map')[0].JMI.compute( parameters);
