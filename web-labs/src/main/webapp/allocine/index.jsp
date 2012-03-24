@@ -42,10 +42,8 @@ $(document).ready(function() {
 		window[event.fn](event.map, event.args);
 	} );
 	map.addEventListener(JMI.Map.event.EMPTY, function(event) {
-		document.getElementById("message").innerHTML = "Sorry, the map is empty.";
 	} );
 	map.addEventListener(JMI.Map.event.ERROR, function(event) {
-		document.getElementById("message").innerHTML = event.message;
 	} );
 	t1 = $('#filter option:selected')[0].label;
 	t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;

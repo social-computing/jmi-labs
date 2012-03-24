@@ -57,10 +57,8 @@ function GoMap() {
 			window[event.fn](event.map, event.args);
 		} );
 		map.addEventListener(JMI.Map.event.EMPTY, function(event) {
-			document.getElementById("status").innerHTML = 'Map is empty.';
 		} );
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
-			document.getElementById("status").innerHTML = event.message;
 		} );
 		breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles,'thumbnail':{}});
 		map.compute( parameters);
