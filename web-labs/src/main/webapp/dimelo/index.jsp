@@ -25,6 +25,10 @@ if( query == null) {
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
+var breadcrumb, t1 = 'Initial query', t2 = 'Query: <%=query%>';
+function breadcrumbTitles() {
+	return { 'shortTitle': t1, 'longTitle': t2};
+}
 function getParams() {
 	var p = {
 		map: 'Adisseo',
@@ -58,6 +62,7 @@ function GoMap() {
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 			document.getElementById("status").innerHTML = event.message;
 		} );
+		breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles,'thumbnail':{}});
 		map.compute( parameters);
 	};
 };
@@ -67,15 +72,17 @@ function JMIF_Navigate(map, url) {
 function JMIF_Focus(map, args) {
 	var parameters = getParams();
 	parameters.entityId = args[0];
+	t1 = "Focus";
+	t2 = "Focus on: " + args[1];
 	map.compute( parameters);
-	document.getElementById("status").innerHTML = "<i>Focus on:</i> " + args[1];
 }
 function JMIF_Center(map, args) {
 	var parameters = getParams();
 	parameters.attributeId = args[0];
 	parameters.analysisProfile = "DiscoveryProfile";
+	t1 = "Centered";
+	t2 = "Centered on: " + args[1];
 	map.compute( parameters);
-	document.getElementById("status").innerHTML = "<i>Centered on:</i> " + args[1];
 }
 </script>
 <jsp:include page="../ga.jsp" />
@@ -94,7 +101,7 @@ function JMIF_Center(map, args) {
 	</tr>
 </table>
 </form>
-<div id="status">&nbsp;</div>
+<div id="breadcrumb">&nbsp;</div>
 <div id="map"></div>
 </body>
 </html>

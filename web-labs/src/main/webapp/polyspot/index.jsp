@@ -31,7 +31,7 @@ if( query == null) {
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
-var breadcrumb, t1 = 'Initial query', t2 = 'Search: <%=query%>';
+var breadcrumb, t1 = 'Initial query', t2 = 'Query: <%=query%>';
 function breadcrumbTitles() {
 	return { 'shortTitle': t1, 'longTitle': t2};
 }
