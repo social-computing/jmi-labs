@@ -132,7 +132,6 @@ function JMIF_CompleteParameters( parameters) {
 	</tr>
 	<tr>
 		<td nowrap colspan="3">
-			<p id="message">&nbsp;</p>
 		</td>
 	</tr>
 </table>

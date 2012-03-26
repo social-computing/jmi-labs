@@ -68,13 +68,6 @@ $(document).ready(function() {
 <script type="text/javascript">
   function ready() {
 	  var map = document.getElementById("jmi-polyspot");
-	  var titles = map.getArrayProperty( "$FEEDS_TITLES");
-	  if( titles) {
-	  	document.title = titles.join( ', ') + ' | Just Map It! Feeds - ';
-		if( map.getProperty( "$analysisProfile") == "GlobalProfile") {
-			document.getElementById("message").innerHTML = titles.join( ', ');
-		}
-	  }
   }
   function empty() {
 	document.getElementById("message").innerHTML = "Sorry, the map is empty.";
@@ -90,7 +83,7 @@ $(document).ready(function() {
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
 	parameters.entityId = args[0];
-	parameters.entreprise = args[2];
+	parameters.entreprise = '<%=entreprise%>';
 	document.getElementById("jmi-polyspot").compute( parameters);
 	document.getElementById("message").innerHTML = "<i>Focus on named entity:</i> " + args[1];
   }
@@ -99,17 +92,17 @@ $(document).ready(function() {
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
 	parameters.attributeId = args[0];
-	parameters.entreprise = args[2];
+	parameters.entreprise = '<%=entreprise%>';
 	parameters.analysisProfile = "DiscoveryProfile";
 	document.getElementById("jmi-polyspot").compute( parameters);
 	document.getElementById("message").innerHTML = "<i>Centered on item:</i> " + args[1];
   }
 function JMIF_CompleteParameters( parameters) {
 	 parameters.allowDomain = "*";
-	 parameters.wpsserverurl = "http://localhost:8080/jmi-server";
-     parameters.eddserverurl = "http://localhost:8080/web-labs";
-	 //parameters.wpsserverurl = "http://server.just-map-it.com";
-     //parameters.eddserverurl = "http://labs.just-map-it.com";
+	 //parameters.wpsserverurl = "http://localhost:8080/jmi-server";
+     //parameters.eddserverurl = "http://localhost:8080/web-labs";
+	 parameters.wpsserverurl = "http://server.just-map-it.com";
+     parameters.eddserverurl = "http://labs.just-map-it.com";
 	 parameters.wpsplanname = "EDD";
 	 parameters.entities = '<%= (persons ? "Person" :"") + "," + (organizations ? "Organization" :"") + "," + (geos ? "Geo" :"")%>';
 	 parameters.inverted = '<%=inverse%>';
