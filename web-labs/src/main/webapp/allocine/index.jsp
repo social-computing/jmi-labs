@@ -53,7 +53,7 @@ $(document).ready(function() {
 	} );
 	breadcrumbTitles.shortTitle = $('#filter option:selected')[0].label;
 	breadcrumbTitles.longTitle = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
-	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc});
+	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
 	map.compute( parameters);
 	
 	$('#kind').change(function(){
@@ -82,8 +82,8 @@ function focus(map, args) {
 	var parameters = {};
 	parameters["entityId"] = args[0];
 	completeParameters( parameters);
-	t1 = "Focus";
-	t2 = "Focus on item: " + args[1];
+	breadcrumbTitles.shortTitle = "Focus";
+	breadcrumbTitles.longTitle = "Focus on: " + args[1];
 	map.compute( parameters);
 }
 function center(map, args) {
@@ -91,8 +91,8 @@ function center(map, args) {
 	parameters["attributeId"] = args[0];
 	parameters["analysisProfile"] = "DiscoveryProfile";
 	completeParameters( parameters);
-	t1 = "Centered";
-	t2 = "Centered on item: " + args[1];
+	breadcrumbTitles.shortTitle = "Centered";
+	breadcrumbTitles.longTitle = "Centered on: " + args[1];
 	map.compute( parameters);
 }
 function same(map, args) {
