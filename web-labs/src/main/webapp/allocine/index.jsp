@@ -21,9 +21,15 @@ img {
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"> 
-var breadcrumb, t1, t2;
-function breadcrumbTitles() {
-	return { 'shortTitle': t1, 'longTitle': t2};
+var breadcrumbTitles = { shortTitle: '', longTitle: '' };
+function JMIF_breadcrumbTitlesFunc(event) {
+	if( event.type === JMI.Map.event.EMPTY) {
+		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
+	}
+	if( event.type === JMI.Map.event.ERROR) {
+		return {shortTitle: 'Sorry, an error occured.', longTitle: 'Sorry, an error occured. Error: ' + event.message};
+	}
+	return breadcrumbTitles;
 }
 $(document).ready(function() {
 	var parameters = {};
@@ -45,9 +51,9 @@ $(document).ready(function() {
 	} );
 	map.addEventListener(JMI.Map.event.ERROR, function(event) {
 	} );
-	t1 = $('#filter option:selected')[0].label;
-	t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
-	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles});
+	breadcrumbTitles.shortTitle = $('#filter option:selected')[0].label;
+	breadcrumbTitles.longTitle = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
+	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc});
 	map.compute( parameters);
 	
 	$('#kind').change(function(){
@@ -55,8 +61,8 @@ $(document).ready(function() {
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
 		 breadcrumb.flush();
-		 t1 = $('#filter option:selected')[0].label;
-		 t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
+		 breadcrumbTitles.shortTitle = $('#filter option:selected')[0].label;
+		 breadcrumbTitles.longTitle = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 		 $('#map')[0].JMI.compute( parameters);
 	});
 	$('#filter').change(function(){
@@ -64,8 +70,8 @@ $(document).ready(function() {
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
 		 breadcrumb.flush();
-		 t1 = $('#filter option:selected')[0].label;
-		 t2 = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
+		 breadcrumbTitles.shortTitle = $('#filter option:selected')[0].label;
+		 breadcrumbTitles.longTitle = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 		 $('#map')[0].JMI.compute( parameters);
 	}); 
 });

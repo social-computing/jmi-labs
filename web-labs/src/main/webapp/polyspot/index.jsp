@@ -31,9 +31,15 @@ if( query == null) {
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
-var breadcrumb, t1 = 'Initial query', t2 = 'Query: <%=query%>';
-function breadcrumbTitles() {
-	return { 'shortTitle': t1, 'longTitle': t2};
+var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query%>' };
+function JMIF_breadcrumbTitlesFunc(event) {
+	if( event.type === JMI.Map.event.EMPTY) {
+		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
+	}
+	if( event.type === JMI.Map.event.ERROR) {
+		return {shortTitle: 'Sorry, an error occured.', longTitle: 'Sorry, an error occured. Error: ' + event.message};
+	}
+	return breadcrumbTitles;
 }
 function GoMap() {
 	var parameters = {};
@@ -59,7 +65,7 @@ function GoMap() {
 		} );
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 		} );
-		breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':breadcrumbTitles,'thumbnail':{}});
+		breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
 		map.compute( parameters);
 	}
 };
@@ -73,8 +79,8 @@ function GoMap() {
 	parameters.entityId = args[0];
 	parameters.query = map.getProperty("$query");
 	parameters.field = map.getProperty("$field");
-	t1 = "Focus";
-	t2 = "Focus on named entity: " + args[1];
+	breadcrumbTitles.shortTitle = "Focus";
+	breadcrumbTitles.longTitle = "Focus on named entity: " + args[1];
 	map.compute( parameters);
   }
   function JMIF_Center(map,args)
@@ -85,8 +91,8 @@ function GoMap() {
 	parameters.query = map.getProperty("$query");
 	parameters.field = map.getProperty("$field");
 	parameters.analysisProfile = "DiscoveryProfile";
-	t1 = "Centered";
-	t2 = "Centered on item: " + args[1];
+	breadcrumbTitles.shortTitle = "Centered";
+	breadcrumbTitles.longTitle = "Centered on item: " + args[1];
 	map.compute( parameters);
   }
 function JMIF_CompleteParameters( parameters) {
