@@ -41,6 +41,7 @@ if(user_token != null) {
 %>
 <head>
 <title>Just Map It! Linkedin</title>
+<meta name="robots" content="index,follow" /> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
 <style type="text/css" media="screen">
@@ -60,7 +61,7 @@ img {
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript">
-var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Initial query' };
+var breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'All your contacts and their skills' };
 function JMIF_breadcrumbTitlesFunc(event) {
 	if( event.type === JMI.Map.event.EMPTY) {
 		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
@@ -111,8 +112,8 @@ function GoMap() {
 		$('#map')[0].JMI.compute( parameters);
 	});
 };
-function JMIF_Navigate(map, url) {
-	window.open( url, "_blank");
+function JMIF_Navigate(map, args) {
+	window.open( args[0], "_blank");
 }
 function JMIF_Focus(map, args) {
 	var parameters = getParams();

@@ -1,9 +1,5 @@
 package com.socialcomputing.labs.linkedin;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.NoSuchAlgorithmException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
@@ -23,7 +19,6 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entit
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.OAuthHelper;
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper;
-import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper.Type;
 
 @Path("/linkedin")
 public class RestProvider {
@@ -57,19 +52,21 @@ public class RestProvider {
             String secret = RestProvider.API_SECRET + "&" + authTokenSecret;
             
             OAuthHelper auth = OAuthHelper.GetOAuth(RestProvider.API_KEY, authToken);
-            api = new UrlHelper("http://api.linkedin.com/v1/people/~:(id,first-name,last-name,skills)");
+            api = new UrlHelper("http://api.linkedin.com/v1/people/~:(id,formatted-name,headline,public-profile-url,skills)");
             auth.addOAuthParams(api, api.getUrl(), "GET", secret);
             //api.addHeader("Authorization", meAuth.getOAuthHeader(meUrl, "GET", secret));
             api.addHeader("x-li-format", "json");
             api.openConnections();
             JsonNode me = mapper.readTree(api.getStream());
             Attribute attribute = dataStore.addAttribute( me.get("id").getTextValue());
-            attribute.addProperty("name", me.get("firstName").getTextValue() + " " + me.get("lastName").getTextValue());
+            attribute.addProperty("name", me.has("formattedName") ? me.get("formattedName").getTextValue() : "Xxxx Xxxx");
+            attribute.addProperty("headline", me.has("headline") ? me.get("headline").getTextValue() : "");
+            attribute.addProperty("url", me.has("publicProfileUrl") ? me.get("publicProfileUrl").getTextValue() : "");
             addSkills(dataStore, me, attribute, authToken, authTokenSecret);
             api.closeConnections();
             
             auth = OAuthHelper.GetOAuth(RestProvider.API_KEY, authToken);
-            api = new UrlHelper("http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,skills)");
+            api = new UrlHelper("http://api.linkedin.com/v1/people/~/connections:(id,formatted-name,headline,public-profile-url,skills)");
             auth.addOAuthParams(api, api.getUrl(), "GET", secret);
             api.addHeader("x-li-format", "json");
             api.openConnections();
@@ -77,7 +74,9 @@ public class RestProvider {
             for( JsonNode connection: (ArrayNode)connections.get("values")) {
                 if( connection.has("skills")) {
                     attribute = dataStore.addAttribute( connection.get("id").getTextValue());
-                    attribute.addProperty("name", connection.get("firstName").getTextValue() + " " + connection.get("lastName").getTextValue());
+                    attribute.addProperty("name", connection.has("formattedName") ? connection.get("formattedName").getTextValue() : "Xxxx Xxxx");
+                    attribute.addProperty("headline", connection.has("headline") ? connection.get("headline").getTextValue() : "");
+                    attribute.addProperty("url", connection.has("publicProfileUrl") ? connection.get("publicProfileUrl").getTextValue() : "");
                     addSkills(dataStore, connection, attribute, authToken, authTokenSecret);
                 }
             }
@@ -94,11 +93,16 @@ public class RestProvider {
     
     void addSkills(StoreHelper dataStore, JsonNode person, Attribute attribute, String authToken, String authTokenSecret) {
         if( person.has("skills")) {
-            for( JsonNode skill: (ArrayNode)person.get("skills").get("values")) {
-                skill = skill.get("skill");
-                Entity entity = dataStore.addEntity( skill.get("name").getTextValue());
-                entity.addProperty("name", entity.getId());
-                entity.addAttribute(attribute, 1);
+            JsonNode skills = person.get("skills");
+            if( skills.has("values")) {
+                for( JsonNode skill: (ArrayNode)skills.get("values")) {
+                    skill = skill.get("skill");
+                    if( skill != null) {
+                        Entity entity = dataStore.addEntity( skill.get("name").getTextValue());
+                        entity.addProperty("name", entity.getId());
+                        entity.addAttribute(attribute, 1);
+                    }
+                }
             }
         }
     }

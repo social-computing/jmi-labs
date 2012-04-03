@@ -43,14 +43,6 @@
         </slice>
     </sat>
     
-<!-- Cur Image -->
-	<sat shape="voidShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
-		<transfo map="interpol" scale="0">
-			<polar dir="180" rad="0" />
-		</transfo>
-		<slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={$POSTER}" transfo="imgTrf" alpha="1" linewidth="1" />
-	</sat>
-
 <!-- Cur Title -->
     <sat shape="voidShp" click="clickEvt" dblClk="dblClkEvt" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
         <transfo map="interpol" scale="0">
@@ -90,11 +82,15 @@
     </transfo>
 
     <tip id="textTip" font="nameFnt" label="@nameStr" textCol="@blackCol" isCorner="true" blur="-1" rounded="-1" dir="SW" align="left" isFloating="false" />
+    <font id="tipFnt" name="Arial" size="12" style="plain" />
 
+    <tooltip id="tooltip" delay="0" length="3000">
+        <tip font="tipFnt" label="{sHEADLINE}" inCol="255 255 255" outCol="204 204 204" textCol="34 34 34" align="center" isFloating="true" blur="-1" rounded="10" dir="SW" isCorner="false" />
+    </tooltip>
 
     <!-- Hover event -->
     <event id="hoverEvt">
-        <show status="Cliquez pour afficher le menu de '{sNAME}'. Double-cliquez pour afficher sa fiche." />
+        <pop tooltip="tooltip" />
     </event>
 
     <!-- Click event -->
@@ -103,10 +99,10 @@
     </event>
 
 	<menu id="menu" font="menuFnt">
-		<item label="Afficher" font="nameFnt" url="javascript:JMIF_Navigate({sID})" />
-		<item label="Centrer" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME},{s$feed})" />
+		<item label="Display" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
+		<item label="Center" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
 		<separator />
-		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME],{s$feed})" />
+		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
 	</menu>
 
 	<font id="menuFnt" name="Arial" size="11" style="plain" />

@@ -16,6 +16,7 @@ if( code == null) { %>
 <%} else {
 String authcode = ViadeoRestProvider.GetAccessToken(code);%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="robots" content="noindex,nofollow" /> 
 <style type="text/css" media="screen">
 html, body {
 	height: 100%;

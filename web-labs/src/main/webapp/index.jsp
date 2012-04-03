@@ -4,7 +4,10 @@
 <title>Just Map It! Labs</title>
 <meta http-equiv="content-language" content="en" />
 <meta name="author" content="Social Computing" /> 
-<meta name="robots" content="noindex,nofollow" /> 
+<meta name="robots" content="index,follow" /> 
+<meta name="description" content="Just Map It! Labs: experiment data visualization" /> 
+<meta name="keywords" content="labs, rss, netvibes, google, blogger, feeds, feed, map, cartography, visualization, social, blog, gadget, widget, social computing, category, representation, information" />
+<meta name="author" content="Social Computing" /> 
 <link rel="shortcut icon" href="./favicon.ico" />
 <style type="text/css">
 h1
@@ -35,6 +38,7 @@ img
 <table width="60%" border="0" style="padding: 100px 0 0 200px">
 	<tr>
 		<td><a title="Just Map It! Html5" href="./html5"><img alt="Just Map It! Html5" src="./images/html5-logo.png" /></a></td>
+		<td><a title="Just Map It! Linkedin" href="./linkedin"><img alt="Just Map It! Linkedin" src="./images/linkedin.jpg" /></a></td>
 	</tr>
 </table>
 

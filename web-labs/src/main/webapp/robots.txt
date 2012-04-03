@@ -1,2 +1,8 @@
 User-agent: *
-Disallow: /*
+Allow: /
+Allow: /linkedin/
+Allow: /html5/
+Allow: /linkedin/
+Disallow: /jmi-client/
+Disallow: /js/
+
