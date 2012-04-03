@@ -33,7 +33,7 @@ public class RestProvider {
     public static final String REQUEST_TOKEN_URL = "https://api.linkedin.com/uas/oauth/requestToken";
     public static final String ACCESS_TOKEN_URL = "https://api.linkedin.com/uas/oauth/accessToken";
     public static final String OAUTH_URL = "https://www.linkedin.com/uas/oauth/authorize";
-    public static final String CALLBACK = "https://labs.just-map-it.com/";
+    public static final String CALLBACK = "https://labs.just-map-it.com/linkedin/";
     private static final ObjectMapper mapper = new ObjectMapper();
     
     @GET
@@ -41,11 +41,11 @@ public class RestProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public String kind(@Context HttpServletRequest request, @QueryParam("authtoken") String authToken, @QueryParam("authtokensecret") String authTokenSecret, @QueryParam("kind") String kind) {
         HttpSession session = request.getSession(true);
-        String key = kind;
+        String key = "skills";
         String result = ( String)session.getAttribute( key);
         if (result == null || result.length() == 0) {
             result = extract(authToken, authTokenSecret, kind);
-            //session.setAttribute( key, result);
+            session.setAttribute( key, result);
         }
         return result;
     }
@@ -65,8 +65,8 @@ public class RestProvider {
             JsonNode me = mapper.readTree(api.getStream());
             Attribute attribute = dataStore.addAttribute( me.get("id").getTextValue());
             attribute.addProperty("name", me.get("firstName").getTextValue() + " " + me.get("lastName").getTextValue());
+            addSkills(dataStore, me, attribute, authToken, authTokenSecret);
             api.closeConnections();
-
             
             auth = OAuthHelper.GetOAuth(RestProvider.API_KEY, authToken);
             api = new UrlHelper("http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,skills)");
@@ -78,13 +78,7 @@ public class RestProvider {
                 if( connection.has("skills")) {
                     attribute = dataStore.addAttribute( connection.get("id").getTextValue());
                     attribute.addProperty("name", connection.get("firstName").getTextValue() + " " + connection.get("lastName").getTextValue());
-
-                    for( JsonNode skill: (ArrayNode)connection.get("skills").get("values")) {
-                        skill = skill.get("skill");
-                        Entity entity = dataStore.addEntity( skill.get("name").getTextValue());
-                        entity.addProperty("name", entity.getId());
-                        entity.addAttribute(attribute, 1);
-                    }
+                    addSkills(dataStore, connection, attribute, authToken, authTokenSecret);
                 }
             }
             api.closeConnections();
@@ -96,6 +90,17 @@ public class RestProvider {
             return StoreHelper.ErrorToJson(e);
         }
         return dataStore.toJson();
+    }
+    
+    void addSkills(StoreHelper dataStore, JsonNode person, Attribute attribute, String authToken, String authTokenSecret) {
+        if( person.has("skills")) {
+            for( JsonNode skill: (ArrayNode)person.get("skills").get("values")) {
+                skill = skill.get("skill");
+                Entity entity = dataStore.addEntity( skill.get("name").getTextValue());
+                entity.addProperty("name", entity.getId());
+                entity.addAttribute(attribute, 1);
+            }
+        }
     }
     
     void getConnections(StoreHelper dataStore, String id, String authToken, String authTokenSecret) {
