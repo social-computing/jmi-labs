@@ -56,16 +56,11 @@ img {
 	border: 0;
 }
 </style>
-<%Boolean inverse = request.getParameter("Inverse") != null;
-String query = request.getParameter("query");
-if( query == null) {
-    query = "";
- }%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript">
-var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query%>' };
+var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Initial query' };
 function JMIF_breadcrumbTitlesFunc(event) {
 	if( event.type === JMI.Map.event.EMPTY) {
 		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
@@ -83,8 +78,8 @@ function getParams() {
     	authtoken: '<%=user_token%>',
     	authtokensecret: '<%=user_token_secret%>',
 		jsessionid: '<%=session.getId()%>',
-		inverted: <%=inverse%>,
-		kind: $('#kind option:selected')[0].value
+		inverted: 'false',
+		kind: ''
     };
     return p;
 };
@@ -143,12 +138,6 @@ function JMIF_Center(map, args) {
 	<tr>
 		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
-			<select id="kind">
-				<option value="contacts" >Contacts</option>
-				<option value="groups" >Groups</option>
-				<option value="likes" >Likes</option>
-			</select>
-			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
 		</td>
 		<td align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Adisseo" src="../images/justmapit.png" /></a></td>
 	</tr>

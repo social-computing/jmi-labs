@@ -57,7 +57,7 @@ public class RestProvider {
             String secret = RestProvider.API_SECRET + "&" + authTokenSecret;
             
             OAuthHelper auth = OAuthHelper.GetOAuth(RestProvider.API_KEY, authToken);
-            api = new UrlHelper("http://api.linkedin.com/v1/people/~:(id,first-name,last-name)");
+            api = new UrlHelper("http://api.linkedin.com/v1/people/~:(id,first-name,last-name,skills)");
             auth.addOAuthParams(api, api.getUrl(), "GET", secret);
             //api.addHeader("Authorization", meAuth.getOAuthHeader(meUrl, "GET", secret));
             api.addHeader("x-li-format", "json");
@@ -69,20 +69,23 @@ public class RestProvider {
 
             
             auth = OAuthHelper.GetOAuth(RestProvider.API_KEY, authToken);
-            api = new UrlHelper("http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name)");
+            api = new UrlHelper("http://api.linkedin.com/v1/people/~/connections:(id,first-name,last-name,skills)");
             auth.addOAuthParams(api, api.getUrl(), "GET", secret);
             api.addHeader("x-li-format", "json");
             api.openConnections();
             JsonNode connections = mapper.readTree(api.getStream());
             for( JsonNode connection: (ArrayNode)connections.get("values")) {
-                attribute = dataStore.addAttribute( connection.get("id").getTextValue());
-                attribute.addProperty("name", connection.get("firstName").getTextValue() + " " + connection.get("lastName").getTextValue());
+                if( connection.has("skills")) {
+                    attribute = dataStore.addAttribute( connection.get("id").getTextValue());
+                    attribute.addProperty("name", connection.get("firstName").getTextValue() + " " + connection.get("lastName").getTextValue());
 
-                Entity entity = dataStore.addEntity( connection.get("id").getTextValue());
-                entity.addProperty("name", connection.get("firstName").getTextValue() + " " + connection.get("lastName").getTextValue());
-                entity.addAttribute(attribute, 1);
-                
-                this.getConnections(dataStore, entity.getId(), authToken, authTokenSecret);
+                    for( JsonNode skill: (ArrayNode)connection.get("skills").get("values")) {
+                        skill = skill.get("skill");
+                        Entity entity = dataStore.addEntity( skill.get("name").getTextValue());
+                        entity.addProperty("name", entity.getId());
+                        entity.addAttribute(attribute, 1);
+                    }
+                }
             }
             api.closeConnections();
         }
