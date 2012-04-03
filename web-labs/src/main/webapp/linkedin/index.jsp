@@ -73,8 +73,8 @@ function JMIF_breadcrumbTitlesFunc(event) {
 function getParams() {
 	var p = {
 		map: 'Linkedin',
-    	//linkedinserverurl: 'http://labs.just-map-it.com',
-    	linkedinserverurl: 'http://localhost:8080/web-labs',
+    	linkedinserverurl: 'http://labs.just-map-it.com',
+    	//linkedinserverurl: 'http://localhost:8080/web-labs',
     	authtoken: '<%=user_token%>',
     	authtokensecret: '<%=user_token_secret%>',
 		jsessionid: '<%=session.getId()%>',
@@ -89,8 +89,8 @@ function GoMap() {
 	var map = JMI.Map({
 				parent: 'map', 
 				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-				//server: 'http://server.just-map-it.com', 
-				server: 'http://localhost:8080/jmi-server/', 
+				server: 'http://server.just-map-it.com', 
+				//server: 'http://localhost:8080/jmi-server/', 
 				//client: JMI.Map.SWF
 			});
 	map.addEventListener(JMI.Map.event.READY, function(event) {
