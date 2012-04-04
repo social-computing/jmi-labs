@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Allow: /linkedin/
 Allow: /html5/
 Allow: /linkedin/
 Disallow: /jmi-client/

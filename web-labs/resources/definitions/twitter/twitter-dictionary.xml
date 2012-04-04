@@ -2,17 +2,17 @@
 
 <!DOCTYPE dictionary SYSTEM "WPS-dictionary.dtd" >
 
-<dictionary name="Linkedin" >
-	<comment>Linkedin Map Dictionary</comment>
+<dictionary name="Twitter" >
+	<comment>Twitter Map Dictionary</comment>
 
 	<entities>
 		<REST-entities name="Twitter" type="json" invert="{$inverted}">
 			<URL-connection>
-				<url>{$linkedinserverurl}/rest/linkedin/maps/map.json</url>
+				<url>{$twitterserverurl}/rest/twitter/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="authtoken">{$authtoken}</url-parameter>
 				<url-parameter name="authtokensecret">{$authtokensecret}</url-parameter>
-				<url-parameter name="kind">{$kind}</url-parameter>
+				<url-parameter name="query">{$query}</url-parameter>
 			</URL-connection>
 	
 			<REST-entity markup="entities" id="id" >

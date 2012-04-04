@@ -53,7 +53,7 @@ public class RestProvider {
             
             OAuthHelper auth = OAuthHelper.GetOAuth(RestProvider.API_KEY, authToken);
             api = new UrlHelper("http://api.linkedin.com/v1/people/~:(id,formatted-name,headline,public-profile-url,skills)");
-            auth.addOAuthParams(api, api.getUrl(), "GET", secret);
+            auth.addOAuthParams(api, "GET", secret);
             //api.addHeader("Authorization", meAuth.getOAuthHeader(meUrl, "GET", secret));
             api.addHeader("x-li-format", "json");
             api.openConnections();
@@ -67,7 +67,7 @@ public class RestProvider {
             
             auth = OAuthHelper.GetOAuth(RestProvider.API_KEY, authToken);
             api = new UrlHelper("http://api.linkedin.com/v1/people/~/connections:(id,formatted-name,headline,public-profile-url,skills)");
-            auth.addOAuthParams(api, api.getUrl(), "GET", secret);
+            auth.addOAuthParams(api, "GET", secret);
             api.addHeader("x-li-format", "json");
             api.openConnections();
             JsonNode connections = mapper.readTree(api.getStream());
@@ -107,11 +107,11 @@ public class RestProvider {
         }
     }
     
-    void getConnections(StoreHelper dataStore, String id, String authToken, String authTokenSecret) {
+    /*void getConnections(StoreHelper dataStore, String id, String authToken, String authTokenSecret) {
         try {
             OAuthHelper auth = OAuthHelper.GetOAuth(RestProvider.API_KEY, authToken);
             UrlHelper api = new UrlHelper("http://api.linkedin.com/v1/people/id=" + id + "/connections:(id,first-name,last-name)");
-            auth.addOAuthParams(api, api.getUrl(), "GET", RestProvider.API_SECRET + "&" + authTokenSecret);
+            auth.addOAuthParams(api, "GET", RestProvider.API_SECRET + "&" + authTokenSecret);
             api.addHeader("x-li-format", "json");
             api.openConnections();
             JsonNode connections = mapper.readTree(api.getStream());
@@ -129,7 +129,7 @@ public class RestProvider {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
+    }*/
     
     /*
     @Path("image-proxy")

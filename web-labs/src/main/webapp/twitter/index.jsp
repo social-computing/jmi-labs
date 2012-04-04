@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@page import="java.util.Map"%>
 <%@page import="com.socialcomputing.wps.server.planDictionnary.connectors.utils.OAuthHelper"%>
-<%@page import="com.socialcomputing.labs.linkedin.RestProvider"%>
+<%@page import="com.socialcomputing.labs.twitter.RestProvider"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <%
 String user_token = (String) session.getAttribute( "user_token");
@@ -40,7 +40,7 @@ if(user_token == null) {
 if(user_token != null) {
 %>
 <head>
-<title>Just Map It! Linkedin</title>
+<title>Just Map It! Twitter</title>
 <meta name="robots" content="index,follow" /> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
@@ -57,6 +57,11 @@ img {
 	border: 0;
 }
 </style>
+<%Boolean inverse = request.getParameter("Inverse") != null;
+String query = request.getParameter("query");
+if( query == null) {
+    query = "";
+ }%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
@@ -73,44 +78,40 @@ function JMIF_breadcrumbTitlesFunc(event) {
 }
 function getParams() {
 	var p = {
-		map: 'Linkedin',
-    	linkedinserverurl: 'http://labs.just-map-it.com',
-    	//linkedinserverurl: 'http://localhost:8080/web-labs',
+		map: 'Twitter',
+    	twitterserverurl: 'http://labs.just-map-it.com',
+    	//twitterserverurl: 'http://localhost:8080/web-labs',
     	authtoken: '<%=user_token%>',
     	authtokensecret: '<%=user_token_secret%>',
 		jsessionid: '<%=session.getId()%>',
 		inverted: 'false',
-		kind: ''
+		query: '<%=query%>'
     };
     return p;
 };
 function GoMap() {
 	var parameters = getParams();
 	parameters.analysisProfile='GlobalProfile';
-	var map = JMI.Map({
-				parent: 'map', 
-				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-				server: 'http://server.just-map-it.com', 
-				//server: 'http://localhost:8080/jmi-server/', 
-				//client: JMI.Map.SWF
-			});
-	map.addEventListener(JMI.Map.event.READY, function(event) {
-	} );
-	map.addEventListener(JMI.Map.event.ACTION, function(event) {
-		window[event.fn](event.map, event.args);
-	} );
-	map.addEventListener(JMI.Map.event.EMPTY, function(event) {
-	} );
-	map.addEventListener(JMI.Map.event.ERROR, function(event) {
-	} );
-	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
-	map.compute( parameters);
-
-	$('#kind').change(function(){
-		var parameters = getParams();
-		parameters.analysisProfile = "GlobalProfile";
-		$('#map')[0].JMI.compute( parameters);
-	});
+	if( parameters.query.length > 0) {
+		var map = JMI.Map({
+					parent: 'map', 
+					swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
+					server: 'http://server.just-map-it.com', 
+					//server: 'http://localhost:8080/jmi-server/', 
+					//client: JMI.Map.SWF
+				});
+		map.addEventListener(JMI.Map.event.READY, function(event) {
+		} );
+		map.addEventListener(JMI.Map.event.ACTION, function(event) {
+			window[event.fn](event.map, event.args);
+		} );
+		map.addEventListener(JMI.Map.event.EMPTY, function(event) {
+		} );
+		map.addEventListener(JMI.Map.event.ERROR, function(event) {
+		} );
+		breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+		map.compute( parameters);
+	}
 };
 function JMIF_Navigate(map, args) {
 	window.open( args[0], "_blank");
@@ -139,8 +140,10 @@ function JMIF_Center(map, args) {
 	<tr>
 		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
+			<input type="text" name="query" title="Query" size="80" value="<%=query%>" />
+			<input type="submit" value="Just Map It!" />
 		</td>
-		<td align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit.png" /></a></td>
+		<td align="right"><a title="Just Map It! Twitter" href="./"><img alt="Just Map It! Twitter" src="../images/justmapit.png" /></a></td>
 	</tr>
 </table>
 </form>
