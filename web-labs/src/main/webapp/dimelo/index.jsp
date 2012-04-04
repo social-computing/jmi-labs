@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Just Map It! Adisseo</title>
@@ -40,7 +40,7 @@ function getParams() {
 	var p = {
 		map: 'Adisseo',
     	dimeloserverurl: 'http://labs.just-map-it.com',
-    	//dimeloserverurl: 'http://192.168.1.11:8080/web-labs',
+    	//dimeloserverurl: 'http://localhost:8080/web-labs',
 		jsessionid: '<%=session.getId()%>',
 		inverted: <%=inverse%>,
 		query: '<%=query%>'
@@ -55,7 +55,7 @@ function GoMap() {
 					parent: 'map', 
 					swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
 					server: 'http://server.just-map-it.com', 
-					//server: 'http://192.168.1.11:8080/jmi-server/', 
+					//server: 'http://localhost:8080/jmi-server/', 
 					//client: JMI.Map.SWF
 				});
 		map.addEventListener(JMI.Map.event.READY, function(event) {

@@ -40,10 +40,10 @@ public class DimeloRestProvider {
     public String kind(@Context HttpServletRequest request, @QueryParam("query") String query) {
         HttpSession session = request.getSession(true);
         String key = query;
-        String result = null; //( String)session.getAttribute( key);
+        String result = ( String)session.getAttribute( key);
         if (result == null || result.length() == 0) {
             result = extract(query);
-            //session.setAttribute( key, result);
+            session.setAttribute( key, result);
         }
         return result;
     }
@@ -120,30 +120,19 @@ public class DimeloRestProvider {
                 urlVotes.closeConnections();
             }
             urlIdeas.closeConnections();
-/*            StringBuilder idUsers = new StringBuilder("[");
-            boolean first = true;
+
+            UrlHelper urlUsers = new UrlHelper( DimeloRestProvider.USER_API_URL + "/1.0/users");
+            urlUsers.addParameter( "access_token", DimeloRestProvider.ACCESS_TOKEN);
             for( Entity ent : storeHelper.getEntities().values()) {
-                if( first)
-                    first = false;
-                else
-                    idUsers.append(',');
-                idUsers.append(ent.getId());
-                ent.addProperty("name", ent.getId());
+                urlUsers.addParameter( "ids[]", ent.getId());
             }
-            idUsers.append(']');*/
-            for( Entity ent : storeHelper.getEntities().values()) {
-                UrlHelper urlUsers = new UrlHelper( DimeloRestProvider.USER_API_URL + "/1.0/users");
-                urlUsers.addParameter( "access_token", DimeloRestProvider.ACCESS_TOKEN);
-                //urlUsers.addParameter( "ids", idUsers.toString());
-                urlUsers.addParameter( "ids", ent.getId());
-                urlUsers.openConnections();
-                JsonNode users = mapper.readTree(urlUsers.getStream());
-                for (JsonNode user : (ArrayNode) users) {
-                    //Entity ent = storeHelper.getEntity(String.valueOf(user.get("id").getIntValue()));
-                    ent.addProperty("name", user.get("firstname").getTextValue() + " " + user.get("lastname").getTextValue());        
-                }
-                urlUsers.closeConnections();
+            urlUsers.openConnections();
+            JsonNode users = mapper.readTree(urlUsers.getStream());
+            for (JsonNode user : (ArrayNode) users) {
+                Entity ent = storeHelper.getEntity(String.valueOf(user.get("id").getIntValue()));
+                ent.addProperty("name", user.get("firstname").getTextValue() + " " + user.get("lastname").getTextValue());        
             }
+            urlUsers.closeConnections();
         }
         catch (Exception e) {
             return StoreHelper.ErrorToJson(e);
