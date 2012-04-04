@@ -41,7 +41,7 @@ public class RestProvider {
         String result = ( String)session.getAttribute( key);
         if (result == null || result.length() == 0) {
             result = extract(authToken, authTokenSecret, query);
-            //session.setAttribute( key, result);
+            session.setAttribute( key, result);
         }
         return result;
     }

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@page import="java.util.Map"%>
 <%@page import="com.socialcomputing.wps.server.planDictionnary.connectors.utils.OAuthHelper"%>
 <%@page import="com.socialcomputing.labs.twitter.RestProvider"%>
@@ -66,7 +66,7 @@ if( query == null) {
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript">
-var breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'All your contacts and their skills' };
+var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query%>'};
 function JMIF_breadcrumbTitlesFunc(event) {
 	if( event.type === JMI.Map.event.EMPTY) {
 		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
