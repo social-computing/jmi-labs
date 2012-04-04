@@ -22,6 +22,14 @@
         <slice inCol="255 182 0" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
     </sat>
 
+<!-- Cur Image -->
+	<sat shape="voidShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
+		<transfo map="interpol" scale="0">
+			<polar dir="180" rad="0" />
+		</transfo>
+		<slice image="/images/person.png" transfo="imgTrf" alpha="1" linewidth="1" />
+	</sat>
+	
 <!-- Rest Titles -->
     <sat shape="voidShp" click="clickEvt" dblClk="dblClkEvt" isTip="true" isSub="true" isVisible="true" isSuper="true" isCur="false" isRest="true" isBack="false" isNoSided="false">
         <transfo map="interpol" scale="0">
