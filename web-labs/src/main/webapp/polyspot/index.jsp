@@ -45,9 +45,9 @@ function JMIF_breadcrumbTitlesFunc(event) {
 function GoMap() {
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
-	parameters.analysisProfile = "GlobalProfile";
-	parameters.query = "<%=java.net.URLEncoder.encode(query, "UTF-8")%>";
-	parameters.field = "<%=java.net.URLEncoder.encode(field, "UTF-8")%>";
+	parameters.analysisProfile = 'GlobalProfile';
+	parameters.query = '<%=query%>';
+	parameters.field = '<%=field%>';
 	if( parameters.query.length > 0) {
 		var map = JMI.Map({
 					parent: 'map', 
@@ -66,7 +66,7 @@ function GoMap() {
 		} );
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 		} );
-		breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+		//var breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
 		map.compute( parameters);
 	}
 };

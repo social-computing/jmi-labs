@@ -137,10 +137,17 @@ function JMIF_Center(map, args) {
 <form id="main" method="get">
 <table width="100%" border="0">
 	<tr>
-		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
+		<td rowspan="2"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
+<script src="//platform.linkedin.com/in.js" type="text/javascript"></script>
+<script type="IN/Share" data-url="http://labs.just-map-it.com/linkedin/" data-counter="right"></script>
 		</td>
-		<td align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit.png" /></a></td>
+		<td rowspan="2" align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit.png" /></a></td>
+	</tr>
+	<tr>
+		<td>
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://labs.just-map-it.com/linkedin/">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>		</td>
 	</tr>
 </table>
 </form>
