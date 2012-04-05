@@ -8,7 +8,7 @@
 	<entities>
 		<REST-entities name="SpreadSheet" type="json" invert="{$inverted}" >
 			<URL-connection type="GET">
-				<url>{$dimeloserverurl}/rest/dimelo/maps/map.json</url>
+				<url>{$spreadsheetserverurl}/rest/spreadsheet/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="query">{$query}</url-parameter>
 				<url-parameter name="inverted">{$inverted}</url-parameter>
