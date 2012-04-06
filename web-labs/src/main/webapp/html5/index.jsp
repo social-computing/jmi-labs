@@ -27,9 +27,8 @@ function GoMap() {
 	mapHtml5 = JMI.Map({
 				parent: 'mapHtml5', 
 				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-				server: 'http://server.just-map-it.com', 
-				//client: JMI.Map.SWF,
-				parameters: parameters
+				server: 'http://server.just-map-it.com' 
+				//client: JMI.Map.SWF
 			});
 	mapHtml5.addEventListener(JMI.Map.event.READY, function(event) {
 		document.getElementById('titleHtml5').innerHTML = event.map.type;
@@ -58,8 +57,7 @@ function GoMap() {
 				parent: 'mapFlex', 
 				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
 				server: 'http://server.just-map-it.com', 
-				client: JMI.Map.SWF,
-				parameters: parameters
+				client: JMI.Map.SWF
 			});
 	mapFlex.addEventListener(JMI.Map.event.READY, function(event) {
 		document.getElementById('titleFlex').innerHTML = event.map.type;

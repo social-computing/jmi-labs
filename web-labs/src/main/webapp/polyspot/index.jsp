@@ -52,9 +52,8 @@ function GoMap() {
 		var map = JMI.Map({
 					parent: 'map', 
 					swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-					server: 'http://server.just-map-it.com', 
-					//server: 'http://localhost:8080/jmi-server/', 
-					//client: JMI.Map.SWF
+					server: 'http://server.just-map-it.com'
+					//server: 'http://localhost:8080/jmi-server/'
 				});
 		map.addEventListener(JMI.Map.event.READY, function(event) {
 			//document.getElementById("message").innerHTML = breadcrumb.cuurent().longTitle;
@@ -66,7 +65,7 @@ function GoMap() {
 		} );
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 		} );
-		//var breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+		var breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
 		map.compute( parameters);
 	}
 };

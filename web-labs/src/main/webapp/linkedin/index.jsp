@@ -35,12 +35,13 @@ if(user_token == null) {
 	    session.setAttribute( "oauth_token_secret", oauth_token_secret);
 	%>
 		</head>
-		    <!--meta http-equiv="refresh" content="0; url=<%=RestProvider.OAUTH_URL%>?oauth_token=<%=oauth_token%>&oauth_token_secret=<%=oauth_token_secret%>" /-->
-			<title>Redirection</title>
-			<meta name="robots" content="noindex,follow" />
+		    <meta http-equiv="refresh" content="0; url=<%=RestProvider.OAUTH_URL%>?oauth_token=<%=java.net.URLEncoder.encode(oauth_token,"UTF-8")%>&oauth_token_secret=<%=java.net.URLEncoder.encode(oauth_token_secret,"UTF-8")%>" />
+			<title>Just Map It! Linkedin</title>
+			<meta name="robots" content="index,follow" />
 		</head>
 		<body>
-		<script> top.location.href='<%=RestProvider.OAUTH_URL%>?oauth_token=<%=java.net.URLEncoder.encode(oauth_token,"UTF-8")%>&oauth_token_secret=<%=java.net.URLEncoder.encode(oauth_token_secret,"UTF-8")%>'</script>
+		<p><a href="<%=RestProvider.OAUTH_URL%>?oauth_token=<%=oauth_token %>&oauth_token_secret=<%=oauth_token_secret%>">Redirection</a></p>
+		<!-- script> top.location.href='<%=RestProvider.OAUTH_URL%>?oauth_token=<%=java.net.URLEncoder.encode(oauth_token,"UTF-8")%>&oauth_token_secret=<%=java.net.URLEncoder.encode(oauth_token_secret,"UTF-8")%>'</script-->
 		</body>
 	<%}
 }
@@ -97,8 +98,8 @@ function GoMap() {
 	var map = JMI.Map({
 				parent: 'map', 
 				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-				server: 'http://server.just-map-it.com', 
-				//server: 'http://localhost:8080/jmi-server/', 
+				server: 'http://server.just-map-it.com' 
+				//server: 'http://localhost:8080/jmi-server/'
 				//client: JMI.Map.SWF
 			});
 	map.addEventListener(JMI.Map.event.READY, function(event) {
