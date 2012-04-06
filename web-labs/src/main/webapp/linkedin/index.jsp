@@ -3,146 +3,46 @@
 <%@page import="com.socialcomputing.wps.server.planDictionnary.connectors.utils.OAuthHelper"%>
 <%@page import="com.socialcomputing.labs.linkedin.RestProvider"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<%
-String user_token = (String) session.getAttribute( "user_token");
-String user_token_secret = (String) session.getAttribute( "user_token_secret");
-String oauth_verifier = null;
-if(user_token == null) {
-    String oauth_token = request.getParameter("oauth_token");
-    String oauth_token_secret = request.getParameter("oauth_token_secret");
-    oauth_verifier = request.getParameter("oauth_verifier");
-	if( oauth_token != null) {
-	    oauth_token_secret = (String) session.getAttribute( "oauth_token_secret");
-	    Map<String,String> result = null;
-	    try {
-	    	result = OAuthHelper.GetAccessToken(RestProvider.ACCESS_TOKEN_URL, RestProvider.API_KEY, RestProvider.API_SECRET, oauth_token_secret, oauth_token, oauth_verifier);
-	    } catch(Exception e) {
-	        oauth_token = null;
-	    }
-	    if( result != null) {
-		    user_token = result.get( "oauth_token");
-		    user_token_secret = result.get( "oauth_token_secret");
-		    session.setAttribute( "user_token", user_token);
-		    session.setAttribute( "user_token_secret", user_token_secret);
-	    }
-	}
-	if( oauth_token == null) {
-	    Map<String,String> result = OAuthHelper.GetRequestToken( RestProvider.REQUEST_TOKEN_URL, RestProvider.CALLBACK, RestProvider.API_KEY, RestProvider.API_SECRET);
-	    oauth_token = result.get( "oauth_token");
-	    oauth_token_secret = result.get( "oauth_token_secret");
-	    oauth_verifier = result.get( "oauth_verifier");
-	    session.setAttribute( "oauth_token", oauth_token);
-	    session.setAttribute( "oauth_token_secret", oauth_token_secret);
-	%>
-		</head>
-		    <meta http-equiv="refresh" content="0; url=<%=RestProvider.OAUTH_URL%>?oauth_token=<%=java.net.URLEncoder.encode(oauth_token,"UTF-8")%>&oauth_token_secret=<%=java.net.URLEncoder.encode(oauth_token_secret,"UTF-8")%>" />
-			<title>Just Map It! Linkedin</title>
-			<meta name="robots" content="index,follow" />
-		</head>
-		<body>
-		<p><a href="<%=RestProvider.OAUTH_URL%>?oauth_token=<%=oauth_token %>&oauth_token_secret=<%=oauth_token_secret%>">Redirection</a></p>
-		<!-- script> top.location.href='<%=RestProvider.OAUTH_URL%>?oauth_token=<%=java.net.URLEncoder.encode(oauth_token,"UTF-8")%>&oauth_token_secret=<%=java.net.URLEncoder.encode(oauth_token_secret,"UTF-8")%>'</script-->
-		</body>
-	<%}
-}
-if(user_token != null) {
-%>
 <head>
 <title>Just Map It! Linkedin</title>
 <meta name="robots" content="index,follow" /> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="content-language" content="en" />
 <meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
+<meta name="description" content="View and navigate your Linkedin contacts thru an interactive map! by Social Computing" />
+<meta name="keywords" content="map, cartography, visualization, social computing, representation, information, skill, skills, talent, linkedin" />
+<meta name="author" content="Social Computing" /> 
+<meta property="og:title" content="Just Map It! Linkedin" />
+<meta property="og:description" content="View and navigate your Linkedin contacts thru an interactive map! by Social Computing" />
+<meta property="og:image" content="http://labs.just-map-it.com/images/thumbnail-linkedin.png" />
 <style type="text/css" media="screen">
 html, body {
 	height: 100%;
-}
-#map {
-	width: 100%;
-	height: 80%;
 	background-color: #FFFFFF;
+	font-family: Arial, Helvetica, 'Nimbus Sans L', sans-serif;
+}
+#explain {
+  width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #006699;
+  font-size:24px;
+}
+#go, #go a {
+  width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  color: #006699;
+  font-size:16px;
 }
 img {
 	border: 0;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
-<script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
-<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript">
-var breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'All your contacts and their skills' };
-function JMIF_breadcrumbTitlesFunc(event) {
-	if( event.type === JMI.Map.event.EMPTY) {
-		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
-	}
-	if( event.type === JMI.Map.event.ERROR) {
-		return {shortTitle: 'Sorry, an error occured.', longTitle: 'Sorry, an error occured. Error: ' + event.message};
-	}
-	return breadcrumbTitles;
-}
-function getParams() {
-	var p = {
-		map: 'Linkedin',
-    	linkedinserverurl: 'http://labs.just-map-it.com',
-    	//linkedinserverurl: 'http://localhost:8080/web-labs',
-    	authtoken: '<%=user_token%>',
-    	authtokensecret: '<%=user_token_secret%>',
-		jsessionid: '<%=session.getId()%>',
-		inverted: 'false',
-		kind: ''
-    };
-    return p;
-};
-function GoMap() {
-	var parameters = getParams();
-	parameters.analysisProfile='GlobalProfile';
-	var map = JMI.Map({
-				parent: 'map', 
-				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-				server: 'http://server.just-map-it.com' 
-				//server: 'http://localhost:8080/jmi-server/'
-				//client: JMI.Map.SWF
-			});
-	map.addEventListener(JMI.Map.event.READY, function(event) {
-	} );
-	map.addEventListener(JMI.Map.event.ACTION, function(event) {
-		window[event.fn](event.map, event.args);
-	} );
-	map.addEventListener(JMI.Map.event.EMPTY, function(event) {
-	} );
-	map.addEventListener(JMI.Map.event.ERROR, function(event) {
-	} );
-	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
-	map.compute( parameters);
-
-	$('#kind').change(function(){
-		var parameters = getParams();
-		parameters.analysisProfile = "GlobalProfile";
-		$('#map')[0].JMI.compute( parameters);
-	});
-};
-function JMIF_Navigate(map, args) {
-	window.open( args[0], "_blank");
-}
-function JMIF_Focus(map, args) {
-	var parameters = getParams();
-	parameters.entityId = args[0];
-	breadcrumbTitles.shortTitle = "Focus";
-	breadcrumbTitles.longTitle = "Focus on: " + args[1];
-	map.compute( parameters);
-}
-function JMIF_Center(map, args) {
-	var parameters = getParams();
-	parameters.attributeId = args[0];
-	parameters.analysisProfile = "DiscoveryProfile";
-	breadcrumbTitles.shortTitle = "Centered";
-	breadcrumbTitles.longTitle = "Centered on: " + args[1];
-	map.compute( parameters);
-}
-</script>
 <jsp:include page="../ga.jsp" />
 </head>
-<body onload="GoMap()">
-<form id="main" method="get">
+<body>
 <table width="100%" border="0">
 	<tr>
 		<td rowspan="2"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
@@ -158,9 +58,15 @@ function JMIF_Center(map, args) {
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>		</td>
 	</tr>
 </table>
-</form>
-<div id="breadcrumb">&nbsp;</div>
-<div id="map"></div>
+<div id="explain">
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>Just Map It! Linkedin helps you understand how your LinkedIn contacts are connected through their Skills.</p>
+	<p>You can navigate from contact to contact (Center) or see whom in your contacts are sharing one skill ...</p>
+</div>
+<div id="go">
+	<p><a title="Just Map It! Linkedin" href="map.jsp"><img alt="Just Map It! Linkedin" src="../images/linkedin-in.png" /></a>
+	<br/><a title="Just Map It! Linkedin" href="map.jsp">Click to try!</a></p>
+</div>
 </body>
-<%}%>
 </html>
