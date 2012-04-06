@@ -11,6 +11,21 @@ if(user_token == null) {
     String oauth_token = request.getParameter("oauth_token");
     String oauth_token_secret = request.getParameter("oauth_token_secret");
     oauth_verifier = request.getParameter("oauth_verifier");
+	if( oauth_token != null) {
+	    oauth_token_secret = (String) session.getAttribute( "oauth_token_secret");
+	    Map<String,String> result = null;
+	    try {
+	    	result = OAuthHelper.GetAccessToken(RestProvider.ACCESS_TOKEN_URL, RestProvider.API_KEY, RestProvider.API_SECRET, oauth_token_secret, oauth_token, oauth_verifier);
+	    } catch(Exception e) {
+	        oauth_token = null;
+	    }
+	    if( result != null) {
+		    user_token = result.get( "oauth_token");
+		    user_token_secret = result.get( "oauth_token_secret");
+		    session.setAttribute( "user_token", user_token);
+		    session.setAttribute( "user_token_secret", user_token_secret);
+	    }
+	}
 	if( oauth_token == null) {
 	    Map<String,String> result = OAuthHelper.GetRequestToken( RestProvider.REQUEST_TOKEN_URL, RestProvider.CALLBACK, RestProvider.API_KEY, RestProvider.API_SECRET);
 	    oauth_token = result.get( "oauth_token");
@@ -20,22 +35,14 @@ if(user_token == null) {
 	    session.setAttribute( "oauth_token_secret", oauth_token_secret);
 	%>
 		</head>
-		    <meta http-equiv="refresh" content="0; url=<%=RestProvider.OAUTH_URL%>?oauth_token=<%=oauth_token%>&oauth_token_secret=<%=oauth_token_secret%>" />
+		    <!--meta http-equiv="refresh" content="0; url=<%=RestProvider.OAUTH_URL%>?oauth_token=<%=oauth_token%>&oauth_token_secret=<%=oauth_token_secret%>" /-->
 			<title>Redirection</title>
 			<meta name="robots" content="noindex,follow" />
 		</head>
 		<body>
-		<p><a href="<%=RestProvider.OAUTH_URL%>?oauth_token=<%=oauth_token %>&oauth_token_secret=<%=oauth_token_secret%>">Redirection</a></p>
+		<script> top.location.href='<%=RestProvider.OAUTH_URL%>?oauth_token=<%=java.net.URLEncoder.encode(oauth_token,"UTF-8")%>&oauth_token_secret=<%=java.net.URLEncoder.encode(oauth_token_secret,"UTF-8")%>'</script>
 		</body>
-	<%
-	} else {
-	    oauth_token_secret = (String) session.getAttribute( "oauth_token_secret");
-	    Map<String,String> result = OAuthHelper.GetAccessToken(RestProvider.ACCESS_TOKEN_URL, RestProvider.API_KEY, RestProvider.API_SECRET, oauth_token_secret, oauth_token, oauth_verifier);
-	    user_token = result.get( "oauth_token");
-	    user_token_secret = result.get( "oauth_token_secret");
-	    session.setAttribute( "user_token", user_token);
-	    session.setAttribute( "user_token_secret", user_token_secret);
-	}
+	<%}
 }
 if(user_token != null) {
 %>
