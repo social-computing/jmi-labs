@@ -10,7 +10,7 @@
 <meta http-equiv="content-language" content="en" />
 <meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
 <meta name="description" content="View and navigate your Linkedin contacts thru an interactive map! by Social Computing" />
-<meta name="keywords" content="map, cartography, visualization, social computing, representation, information, skill, skills, talent, linkedin" />
+<meta name="keywords" content="just map it, map, cartography, dataviz, visualization, data visualization, social computing, representation, information, skill, skills, competence, expert, expertise, talent, linkedin" />
 <meta name="author" content="Social Computing" /> 
 <meta property="og:title" content="Just Map It! Linkedin" />
 <meta property="og:description" content="View and navigate your Linkedin contacts thru an interactive map! by Social Computing" />
@@ -50,12 +50,16 @@ img {
 <script src="//platform.linkedin.com/in.js" type="text/javascript"></script>
 <script type="IN/Share" data-url="http://labs.just-map-it.com/linkedin/" data-counter="right"></script>
 		</td>
+		<td rowspan="2">
+<iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Flabs.just-map-it.com%2Flinkedin%2F&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=arial&amp;height=35&amp;appId=136353756473765" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>		</td>
 		<td rowspan="2" align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit.png" /></a></td>
 	</tr>
 	<tr>
 		<td>
 <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://labs.just-map-it.com/linkedin/">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>		</td>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+		</td>
+		<td></td>
 	</tr>
 </table>
 <div id="explain">

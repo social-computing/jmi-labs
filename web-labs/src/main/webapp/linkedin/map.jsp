@@ -49,7 +49,7 @@ if(user_token != null) {
 %>
 <head>
 <title>Just Map It! Linkedin</title>
-<meta name="robots" content="index,follow" /> 
+<meta name="robots" content="noindex,nofollow" /> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
 <link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
@@ -155,12 +155,16 @@ function JMIF_Center(map, args) {
 <script src="//platform.linkedin.com/in.js" type="text/javascript"></script>
 <script type="IN/Share" data-url="http://labs.just-map-it.com/linkedin/" data-counter="right"></script>
 		</td>
+		<td>
+<iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Flabs.just-map-it.com%2Flinkedin%2F&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=arial&amp;height=35&amp;appId=136353756473765" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>		</td>
 		<td rowspan="2" align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit.png" /></a></td>
 	</tr>
 	<tr>
 		<td>
 <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://labs.just-map-it.com/linkedin/">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>		</td>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+		</td>
+		<td></td>
 	</tr>
 </table>
 </form>
