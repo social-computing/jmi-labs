@@ -157,7 +157,7 @@ function JMIF_Center(map, args) {
 		</td>
 		<td>
 <iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Flabs.just-map-it.com%2Flinkedin%2F&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=arial&amp;height=35&amp;appId=136353756473765" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>		</td>
-		<td rowspan="2" align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit.png" /></a></td>
+		<td rowspan="2" align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit_linkedin.png" /></a></td>
 	</tr>
 	<tr>
 		<td>

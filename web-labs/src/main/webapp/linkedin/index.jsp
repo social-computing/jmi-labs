@@ -9,10 +9,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="content-language" content="en" />
 <meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
-<meta name="description" content="View and navigate your Linkedin contacts thru an interactive map! by Social Computing" />
+<meta name="description" content="Just Map It! Linkedin helps you understand how your LinkedIn contacts are connected through their Skills. You can navigate from contact to contact (Center) or see whom in your contacts are sharing one skill." />
 <meta name="keywords" content="just map it, map, cartography, dataviz, visualization, data visualization, social computing, representation, information, skill, skills, competence, expert, expertise, talent, linkedin" />
 <meta name="author" content="Social Computing" /> 
 <meta property="og:title" content="Just Map It! Linkedin" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://labs.just-map-it.com/linkedin/" />
 <meta property="og:description" content="View and navigate your Linkedin contacts thru an interactive map! by Social Computing" />
 <meta property="og:image" content="http://labs.just-map-it.com/images/thumbnail-linkedin.png" />
 <style type="text/css" media="screen">
@@ -52,7 +54,7 @@ img {
 		</td>
 		<td rowspan="2">
 <iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Flabs.just-map-it.com%2Flinkedin%2F&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=arial&amp;height=35&amp;appId=136353756473765" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:35px;" allowTransparency="true"></iframe>		</td>
-		<td rowspan="2" align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit.png" /></a></td>
+		<td rowspan="2" align="right"><a title="Just Map It! Linkedin" href="./"><img alt="Just Map It! Linkedin" src="../images/justmapit_linkedin.png" /></a></td>
 	</tr>
 	<tr>
 		<td>

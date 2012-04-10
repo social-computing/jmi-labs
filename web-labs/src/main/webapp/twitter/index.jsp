@@ -142,7 +142,7 @@ function JMIF_Center(map, args) {
 			<input type="text" name="query" title="Query" size="80" value="<%=query%>" />
 			<input type="submit" value="Just Map It!" />
 		</td>
-		<td align="right"><a title="Just Map It! Twitter" href="./"><img alt="Just Map It! Twitter" src="../images/justmapit.png" /></a></td>
+		<td align="right"><a title="Just Map It! Twitter" href="./"><img alt="Just Map It! Twitter" src="../images/justmapit_twitter.png" /></a></td>
 	</tr>
 </table>
 </form>

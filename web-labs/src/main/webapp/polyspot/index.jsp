@@ -113,7 +113,7 @@ function JMIF_CompleteParameters( parameters) {
 	<tr>
 		<td rowspan="3"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td class="label" ><b>Enter query:</b></td>
-		<td rowspan="3"align="right"><a title="Just Map It! Polyspot" href="./"><img alt="Just Map It! Syllabs" src="../images/justmapit.png" /></a></td>
+		<td rowspan="3"align="right"><a title="Just Map It! Polyspot" href="./"><img alt="Just Map It! Polyspot" src="../images/justmapit_polyspot.png" /></a></td>
 	</tr>
 	<tr>
 		<td>
