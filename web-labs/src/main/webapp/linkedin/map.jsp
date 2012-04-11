@@ -52,7 +52,7 @@ if(user_token != null) {
 <meta name="robots" content="noindex,nofollow" /> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=no"/>
-<link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
+<link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <style type="text/css" media="screen">
 html, body {
 	height: 100%;
@@ -102,7 +102,7 @@ function GoMap() {
 	parameters.analysisProfile='GlobalProfile';
 	var map = JMI.Map({
 				parent: 'map', 
-				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
+				swf: '../jmi-client/swf/jmi-flex-1.0-SNAPSHOT.swf', 
 				server: 'http://server.just-map-it.com' 
 				//server: 'http://localhost:8080/jmi-server/'
 				//client: JMI.Map.SWF

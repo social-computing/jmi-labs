@@ -5,7 +5,7 @@
 <meta name="robots" content="index,follow" /> 
 <meta name="viewport" content="target- densitydpi=device-dpi, width=device-width, user-scalable=yes"/>
 <meta property="og:image" content="http://labs.just-map-it.com/images/html5-logo.png" />
-<link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
+<link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
 var mapHtml5, mapFlex;
@@ -26,8 +26,8 @@ function GoMap() {
 	parameters.analysisProfile='GlobalProfile';
 	mapHtml5 = JMI.Map({
 				parent: 'mapHtml5', 
-				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
-				server: 'http://server.just-map-it.com' 
+				swf: '../jmi-client/swf/jmi-flex-1.0-SNAPSHOT.swf', 
+				server: 'http://server.just-map-it.com'
 				//client: JMI.Map.SWF
 			});
 	mapHtml5.addEventListener(JMI.Map.event.READY, function(event) {
@@ -55,7 +55,7 @@ function GoMap() {
 	mapHtml5.compute(parameters);
 	mapFlex = JMI.Map({
 				parent: 'mapFlex', 
-				swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
+				swf: '../jmi-client/swf/jmi-flex-1.0-SNAPSHOT.swf', 
 				server: 'http://server.just-map-it.com', 
 				client: JMI.Map.SWF
 			});

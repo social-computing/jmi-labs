@@ -1,5 +1,10 @@
 package com.socialcomputing.labs.linkedin;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
@@ -12,7 +17,10 @@ import javax.ws.rs.core.MediaType;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.socialcomputing.labs.rest.LabsRest;
 import com.socialcomputing.wps.server.planDictionnary.connectors.WPSConnectorException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
@@ -22,6 +30,7 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper
 
 @Path("/linkedin")
 public class RestProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(LabsRest.class);
     
     public static final String API_KEY = "ejwzc9lafbwj";
     public static final String API_SECRET = "lNcgxo8yL1p0CsTp";
@@ -83,7 +92,22 @@ public class RestProvider {
             api.closeConnections();
         }
         catch (WPSConnectorException e) {
-            return StoreHelper.ErrorToJson( api.getResponseCode(), api.getResult(), null);
+            String r = api.getResult();
+            StringBuilder sb = new StringBuilder();
+            sb.append("Linkedin response\n").append(r);
+            sb.append("\nLinkedin headers\n");
+            Map<String,List<String>> map = api.getConnection().getHeaderFields();
+            if( map != null) {
+                for(String k: map.keySet()) {
+                    sb.append(k).append(": ");
+                    for( String v : map.get(k)) {
+                        sb.append(v).append(" ");
+                    }
+                    sb.append("\n");
+                }
+            }
+            LOG.debug(sb.toString());
+            return StoreHelper.ErrorToJson( api.getResponseCode(), r, null);
         }
         catch (Exception e) {
             return StoreHelper.ErrorToJson(e);

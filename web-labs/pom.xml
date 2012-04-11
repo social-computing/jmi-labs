@@ -88,31 +88,18 @@
     	<version>2.3</version>
 	</dependency>
 	
-	<dependency>
-      <groupId>com.google.api-client</groupId>
-      <artifactId>google-api-client</artifactId>
-      <version>1.7.0-beta</version>
-    </dependency>
    <dependency>
       <groupId>com.google.oauth-client</groupId>
       <artifactId>google-oauth-client-servlet</artifactId>
       <version>1.7.0-beta</version>
     </dependency>
 	
-	<!-- Jmi flex client -->
+	<!-- Jmi client -->
     <dependency>
-      <groupId>com.socialcomputing.jmi.jmi</groupId>
-      <artifactId>jmi-flex</artifactId>
+      <groupId>com.socialcomputing.jmi.jmi-client</groupId>
+      <artifactId>jmi-canvas</artifactId>
       <version>1.0-SNAPSHOT</version>
-      <type>swf</type>
-      <scope>runtime</scope>      
-    </dependency>
-	
-    <dependency>
-      <groupId>com.socialcomputing.jmi.jmi</groupId>
-      <artifactId>jmi-viadeo</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <type>swf</type>
+      <type>jar</type>
       <scope>runtime</scope>      
     </dependency>
 	
@@ -157,6 +144,22 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+        <configuration>
+
+          <overlays>
+            <overlay>
+              <groupId>com.socialcomputing.jmi.jmi-client</groupId>
+              <artifactId>jmi-canvas</artifactId>
+              <type>jar</type>
+              <targetPath>/</targetPath>
+            </overlay>
+          </overlays>          
+        </configuration>
       </plugin>
 	</plugins>
 	<pluginManagement>

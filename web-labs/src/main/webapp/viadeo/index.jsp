@@ -95,7 +95,7 @@ $(document).ready(function() {
    attributes.name = "jmi-viadeo";
    attributes.align = "middle";
    swfobject.embedSWF(
-           "../client/flex/jmi-flex-1.0-SNAPSHOT.swf", "flashContent", 
+           "../jmi-client/swf/jmi-flex-1.0-SNAPSHOT.swf", "flashContent", 
            "100%", "100%", 
            swfVersionStr, xiSwfUrlStr, 
            flashvars, params, attributes);

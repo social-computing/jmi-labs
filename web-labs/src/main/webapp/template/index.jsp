@@ -23,7 +23,7 @@ String query = request.getParameter("query");
 if( query == null) {
     query = "";
  }%>
-<link rel="stylesheet" type="text/css" href="../jmi-client/jmi-client.css" />
+<link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
 var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query%>' };
@@ -53,9 +53,9 @@ function GoMap() {
 	if( parameters.query.length > 0) {
 		var map = JMI.Map({
 					parent: 'map', 
-					swf: '../jmi-client/jmi-flex-1.0-SNAPSHOT.swf', 
+					swf: '../jmi-client/swf/jmi-flex-1.0-SNAPSHOT.swf', 
 					//server: 'http://server.just-map-it.com', 
-					server: 'http://localhost:8080/jmi-server/', 
+					server: 'http://localhost:8080/jmi-server/' 
 					//client: JMI.Map.SWF
 				});
 		map.addEventListener(JMI.Map.event.READY, function(event) {

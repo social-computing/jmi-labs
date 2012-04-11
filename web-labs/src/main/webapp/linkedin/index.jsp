@@ -13,9 +13,7 @@
 <meta name="keywords" content="just map it, map, cartography, dataviz, visualization, data visualization, social computing, representation, information, skill, skills, competence, expert, expertise, talent, linkedin" />
 <meta name="author" content="Social Computing" /> 
 <meta property="og:title" content="Just Map It! Linkedin" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://labs.just-map-it.com/linkedin/" />
-<meta property="og:description" content="View and navigate your Linkedin contacts thru an interactive map! by Social Computing" />
+<meta property="og:description" content="Just Map It! Linkedin helps you understand how your LinkedIn contacts are connected through their Skills. You can navigate from contact to contact (Center) or see whom in your contacts are sharing one skill." />
 <meta property="og:image" content="http://labs.just-map-it.com/images/thumbnail-linkedin.png" />
 <style type="text/css" media="screen">
 html, body {
