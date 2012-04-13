@@ -102,7 +102,7 @@ function GoMap() {
 	parameters.analysisProfile='GlobalProfile';
 	var map = JMI.Map({
 				parent: 'map', 
-				swf: '../jmi-client/swf/jmi-flex-1.0-SNAPSHOT.swf', 
+				clientUrl: '../jmi-client/', 
 				server: 'http://server.just-map-it.com' 
 				//server: 'http://localhost:8080/jmi-server/'
 				//client: JMI.Map.SWF

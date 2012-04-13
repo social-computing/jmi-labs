@@ -26,7 +26,7 @@ function GoMap() {
 	parameters.analysisProfile='GlobalProfile';
 	mapHtml5 = JMI.Map({
 				parent: 'mapHtml5', 
-				swf: '../jmi-client/swf/jmi-flex-1.0-SNAPSHOT.swf', 
+				clientUrl: '../jmi-client/', 
 				server: 'http://server.just-map-it.com'
 				//client: JMI.Map.SWF
 			});
@@ -55,7 +55,7 @@ function GoMap() {
 	mapHtml5.compute(parameters);
 	mapFlex = JMI.Map({
 				parent: 'mapFlex', 
-				swf: '../jmi-client/swf/jmi-flex-1.0-SNAPSHOT.swf', 
+				clientUrl: '../jmi-client/', 
 				server: 'http://server.just-map-it.com', 
 				client: JMI.Map.SWF
 			});
