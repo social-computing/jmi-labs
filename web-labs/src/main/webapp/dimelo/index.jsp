@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Just Map It! Adisseo</title>
@@ -26,7 +26,7 @@ if( query == null) {
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
-var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query%>' };
+var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query.replace("'", "\\'")%>' };
 function JMIF_breadcrumbTitlesFunc(event) {
 	if( event.type === JMI.Map.event.EMPTY) {
 		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
@@ -37,15 +37,14 @@ function JMIF_breadcrumbTitlesFunc(event) {
 	return breadcrumbTitles;
 }
 function getParams() {
-	var p = {
+	return {
 		map: 'Adisseo',
     	dimeloserverurl: 'http://labs.just-map-it.com',
     	//dimeloserverurl: 'http://localhost:8080/web-labs',
 		jsessionid: '<%=session.getId()%>',
 		inverted: <%=inverse%>,
-		query: '<%=query%>'
+		query: '<%=query.replace("'", "\\'")%>'
     };
-    return p;
 };
 function GoMap() {
 	var parameters = getParams();
@@ -97,7 +96,7 @@ function JMIF_Center(map, args) {
 	<tr>
 		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
-			<input type="text" name="query" title="Query" size="80" value="<%=query%>" />
+			<input type="text" name="query" title="Query" size="80" value="<%=query.replace("\"", "&quot;")%>" />
 			<input type="submit" value="Just Map It!" />
 			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
 		</td>

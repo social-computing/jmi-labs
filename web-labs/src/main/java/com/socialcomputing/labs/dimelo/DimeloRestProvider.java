@@ -129,7 +129,7 @@ public class DimeloRestProvider {
             urlUsers.openConnections();
             JsonNode users = mapper.readTree(urlUsers.getStream());
             for (JsonNode user : (ArrayNode) users) {
-                Entity ent = storeHelper.getEntity(String.valueOf(user.get("id").getIntValue()));
+                Entity ent = storeHelper.addEntity(String.valueOf(user.get("id").getIntValue()));
                 ent.addProperty("name", user.get("firstname").getTextValue() + " " + user.get("lastname").getTextValue());        
             }
             urlUsers.closeConnections();
@@ -139,4 +139,12 @@ public class DimeloRestProvider {
         }
         return storeHelper.toJson();
     }
+    
+    // Idead from id
+    // /1.0/feedbacks/:id
+    
+    // Search
+    // /1.0/feedbacks
+    // limit
+    // user_id
 }

@@ -66,7 +66,7 @@ if( query == null) {
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript">
-var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query%>'};
+var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query.replace("'", "\\'")%>'};
 function JMIF_breadcrumbTitlesFunc(event) {
 	if( event.type === JMI.Map.event.EMPTY) {
 		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
@@ -85,7 +85,7 @@ function getParams() {
     	authtokensecret: '<%=user_token_secret%>',
 		jsessionid: '<%=session.getId()%>',
 		inverted: 'false',
-		query: '<%=query%>'
+		query: '<%=query.replace("'", "\\'")%>'
     };
     return p;
 };
@@ -139,7 +139,7 @@ function JMIF_Center(map, args) {
 	<tr>
 		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
-			<input type="text" name="query" title="Query" size="80" value="<%=query%>" />
+			<input type="text" name="query" title="Query" size="80" value="<%=query.replace("\"", "&quot;")%>" />
 			<input type="submit" value="Just Map It!" />
 		</td>
 		<td align="right"><a title="Just Map It! Twitter" href="./"><img alt="Just Map It! Twitter" src="../images/justmapit_twitter.png" /></a></td>

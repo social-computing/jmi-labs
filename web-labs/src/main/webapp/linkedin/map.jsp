@@ -85,7 +85,7 @@ function JMIF_breadcrumbTitlesFunc(event) {
 	return breadcrumbTitles;
 }
 function getParams() {
-	var p = {
+	return {
 		map: 'Linkedin',
     	linkedinserverurl: 'http://labs.just-map-it.com',
     	//linkedinserverurl: 'http://localhost:8080/web-labs',
@@ -95,7 +95,6 @@ function getParams() {
 		inverted: 'false',
 		kind: ''
     };
-    return p;
 };
 function GoMap() {
 	var parameters = getParams();

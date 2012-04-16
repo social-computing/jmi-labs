@@ -1,6 +1,7 @@
 package com.socialcomputing.labs.polyspot;
 
 import java.net.HttpURLConnection;
+import java.net.URLDecoder;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -36,7 +38,7 @@ public class PolyspotRestProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public String kind(@Context HttpServletRequest request,  
                        @QueryParam("sources") String sources,
-                       @QueryParam("field") String field,
+                       @QueryParam("fields") String fields,
                        @QueryParam("query") String query) {
         HttpSession session = request.getSession(true);
         String plsptSession = ( String)session.getAttribute( "plsptSession");
@@ -85,7 +87,9 @@ public class PolyspotRestProvider {
                 if( source.length() > 0)
                     s.addParameter("srcid", source);
             }       
-            s.addParameter("r_fl", field);
+            for(String fname : fields.split( ",")) {
+                s.addParameter("r_fl", fname);
+            }
             s.addParameter("r_fl", "_title");
             s.addParameter("r_nbfetch", "100");
             s.openConnections();
@@ -96,13 +100,17 @@ public class PolyspotRestProvider {
             ArrayNode items = (ArrayNode) resNode.get( "itemSet");
             for (JsonNode item : items) {
                 Attribute attribute = data.addAttribute(item.get("_uid").get(0).getTextValue());
-                attribute.addProperty("name", item.get("_title").get(0).getTextValue());
-                ArrayNode fields = (ArrayNode) item.get(field);
-                if( fields != null) {
-                    for( JsonNode ngram : (ArrayNode) item.get(field)) {
-                        Entity entity = data.addEntity( ngram.getTextValue());
-                        entity.addProperty("name", entity.getId());
-                        entity.addAttribute(attribute, 1);
+                //attribute.addProperty("name", item.get("_title").get(0).getTextValue());
+                attribute.addProperty("name", StringEscapeUtils.unescapeHtml(item.get("_title").get(0).getTextValue()));
+                for(String fname : fields.split( ",")) {
+                    ArrayNode fieldsa = (ArrayNode) item.get(fname);
+                    if( fieldsa != null) {
+                        for( JsonNode ngram : (ArrayNode) item.get(fname)) {
+                            //Entity entity = data.addEntity( ngram.getTextValue());
+                            Entity entity = data.addEntity( StringEscapeUtils.unescapeHtml(ngram.getTextValue()));
+                            entity.addProperty("name", entity.getId());
+                            entity.addAttribute(attribute, 1);
+                        }
                     }
                 }
             }

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Just Map It! PolySpot</title>
@@ -21,18 +22,25 @@ img {
 <%Boolean contacts = (request.getParameter("Contacts") != null);
 Boolean news = request.getParameter("News") != null;
 Boolean wikipedia = request.getParameter("Wikipedia") != null;
+
+Boolean _ngrams = request.getParameter("_ngrams") != null;
+Boolean semantic_theme_label = request.getParameter("semantic-theme-label") != null;
+Boolean person_label = request.getParameter("person-label") != null;
+Boolean organization_organisation_label = request.getParameter("organization-organisation-label") != null;
+
 Boolean inverse = request.getParameter("Inverse") != null;
-String field = request.getParameter("field");
-if( field == null) field = "";
 String query = request.getParameter("query");
 if( query == null) {
- query = "";
- news = true;
+	 query = "";
+	 news = true;
+	 semantic_theme_label = true;
+	 person_label = true;
+	 organization_organisation_label = true;
  }%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
-var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query%>' };
+var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query.replace("'", "\\'")%>' };
 function JMIF_breadcrumbTitlesFunc(event) {
 	if( event.type === JMI.Map.event.EMPTY) {
 		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
@@ -41,19 +49,17 @@ function JMIF_breadcrumbTitlesFunc(event) {
 		return {shortTitle: 'Sorry, an error occured.', longTitle: 'Sorry, an error occured. Error: ' + event.message};
 	}
 	return breadcrumbTitles;
-}
+};
 function GoMap() {
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
 	parameters.analysisProfile = 'GlobalProfile';
-	parameters.query = '<%=query%>';
-	parameters.field = '<%=field%>';
 	if( parameters.query.length > 0) {
 		var map = JMI.Map({
 					parent: 'map', 
 					clientUrl: '../jmi-client/', 
-					server: 'http://server.just-map-it.com'
-					//server: 'http://localhost:8080/jmi-server/'
+					//server: 'http://server.just-map-it.com'
+					server: 'http://localhost:8080/jmi-server/'
 				});
 		map.addEventListener(JMI.Map.event.READY, function(event) {
 			//document.getElementById("message").innerHTML = breadcrumb.cuurent().longTitle;
@@ -71,39 +77,37 @@ function GoMap() {
 };
   function JMIF_Navigate( url) {
  	 window.open( url, "_blank");
-  }
+  };
   function JMIF_Focus(map,args)
   {
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
 	parameters.entityId = args[0];
-	parameters.query = map.getProperty("$query");
-	parameters.field = map.getProperty("$field");
 	breadcrumbTitles.shortTitle = "Focus";
 	breadcrumbTitles.longTitle = "Focus on named entity: " + args[1];
 	map.compute( parameters);
-  }
+  };
   function JMIF_Center(map,args)
   {
 	var parameters = {};
 	JMIF_CompleteParameters( parameters);
 	parameters.attributeId = args[0];
-	parameters.query = map.getProperty("$query");
-	parameters.field = map.getProperty("$field");
 	parameters.analysisProfile = "DiscoveryProfile";
 	breadcrumbTitles.shortTitle = "Centered";
 	breadcrumbTitles.longTitle = "Centered on item: " + args[1];
 	map.compute( parameters);
-  }
+  };
 function JMIF_CompleteParameters( parameters) {
 	 parameters.allowDomain = "*";
-     //parameters.polyspotserverurl = "http://localhost:8080/web-labs";
-     parameters.polyspotserverurl = "http://labs.just-map-it.com";
+     parameters.polyspotserverurl = "http://localhost:8080/web-labs";
+     //parameters.polyspotserverurl = "http://labs.just-map-it.com";
 	 parameters.map = "PolySpot";
 	 parameters.sources = '<%= (contacts ? "1013" :"") + "," + (news ? "1014" :"") + "," + (wikipedia ? "1015" :"")%>';
-	 parameters.inverted = '<%=inverse%>';
+	 parameters.fields = '<%= (_ngrams ? "_ngrams" :"") + "," + (semantic_theme_label ? "semantic-theme-label" :"") + "," + (person_label ? "person-label" :"") + "," + (organization_organisation_label ? "organization-organisation-label" :"")%>';
+	 parameters.query = '<%=query.replace("'", "\\'")%>';
+	 parameters.inverted = '<%=!inverse%>';
 	 parameters.jsessionid = '<%=session.getId()%>';
-} 
+};
 </script>
 <jsp:include page="../ga.jsp" />
 </head>
@@ -117,7 +121,7 @@ function JMIF_CompleteParameters( parameters) {
 	</tr>
 	<tr>
 		<td>
-			<input type="text" name="query" title="URLs" size="80" value="<%=query != null ? query : "" %>" />
+			<input type="text" name="query" title="URLs" size="80" value="<%=query.replace("\"", "&quot;")%>" />			
 			<input type="submit" value="Just Map It!" />
 		</td>
 	</tr>
@@ -126,14 +130,13 @@ function JMIF_CompleteParameters( parameters) {
 			<!--input type="checkbox" name="Contacts" <%=contacts ? "checked" : ""%>/>Contacts-->
 			<input type="checkbox" name="News" <%=news ? "checked" : ""%>/>News
 			<input type="checkbox" name="Wikipedia" <%=wikipedia ? "checked" : ""%>/>Wikipedia
-			<select name="field">
-			  <option value="_ngrams" <%=field.equalsIgnoreCase("_ngrams") ? "selected" : ""%>>ngrams</option>
-			  <option value="semantic-theme-label" <%=field.equalsIgnoreCase("semantic-theme-label") ? "selected" : ""%>>semantic theme</option>
-			  <option value="person-label" <%=field.equalsIgnoreCase("person-label") ? "selected" : ""%>>person label</option>
-			  <option value="organization-organisation-label" <%=field.equalsIgnoreCase("organization-organisation-label") ? "selected" : ""%>>organisation label</option>
-			</select>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
+			<input type="checkbox" name="_ngrams" <%=_ngrams ? "checked" : ""%>/>ngrams
+			<input type="checkbox" name="semantic-theme-label" <%=semantic_theme_label ? "checked" : ""%>/>semantic theme
+			<input type="checkbox" name="person-label" <%=person_label ? "checked" : ""%>/>person label
+			<input type="checkbox" name="organization-organisation-label" <%=organization_organisation_label ? "checked" : ""%>/>organisation label
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> />Inverse
 		</td>
 	</tr>
 	<tr>
