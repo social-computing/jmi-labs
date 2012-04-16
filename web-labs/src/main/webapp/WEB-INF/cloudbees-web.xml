@@ -2,6 +2,9 @@
 <cloudbees-web-app xmlns="http://www.cloudbees.com/xml/webapp/1">
 	<appid>wps/labs</appid>
 
+	<sysprop name="file.encoding" value="UTF-8" />
+	<sysprop name="client.encoding.override" value="UTF-8" />
+	
 	<resource name="jdbc/labs-db" auth="Container" type="javax.sql.DataSource">
 		<param name="username" value="labs" />
 		<param name="password" value="labs" />

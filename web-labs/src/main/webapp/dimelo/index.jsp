@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Just Map It! Adisseo</title>
@@ -128,12 +128,14 @@ function JMIF_Center(map, args) {
 function JMIF_goFeedback(id) {
 	document.getElementById('query').value = id;
 	document.getElementById('kind').value = 'feedback';
+	document.getElementById('inverse').checked = false;
 	document.getElementById('main').submit();
 	return false;
 };
 function JMIF_goUser(id) {
 	document.getElementById('query').value = id;
 	document.getElementById('kind').value = 'user';
+	document.getElementById('inverse').checked = true;
 	document.getElementById('main').submit();
 	return false;
 };
@@ -153,7 +155,7 @@ function JMIF_goUser(id) {
 			</select>
 			<input type="text" id="query" name="query" title="Query" size="80" value="<%=query.replace("\"", "&quot;")%>" />
 			<input type="submit" value="Just Map It!" />
-			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
+			<input type="checkbox" id="inverse" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
 		</td>
 		<td align="right"><a title="Just Map It! Adisseo" href="./"><img alt="Just Map It! Adisseo" src="../images/justmapit.png" /></a></td>
 	</tr>
