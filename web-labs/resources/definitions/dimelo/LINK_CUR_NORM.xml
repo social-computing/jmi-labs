@@ -37,7 +37,7 @@
     </event>
     
     <menu id="menu" font="menuFnt">
-        <item label="[sREC_NAME]" url="javascript:JMIF_Focus([sREC_ID],[sREC_NAME],{s$feed})" />
+        <item label="[sREC_NAME]" url="javascript:JMIF_Focus([sREC_ID],[sREC_NAME])" />
     </menu>
 
     <font id="menuFnt" name="Arial" size="11" style="plain" />

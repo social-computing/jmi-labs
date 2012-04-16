@@ -8,14 +8,18 @@
 	<entities>
 		<REST-entities name="PolySpot" type="json" invert="{$inverted}" >
 			<URL-connection type="GET">
-				<url>{$dimeloserverurl}/rest/dimelo/maps/map.json</url>
+				<url>{$dimeloserverurl}/rest/dimelo/maps/{$kind}.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
-				<url-parameter name="query">{$query}</url-parameter>
-				<url-parameter name="inverted">{$inverted}</url-parameter>
+				<url-parameter name="access-token">5eba7151e753e9fede13177a3098832f</url-parameter>
+				<url-parameter name="user-url">https://open-adisseo.api.users.dimelo.com</url-parameter>
+				<url-parameter name="feedback-url">https://open-adisseo.api.ideas.dimelo.com</url-parameter>
+				<url-parameter name="www-url">http://open-adisseo.ideas.dimelo.com</url-parameter>
+				<url-parameter name="param">{$param}</url-parameter>
 			</URL-connection>
 	
 			<REST-entity markup="entities" id="id">
 				<REST-property id="name" />
+				<REST-property id="url" />
 				<REST-property id="poss_id" attribute="id" />
 				<REST-property id="poss_name" attribute="name" />
 			</REST-entity>
@@ -39,6 +43,7 @@
 			<entity-props-mapping>
 				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
+				<mapping key="URL" value="url" />
 			</entity-props-mapping>
 			<attribute-props-mapping>
 				<mapping key="ID" value="id" />
@@ -59,6 +64,7 @@
 			<entity-props-mapping>
 				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
+				<mapping key="URL" value="url" />
 			</entity-props-mapping>
 			<attribute-props-mapping>
 				<mapping key="ID" value="id" />
@@ -80,6 +86,7 @@
 			<entity-props-mapping>
 				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
+				<mapping key="URL" value="url" />
 			</entity-props-mapping>
 			<attribute-props-mapping>
 				<mapping key="ID" value="id" />
