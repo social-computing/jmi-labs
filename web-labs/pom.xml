@@ -83,7 +83,7 @@
     </dependency>
 	
     <dependency>
-      <groupId>com.socialcomputing.jmi.jmi</groupId>
+      <groupId>com.socialcomputing.jmi.jmi-server</groupId>
       <artifactId>jmi-server-connector-utils</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
