@@ -20,7 +20,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.jdom.Element;
 
-import com.socialcomputing.wps.server.planDictionnary.connectors.WPSConnectorException;
+import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
@@ -70,7 +70,7 @@ public class EddRestProvider {
         return storeHelper.toJson();
     }
 
-    private void read(File file, String[] entities, StoreHelper storeHelper) throws WPSConnectorException {
+    private void read(File file, String[] entities, StoreHelper storeHelper) throws JMIException {
         try {
             char[] buf = new char[(int) file.length()];
             FileReader fr = new FileReader(file);
@@ -87,7 +87,7 @@ public class EddRestProvider {
                 
             extractEntities( attribute, entities, document.getChildText("docText"), storeHelper);
         } catch (Exception e) {
-            throw new WPSConnectorException( "openConnections", e);
+            throw new JMIException( "openConnections", e);
         }
     }
         

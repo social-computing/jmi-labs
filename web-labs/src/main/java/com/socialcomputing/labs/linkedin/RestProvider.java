@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.socialcomputing.labs.rest.LabsRest;
-import com.socialcomputing.wps.server.planDictionnary.connectors.WPSConnectorException;
+import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
@@ -91,7 +91,7 @@ public class RestProvider {
             }
             api.closeConnections();
         }
-        catch (WPSConnectorException e) {
+        catch (JMIException e) {
             String r = api.getResult();
             StringBuilder sb = new StringBuilder();
             sb.append("Linkedin response\n").append(r);

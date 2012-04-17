@@ -13,7 +13,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
-import com.socialcomputing.wps.server.planDictionnary.connectors.WPSConnectorException;
+import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
@@ -87,7 +87,7 @@ public class RestProvider {
                 return StoreHelper.ErrorToJson( 0, results.get("error").getTextValue(), null);
             }
         }
-        catch (WPSConnectorException e) {
+        catch (JMIException e) {
             return StoreHelper.ErrorToJson( api.getResponseCode(), api.getResult(), null);
         }
         catch (Exception e) {

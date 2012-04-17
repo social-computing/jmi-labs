@@ -23,7 +23,7 @@ import au.id.jericho.lib.html.Segment;
 import au.id.jericho.lib.html.Source;
 import au.id.jericho.lib.html.StartTag;
 
-import com.socialcomputing.wps.server.planDictionnary.connectors.WPSConnectorException;
+import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
@@ -80,7 +80,7 @@ public class SyllabsRestProvider {
         return storeHelper.toJson();
     }
 
-    private void read(UrlHelper feed, String[] entities, StoreHelper storeHelper, List<String> titles, List<String> urls, List<Integer> counts) throws WPSConnectorException {
+    private void read(UrlHelper feed, String[] entities, StoreHelper storeHelper, List<String> titles, List<String> urls, List<Integer> counts) throws JMIException {
         String content = feed.getContentType();
         if( content.contains( "text/html")) {
             // HTML ?
@@ -88,7 +88,7 @@ public class SyllabsRestProvider {
             try {
                 source = new Source( feed.getStream());
             } catch (Exception e) {
-                throw new WPSConnectorException( "openConnections", e);
+                throw new JMIException( "openConnections", e);
             }
             List<StartTag> tags = ((Segment)source.findAllElements( "head").get( 0)).findAllStartTags( "link");
             for( StartTag tag : tags) {
@@ -108,7 +108,7 @@ public class SyllabsRestProvider {
         }
     }
     
-    private void readXml(UrlHelper feed, String[] entities, StoreHelper storeHelper, List<String> titles, List<String> urls, List<Integer> counts) throws WPSConnectorException {
+    private void readXml(UrlHelper feed, String[] entities, StoreHelper storeHelper, List<String> titles, List<String> urls, List<Integer> counts) throws JMIException {
         try {
             org.jdom.input.SAXBuilder builder = new org.jdom.input.SAXBuilder(false);
             org.jdom.Document doc = builder.build( feed.getStream());
@@ -122,7 +122,7 @@ public class SyllabsRestProvider {
                 parseAtom( feed.getUrl(), entities, root, storeHelper, urls, titles, counts);
             }
         } catch (Exception e) {
-            throw new WPSConnectorException( "openConnections", e);
+            throw new JMIException( "openConnections", e);
         }
     }
     

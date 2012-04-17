@@ -45,7 +45,7 @@ public class DimeloRestProvider {
         HttpSession session = request.getSession(true);
         String key = kind + "/" + param;
         String result = ( String)session.getAttribute( key);
-        if (result == null || result.length() == 0) {
+        if (result == null || result.length() == 0 || !kind.equalsIgnoreCase("search")) {
             if( kind.equalsIgnoreCase("search")) {
                 result = search(accessToken, wwwUrl, userUrl, feedbackUrl, param);
             }
