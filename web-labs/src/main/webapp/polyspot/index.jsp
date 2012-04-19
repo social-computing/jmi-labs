@@ -58,8 +58,8 @@ function GoMap() {
 		var map = JMI.Map({
 					parent: 'map', 
 					clientUrl: '../jmi-client/', 
-					//server: 'http://server.just-map-it.com'
-					server: 'http://localhost:8080/jmi-server/'
+					server: 'http://server.just-map-it.com'
+					//server: 'http://localhost:8080/jmi-server/'
 				});
 		map.addEventListener(JMI.Map.event.READY, function(event) {
 			//document.getElementById("message").innerHTML = breadcrumb.cuurent().longTitle;
@@ -99,8 +99,8 @@ function GoMap() {
   };
 function JMIF_CompleteParameters( parameters) {
 	 parameters.allowDomain = "*";
-     parameters.polyspotserverurl = "http://localhost:8080/web-labs";
-     //parameters.polyspotserverurl = "http://labs.just-map-it.com";
+     //parameters.polyspotserverurl = "http://localhost:8080/web-labs";
+     parameters.polyspotserverurl = "http://labs.just-map-it.com";
 	 parameters.map = "PolySpot";
 	 parameters.sources = '<%= (contacts ? "1013" :"") + "," + (news ? "1014" :"") + "," + (wikipedia ? "1015" :"")%>';
 	 parameters.fields = '<%= (_ngrams ? "_ngrams" :"") + "," + (semantic_theme_label ? "semantic-theme-label" :"") + "," + (person_label ? "person-label" :"") + "," + (organization_organisation_label ? "organization-organisation-label" :"")%>';
