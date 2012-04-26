@@ -7,10 +7,8 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.socialcomputing.jmi.jmi-labs</groupId>
   <artifactId>web-labs</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
   <name>Just Map It! - Labs web application</name>
   <url>http://labs.just-map-it.com</url>
 
