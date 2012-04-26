@@ -7,11 +7,12 @@
 
 	<entities>
 		<REST-entities name="Klout" type="json" invert="{$inverted}" >
-			<URL-connection type="GET">
+			<URL-connection type="GET">				
 				<url>{$kloutserverurl}/rest/klout/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="access-token">r7c9ehrhams22z48k4zxtm3f</url-parameter>
 				<url-parameter name="api-url">http://api.klout.com/1</url-parameter>
+                <url-parameter name="maptype">{$maptype}</url-parameter>
 				<url-parameter name="param">{$param}</url-parameter>
 			</URL-connection>
 	
