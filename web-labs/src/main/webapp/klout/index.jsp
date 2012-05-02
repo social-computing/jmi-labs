@@ -41,8 +41,8 @@
 			function getParams() {
 				return {
 					map: 'Klout',
-			    	//templateserverurl: 'http://labs.just-map-it.com',
-			    	kloutserverurl: 'http://localhost:8080/web-labs',
+					kloutserverurl: 'http://labs.just-map-it.com',
+			    	//kloutserverurl: 'http://localhost:8080/web-labs',
 					jsessionid: '<%=session.getId()%>',
 					inverted: <%=inverse%>,
 					maptype: '<%=maptype%>',
@@ -57,8 +57,8 @@
 					var map = JMI.Map({
 								parent: 'map', 
 								clientUrl: '../jmi-client/', 
-								//server: 'http://server.just-map-it.com', 
-								server: 'http://localhost:8080/jmi-server/' 
+								server: 'http://server.just-map-it.com', 
+								//server: 'http://localhost:8080/jmi-server/' 
 								//client: JMI.Map.SWF
 							});
 					map.addEventListener(JMI.Map.event.READY, function(event) {
