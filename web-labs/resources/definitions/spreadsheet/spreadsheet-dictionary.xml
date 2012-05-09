@@ -6,11 +6,11 @@
 	<comment>Google SpreadSheet Map Dictionary</comment>
 
 	<entities>
-		<REST-entities name="SpreadSheet" type="json" invert="{$inverted}" >
+		<REST-entities name="SpreadSheet" type="json" invert="{$inverted}" data="data">
 			<URL-connection type="GET">
 				<url>{$spreadsheetserverurl}/rest/spreadsheet/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
-				<url-parameter name="query">{$query}</url-parameter>
+				<url-parameter name="sheetUrl">{$sheetUrl}</url-parameter>
 				<url-parameter name="inverted" default="false">{$inverted}</url-parameter>
 			</URL-connection>
 	
