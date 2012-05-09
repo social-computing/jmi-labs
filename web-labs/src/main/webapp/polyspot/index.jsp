@@ -72,6 +72,7 @@ function GoMap() {
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 		} );
 		var breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+		new JMI.extensions.Slideshow(map);
 		map.compute( parameters);
 	}
 };

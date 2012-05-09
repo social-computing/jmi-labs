@@ -26,8 +26,18 @@ if( query == null) {
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
+var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: 'Query: <%=query.replace("'", "\\'")%>' };
+function JMIF_breadcrumbTitlesFunc(event) {
+	if( event.type === JMI.Map.event.EMPTY) {
+		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
+	}
+	if( event.type === JMI.Map.event.ERROR) {
+		return {shortTitle: 'Sorry, an error occured.', longTitle: 'Sorry, an error occured. Error: ' + event.message};
+	}
+	return breadcrumbTitles;
+};
 function getParams() {
-	var p = {
+	return {
 		map: 'SpreadSheet',
     	//spreadsheetserverurl: 'http://labs.just-map-it.com',
     	spreadsheetserverurl: 'http://localhost:8080/web-labs',
@@ -35,7 +45,6 @@ function getParams() {
 		inverted: <%=inverse%>,
 		query: '<%=query%>'
     };
-    return p;
 };
 function GoMap() {
 	var parameters = getParams();
@@ -58,6 +67,8 @@ function GoMap() {
 		map.addEventListener(JMI.Map.event.ERROR, function(event) {
 			document.getElementById("status").innerHTML = event.message;
 		} );
+		new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+		new JMI.extensions.Slideshow(map);
 		map.compute( parameters);
 	};
 };
@@ -94,7 +105,7 @@ function JMIF_Center(map, args) {
 	</tr>
 </table>
 </form>
-<div id="status">&nbsp;</div>
+<div id="breadcrumb">&nbsp;</div>
 <div id="map"></div>
 </body>
 </html>

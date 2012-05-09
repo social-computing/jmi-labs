@@ -55,6 +55,7 @@ $(document).ready(function() {
 	breadcrumbTitles.shortTitle = $('#filter option:selected')[0].label;
 	breadcrumbTitles.longTitle = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
 	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+	new JMI.extensions.Slideshow(map);
 	map.compute( parameters);
 	
 	$('#kind').change(function(){
