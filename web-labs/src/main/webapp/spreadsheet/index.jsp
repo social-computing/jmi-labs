@@ -44,7 +44,7 @@ function getParams() {
 		jsessionid: '<%=session.getId()%>',
 		inverted: <%=inverse%>,
 		sheetUrl: '<%=sheetUrl%>',
-		data:'{"entities":[{"id":"1","name":"entity1","attributes":["1"]}],"attributes":[{"id":"2","name":"attribute1"}]}'
+		data:'{"entities":[{"id":"France","attributes":[{"id":"hjkh"}]},{"id":"Espagne ","attributes":[{"id":"Europe"},{"id":"hjkh"}]},{"id":"Italie","attributes":[{"id":"hkhjk"}]}],"attributes":[{"id":"Europe"},{"id":"hjkh"},{"id":"hkhjk"}]}'
     };
 };
 function GoMap() {
