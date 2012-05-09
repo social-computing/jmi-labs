@@ -11,7 +11,7 @@
 				<url>{$spreadsheetserverurl}/rest/spreadsheet/maps/map.json</url>
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="query">{$query}</url-parameter>
-				<url-parameter name="inverted">{$inverted}</url-parameter>
+				<url-parameter name="inverted" default="false">{$inverted}</url-parameter>
 			</URL-connection>
 	
 			<REST-entity markup="entities" id="id">
