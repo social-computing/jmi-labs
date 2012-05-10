@@ -53,10 +53,8 @@
     };
     function GoMap() {
 	    var parameters = getParams();
-	    alert(parameters.data);
 	    parameters.analysisProfile='GlobalProfile';
-	    if( parameters.sheetUrl.length > 0) {
-		    alert(parameters.data);
+	    if(parameters.sheetUrl.length > 0) {
 		    var map = JMI.Map({
 					    parent: 'map', 
 					    clientUrl: 'http://labs.just-map-it.com/jmi-client/', 
