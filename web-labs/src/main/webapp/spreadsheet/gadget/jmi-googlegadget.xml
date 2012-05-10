@@ -125,7 +125,7 @@
          */
         for (var c = 1; c < data.getNumberOfColumns(); c++) {
             var headerValue = data.getFormattedValue(0, c);
-            entities[headerValue] = { "id": headerValue }
+            entities[headerValue] = { "id": headerValue,"name": headerValue }
         }
         
         /**
@@ -133,7 +133,7 @@
          */
         for (var r = 1; r < data.getNumberOfRows(); r++) {
             var headerValue = data.getFormattedValue(r, 0);
-            attributes.push({"id": headerValue});
+            attributes.push({"id": headerValue,"name": headerValue});
         }
         
         /**
