@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
 <ModulePrefs
-        title="Just Map It! - Google Gadget"
-        description="Just Map It! - spreadsheet Gadget."
-        author="Jonathan Dray"
-        author_affiliation="Social Computing"
-        author_email="franck.valetas@gmail.com"
-        screenshot="/ig/modules/spreadsheet.png"
-        thumbnail="/ig/modules/spreadsheet-thm.png" > 
+		title="Just Map It! - Google Gadget"
+		description="Just Map It! - spreadsheet Gadget."
+		author="Social Computing" author_email="justmapit@social-computing.com" author_link="http://www.social-computing.com"
+		screenshot="http://feeds.just-map-it.com/images/screenshot.png" 
+		thumbnail="http://feeds.just-map-it.com/images/thumbnail.png">
+    	<Icon>http://labs.just-map-it.com/favicon.ico</Icon>
 </ModulePrefs>
 <UserPref name="_table_query_url" display_name="Data source url" required="true"/>
 <UserPref name="_table_query_refresh_interval" display_name="Data refresh interval (minutes)" default_value="0" datatype="enum" required="true">
