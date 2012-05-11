@@ -9,6 +9,7 @@
       <Icon>http://labs.just-map-it.com/favicon.ico</Icon>
 </ModulePrefs>
 <UserPref name="_table_query_url" display_name="Data source url" required="true"/>
+<UserPref name="invert" display_name="Invert lines and rows" datatype="bool" default_value="false"/>
 <UserPref name="_table_query_refresh_interval" display_name="Data refresh interval (minutes)" default_value="0" datatype="enum" required="true">
 <EnumValue value="0" display_value="Do not refresh"/>
 <EnumValue value="60" display_value="1"/>
@@ -55,10 +56,10 @@
 	  
 	  map.spreadsheetData = data;
       map.breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'Initial map' };
-      
-	  var parameters = JMI.google.Spreadsheet.getParams();
+      map.invert = options.invert;
+	  
+	  var parameters = JMI.google.Spreadsheet.getParams(map);
       parameters.analysisProfile='GlobalProfile';
-      parameters.data = gadgets.json.stringify(map.spreadsheetData);
       
 	  map.compute( parameters);
 	}
@@ -73,12 +74,13 @@
       return event.map.breadcrumbTitles;
     };
 	
-    JMI.google.Spreadsheet.getParams = function() {
+    JMI.google.Spreadsheet.getParams = function(map) {
       return {
         map: 'SpreadSheet',
         spreadsheetserverurl: 'http://labs.just-map-it.com',
-        inverted: false,
-        sheetUrl: 'SpreadSheet hardcoded url'
+        sheetUrl: 'SpreadSheet hardcoded url',
+        data: gadgets.json.stringify(map.spreadsheetData),
+        inverted: map.invert
         };
     };
 
@@ -87,19 +89,17 @@
     };
 	
     JMI.google.Spreadsheet.JMIF_Focus = function(map, args) {
-      var parameters = JMI.google.Spreadsheet.getParams();
+      var parameters = JMI.google.Spreadsheet.getParams(map);
       parameters.entityId = args[0];
-      parameters.data = gadgets.json.stringify(map.spreadsheetData);
       map.compute( parameters);
       map.breadcrumbTitles.shortTitle = "Focus";
       map.breadcrumbTitles.longTitle = "Focus on: " + args[1];
     };
 	
     JMI.google.Spreadsheet.JMIF_Center = function(map, args) {
-      var parameters = JMI.google.Spreadsheet.getParams();
+      var parameters = JMI.google.Spreadsheet.getParams(map);
       parameters.attributeId = args[0];
       parameters.analysisProfile = "DiscoveryProfile";
-      parameters.data = gadgets.json.stringify(map.spreadsheetData);
       map.compute( parameters);
       map.breadcrumbTitles.shortTitle = "Centered";
       map.breadcrumbTitles.longTitle = "Centered on: " + args[1];
@@ -112,8 +112,10 @@
 
     JMI.google.Spreadsheet.sendQuery = function() {
         var prefs = new _IG_Prefs(); // User preferences 
-        gadgetHelper = new google.visualization.GadgetHelper(); 
-        var query = gadgetHelper.createQueryFromPrefs(prefs);
+		if( !JMI.google.Spreadsheet.gadgetHelper) {
+			JMI.google.Spreadsheet.gadgetHelper = new google.visualization.GadgetHelper(); 
+		}
+        var query = JMI.google.Spreadsheet.gadgetHelper.createQueryFromPrefs(prefs);
         query.send(JMI.google.Spreadsheet.handleQueryResponse);
     };
 
@@ -121,7 +123,7 @@
         /**
          * Use the visualization GadgetHelper class to handle errors 
          */
-        if (!gadgetHelper.validateResponse(response)) {
+        if (!JMI.google.Spreadsheet.gadgetHelper.validateResponse(response)) {
             return;     // Default error handling was done, just leave. 
         }
 
@@ -131,8 +133,7 @@
         var row, col, data = response.getDataTable();
         
         /* Initializing data */
-        var entities = [];
-        var attributes = [];
+        var entities = [], attributes = [];
                 
         /**
          * Reading the first line header as entities
@@ -167,13 +168,14 @@
             "attributes": attributes
         };
         
+		var prefs = new gadgets.Prefs();
         var map = new JMI.google.Spreadsheet('map');
-        map.draw( jmidata, {});
+        map.draw( jmidata, {invert:prefs.getBool('invert')});
 
 	};
 	
-    var gadgetHelper = null;
     _IG_RegisterOnloadHandler(JMI.google.Spreadsheet.loadVisualizationAPI);	
+	
 </script>
 
 ]]>
