@@ -44,7 +44,8 @@
       var map = JMI.Map({
               parent: this.container, 
               clientUrl: 'http://labs.just-map-it.com/jmi-client/', 
-              server: 'http://server.just-map-it.com'
+              server: 'http://server.just-map-it.com',
+              method: 'POST'
             });
       map.addEventListener(JMI.Map.event.ACTION, function(event) {
           JMI.google.Spreadsheet[event.fn](event.map, event.args);
