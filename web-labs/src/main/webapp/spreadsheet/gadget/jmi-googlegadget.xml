@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
 <ModulePrefs
-		title="Just Map It! - Google Gadget"
-		description="Just Map It! - spreadsheet Gadget."
-		author="Social Computing" author_email="justmapit@social-computing.com" author_link="http://www.social-computing.com"
-		screenshot="http://feeds.just-map-it.com/images/screenshot.png" 
-		thumbnail="http://feeds.just-map-it.com/images/thumbnail.png">
-    	<Icon>http://labs.just-map-it.com/favicon.ico</Icon>
+        title="Just Map It! - Google Gadget"
+        description="Just Map It! - spreadsheet Gadget."
+      author="Social Computing" author_email="justmapit@social-computing.com" author_link="http://www.social-computing.com"
+    screenshot="http://feeds.just-map-it.com/images/screenshot.png" 
+    thumbnail="http://feeds.just-map-it.com/images/thumbnail.png">
+      <Icon>http://labs.just-map-it.com/favicon.ico</Icon>
 </ModulePrefs>
 <UserPref name="_table_query_url" display_name="Data source url" required="true"/>
 <UserPref name="_table_query_refresh_interval" display_name="Data refresh interval (minutes)" default_value="0" datatype="enum" required="true">
@@ -23,87 +23,96 @@
 
 <div id="tablediv" style="height:500px; width:500px; overflow: auto;">
     <div id="breadcrumb">&nbsp;</div>
-    <div id="map" style="height:400px;"></div>
+    <div id="map" style="height:100%; width:100%"></div>
 </div>
-
 
 <script type="text/javascript">
    
-    var jmidata = {};
-    var breadcrumbTitles = { shortTitle: 'Initial sheetUrl', longTitle: 'sheetUrl: Hardcoded url for now' };
-    function JMIF_breadcrumbTitlesFunc(event) {
+	JMI.namespace("google.Spreadsheet");
+	
+	// Mandatory 
+	JMI.google.Spreadsheet = function(container) {
+	  this.container = container;
+	}	
+		
+	// Mandatory 
+	JMI.google.Spreadsheet.prototype.draw = function(data, options) {
+      var map = JMI.Map({
+              parent: this.container, 
+              clientUrl: 'http://labs.just-map-it.com/jmi-client/', 
+              server: 'http://server.just-map-it.com'
+            });
+      map.addEventListener(JMI.Map.event.ACTION, function(event) {
+          JMI.google.Spreadsheet[event.fn](event.map, event.args);
+        } );
+      new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMI.google.Spreadsheet.JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+      new JMI.extensions.Slideshow(map);
+	  
+	  map.spreadsheetData = data;
+      map.breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'Initial map' };
+      
+	  var parameters = JMI.google.Spreadsheet.getParams();
+      parameters.analysisProfile='GlobalProfile';
+      parameters.data = gadgets.json.stringify(map.spreadsheetData);
+      
+	  map.compute( parameters);
+	}
+	
+    JMI.google.Spreadsheet.JMIF_breadcrumbTitlesFunc = function(event) {
       if( event.type === JMI.Map.event.EMPTY) {
         return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
       }
       if( event.type === JMI.Map.event.ERROR) {
         return {shortTitle: 'Sorry, an error occured.' + event.message, longTitle: 'Sorry, an error occured. Error: ' + event.message};
       }
-      return breadcrumbTitles;
+      return event.map.breadcrumbTitles;
     };
-    function getParams() {
+	
+    JMI.google.Spreadsheet.getParams = function() {
       return {
         map: 'SpreadSheet',
         spreadsheetserverurl: 'http://labs.just-map-it.com',
         inverted: false,
-        sheetUrl: 'SpreadSheet hardcoded url',
-        data: gadgets.json.stringify(jmidata)
+        sheetUrl: 'SpreadSheet hardcoded url'
         };
     };
-    function GoMap() {
-      var parameters = getParams();
-      parameters.analysisProfile='GlobalProfile';
-      if( parameters.sheetUrl.length > 0) {
-        alert(parameters.data);
-        var map = JMI.Map({
-              parent: 'map', 
-              clientUrl: 'http://labs.just-map-it.com/jmi-client/', 
-              server: 'http://server.just-map-it.com'
-            });
-        map.addEventListener(JMI.Map.event.READY, function(event) {
-        } );
-        map.addEventListener(JMI.Map.event.ACTION, function(event) {
-          window[event.fn](event.map, event.args);
-        } );
-        new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
-        new JMI.extensions.Slideshow(map);
-        map.compute( parameters);
-      };
-    };
-    function JMIF_Navigate(map, url) {
+
+    JMI.google.Spreadsheet.JMIF_Navigate = function(map, url) {
       window.open( url, "_blank");
-    }
-    function JMIF_Focus(map, args) {
-      var parameters = getParams();
+    };
+	
+    JMI.google.Spreadsheet.JMIF_Focus = function(map, args) {
+      var parameters = JMI.google.Spreadsheet.getParams();
       parameters.entityId = args[0];
+      parameters.data = gadgets.json.stringify(map.spreadsheetData);
       map.compute( parameters);
-      breadcrumbTitles.shortTitle = "Focus";
-      breadcrumbTitles.longTitle = "Focus on named entity: " + args[1];
-    }
-    function JMIF_Center(map, args) {
-      var parameters = getParams();
+      map.breadcrumbTitles.shortTitle = "Focus";
+      map.breadcrumbTitles.longTitle = "Focus on named entity: " + args[1];
+    };
+	
+    JMI.google.Spreadsheet.JMIF_Center = function(map, args) {
+      var parameters = JMI.google.Spreadsheet.getParams();
       parameters.attributeId = args[0];
       parameters.analysisProfile = "DiscoveryProfile";
+      parameters.data = gadgets.json.stringify(map.spreadsheetData);
       map.compute( parameters);
-      breadcrumbTitles.shortTitle = "Centered";
-      breadcrumbTitles.longTitle = "Centered on item: " + args[1];
-    }    
+      map.breadcrumbTitles.shortTitle = "Centered";
+      map.breadcrumbTitles.longTitle = "Centered on item: " + args[1];
+    };   
 
-    var gadgetHelper = null;
-    _IG_RegisterOnloadHandler(loadVisualizationAPI);
-    function loadVisualizationAPI() { 
+    JMI.google.Spreadsheet.loadVisualizationAPI = function() { 
         google.load("visualization", "1");
-        google.setOnLoadCallback(sendQuery);
-    }
+        google.setOnLoadCallback(JMI.google.Spreadsheet.sendQuery);
+    };
 
-    function sendQuery() {
+    JMI.google.Spreadsheet.sendQuery = function() {
         var prefs = new _IG_Prefs(); // User preferences 
         gadgetHelper = new google.visualization.GadgetHelper(); 
         var query = gadgetHelper.createQueryFromPrefs(prefs);
-        query.send(handleQueryResponse);
-    }
+        query.send(JMI.google.Spreadsheet.handleQueryResponse);
+    };
 
-    function handleQueryResponse(response) {
-
+    JMI.google.Spreadsheet.handleQueryResponse = function(response) {
         /**
          * Use the visualization GadgetHelper class to handle errors 
          */
@@ -114,68 +123,52 @@
         /**
          * GET THE DATA FROM THE SPREADSHEET
          */
-        var data = response.getDataTable();
+        var row, col, data = response.getDataTable();
         
         /* Initializing data */
-        var entities = {};
+        var entities = [];
         var attributes = [];
                 
         /**
          * Reading the first line header as entities
          */
-        for (var c = 1; c < data.getNumberOfColumns(); c++) {
-            var headerValue = data.getFormattedValue(0, c);
-            entities[headerValue] = { "id": headerValue,"name": headerValue }
+        for (col = 1; col < data.getNumberOfColumns(); col++) {
+            entities.push({ "id": col+'', "name": data.getFormattedValue(0, col), "attributes": []});
         }
         
         /**
          * Reading the first line header as attributes
          */
-        for (var r = 1; r < data.getNumberOfRows(); r++) {
-            var headerValue = data.getFormattedValue(r, 0);
-            attributes.push({"id": headerValue,"name": headerValue});
+        for (var row = 1; row < data.getNumberOfRows(); row++) {
+            attributes.push({"id": row+'', "name": data.getFormattedValue(row, 0)});
         }
         
         /**
          * Process all Rows in the specified range
          */
-        for (var row = 1; row < data.getNumberOfRows(); row++) {
-            for (var col = 1; col < data.getNumberOfColumns(); col++) {
+        for ( row = 1; row < data.getNumberOfRows(); row++) {
+            for ( col = 1; col < data.getNumberOfColumns(); col++) {
                 var formattedValue = data.getFormattedValue(row, col);
                 if(formattedValue != "") {
-                    var entityId = data.getFormattedValue(0, col);
-                    var attribute = attributes[(row - 1)];
-                    
-                    var entity = entities[entityId];
-                    if(!("attributes" in entity)){
-                        entity['attributes'] = [];
-                    }
-                    entity.attributes.push(attribute);
+                    var entity = entities[col-1];
+                    entity.attributes.push({"id": row+''});
                 }
-            }
-        }
-        var entitiesArray = [];
-        for(entity in entities){
-            if(entities.hasOwnProperty(entity)){
-                entitiesArray.push(entities[entity]);
             }
         }
 
         // Updating data variable
-        jmidata = {
-            "entities": entitiesArray,
+        var jmidata = {
+            "entities": entities,
             "attributes": attributes
         };
         
-        GoMap();
+        var map = new JMI.google.Spreadsheet('map');
+        map.draw( jmidata, {});
 
-        // Creating html content        
-        // Render the map canvas and call the remote server
-        //var tableDiv = _gel('tablediv');
-        //tableDiv.innerHTML = "<div id=\"breadcrumb\">&nbsp;</div><div id=\"map\"></div>" + data;
-        //tableDiv.style.width = document.body.clientWidth + 'px';
-        //tableDiv.style.height = document.body.clientHeight + 'px';
-    }
+	};
+	
+    var gadgetHelper = null;
+    _IG_RegisterOnloadHandler(JMI.google.Spreadsheet.loadVisualizationAPI);	
 </script>
 
 ]]>
