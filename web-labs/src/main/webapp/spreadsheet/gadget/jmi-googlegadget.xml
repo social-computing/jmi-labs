@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
-<ModulePrefs height="250"
+<ModulePrefs 
     title="Just Map It! Spreadsheet Gadget"
     description="Just Map It! for Google spreadsheet"
     author="Social Computing" author_email="justmapit@social-computing.com" author_link="http://www.social-computing.com"
