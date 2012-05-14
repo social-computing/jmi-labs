@@ -38,30 +38,30 @@
 	// Mandatory 
 	JMI.google.Spreadsheet = function(container) {
 	  this.container = container;
-	}	
-		
-	// Mandatory 
-	JMI.google.Spreadsheet.prototype.draw = function(data, options) {
-      var map = JMI.Map({
+      this.map = JMI.Map({
               parent: this.container, 
               clientUrl: 'http://labs.just-map-it.com/jmi-client/', 
               server: 'http://server.just-map-it.com',
               method: 'POST'
             });
-      map.addEventListener(JMI.Map.event.ACTION, function(event) {
+      this.map.addEventListener(JMI.Map.event.ACTION, function(event) {
           JMI.google.Spreadsheet[event.fn](event.map, event.args);
         } );
-      new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMI.google.Spreadsheet.JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
-      new JMI.extensions.Slideshow(map);
+      new JMI.extensions.Breadcrumb('breadcrumb',this.map,{'namingFunc':JMI.google.Spreadsheet.JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+      new JMI.extensions.Slideshow(this.map);
+	}	
+		
+	// Mandatory 
+	JMI.google.Spreadsheet.prototype.draw = function(data, options) {
 	  
-	  map.spreadsheetData = data;
-      map.breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'Initial map' };
-      map.invert = options.invert;
+	  this.map.spreadsheetData = data;
+      this.map.breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'Initial map' };
+      this.map.invert = options.invert;
 	  
-	  var parameters = JMI.google.Spreadsheet.getParams(map);
+	  var parameters = JMI.google.Spreadsheet.getParams(this.map);
       parameters.analysisProfile='GlobalProfile';
       
-	  map.compute( parameters);
+	  this.map.compute( parameters);
 	}
 	
     JMI.google.Spreadsheet.JMIF_breadcrumbTitlesFunc = function(event) {
