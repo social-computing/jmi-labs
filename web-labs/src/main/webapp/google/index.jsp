@@ -18,7 +18,11 @@ img {
 	border: 0;
 }
 </style>
-<%Boolean inverse = request.getParameter("Inverse") != null;%>
+<%Boolean inverse = request.getParameter("Inverse") != null;
+String sourceId = request.getParameter("sourceId");
+if( sourceId == null || sourceId.length() == 0) 
+    sourceId = "https://docs.google.com/spreadsheet/tq?range=A1%3AE196&key=0AlyyavYc1ciUdHVNX1AyQU5sSnNWZGFXeDIyUmdqMlE&gid=0&headers=-1";
+%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <script type="text/javascript" src="http://www.google.com/jsapi"></script> 
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
@@ -27,8 +31,7 @@ img {
 google.load('visualization', '1');
 google.setOnLoadCallback(googleVisualizationPackagesLoaded);
 function googleVisualizationPackagesLoaded() {
-    var source= 'TEST', sourceId= 'bof...';
-	var data = {entities:[{id:"France",attributes:[{id:"hjkh"}]},{id:"Espagne ",attributes:[{id:"Europe"},{id:"hjkh"}]},{id:"Italie",attributes:[{id:"hkhjk"}]}],attributes:[{id:"Europe"},{id:"hjkh"},{id:"hkhjk"}]};
+	/* 
 	var data = new google.visualization.DataTable();
 	data.addColumn('string', 'Pays');
 	data.addColumn('boolean', 'Bleu');
@@ -51,8 +54,22 @@ function googleVisualizationPackagesLoaded() {
 	data.setCell(2, 3, true);
 
 	var map = new JMI.google.Visualization('map');
-	map.draw(data, {source:source,sourceId:sourceId,breadcrumb:'breadcrumb',invert:<%=inverse%>});
-}
+	map.draw(data, {source:'Test',sourceId:'Bof...',breadcrumb:'breadcrumb',invert:<%=inverse%>});
+	*/
+	
+	var query = new google.visualization.Query('<%=sourceId%>');
+    query.send(handleQueryResponse);
+};
+
+handleQueryResponse = function(response) {
+
+    if (response.isError()) {
+        document.getElementById('breadcrumb').innerHTML= response.getDetailedMessage();
+    }
+	
+	var map = new JMI.google.Visualization('map');
+	map.draw(response.getDataTable(), {source:'GSPREADSHEET',sourceId:'<%=sourceId%>',breadcrumb:'breadcrumb',invert:<%=inverse%>});
+};
 </script>
 <jsp:include page="../ga.jsp" />
 </head>
@@ -62,6 +79,7 @@ function googleVisualizationPackagesLoaded() {
 	<tr>
 		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
+			<input type="text" name="sourceId" title="Google Data Source" size="80" value="<%=sourceId%>" />			
 			<input type="submit" value="Just Map It!" />
 			<input type="checkbox" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverse
 		</td>

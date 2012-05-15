@@ -54,7 +54,9 @@
     };
 
     JMI.google.VisualizationGadget.handleQueryResponse = function(response) {
-
+        /**
+         * Use the visualization GadgetHelper class to handle errors 
+         */
         if (!JMI.google.VisualizationGadget.gadgetHelper.validateResponse(response)) {
             return;     // Default error handling was done, just leave. 
         }
