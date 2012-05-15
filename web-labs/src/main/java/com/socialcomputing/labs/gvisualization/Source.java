@@ -20,12 +20,12 @@ public class Source {
     @Id
     @XmlElement
     @Column(columnDefinition = "varchar(255)")
-    private String      source;
+    private String      sourceId;
     
     @XmlElement
     @Column(columnDefinition = "varchar(64)")
     @Index(name="sourceIdIndex")
-    private String      sourceId;
+    private String      source;
     
     @XmlAttribute
     private int         count;
