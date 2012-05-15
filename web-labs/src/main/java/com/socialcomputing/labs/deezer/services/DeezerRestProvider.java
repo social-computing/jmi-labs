@@ -1,0 +1,258 @@
+package com.socialcomputing.labs.deezer.services;
+
+import static com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper.Type.POST;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.socialcomputing.labs.bluekiwi.utils.HashUtil;
+
+import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
+import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
+import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
+import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
+import com.socialcomputing.wps.server.planDictionnary.connectors.utils.NameValuePair;
+import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper;
+
+@Path("/deezer")
+public class DeezerRestProvider {
+
+	public static final String APP_ID = "TODO";
+	public static final String APP_SECRET = "YOUR_APP_SECRET";
+	public static final String APP_PERMS = "basic_access,email,manage_community";
+	public static final String CALLBACK_URL = "http://labs.just-map-it.com/deezer/";
+
+	
+    public static final String DEEZER_CONNECT_URL = "http://connect.deezer.com";
+    public static final String DEEZER_API_URL = "http://api.deezer.com/2.0";
+    public static final String AUTHORIZE_ENDPOINT = DEEZER_CONNECT_URL + "/oauth/auth.php";
+    public static final String TOKEN_ENDPOINT = DEEZER_CONNECT_URL + "/oauth/access_token.php";
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DeezerRestProvider.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
+    
+    @GET
+    @Path("maps/map.json")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String kind(@Context HttpServletRequest request, @DefaultValue("") @QueryParam("query") String query, 
+    			                                            @QueryParam("access_token") String access_token) {
+        HttpSession session = request.getSession(true);
+        String key = query;
+        String result = null;//( String)session.getAttribute( key);
+        if (result == null || result.length() == 0) {
+           result = build(query, access_token);
+           session.setAttribute( key, result);
+        }
+        return result;
+    }
+    
+    String build(String query, String access_token) {
+        StoreHelper storeHelper = new StoreHelper();
+        try {
+        	ObjectMapper mapper = new ObjectMapper();
+        	
+        	// First try
+        	// With the user id, get the list of friends the user is following
+        	/*
+        	deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/user/" + userId + "/followings");
+        	deezerClient.addParameter("access_token", access_token);
+        	deezerClient.openConnections();
+        	response = mapper.readTree(deezerClient.getStream());
+        	if(response.has("data")) {
+        		JsonNode data = response.get("data");
+        		
+        		// Iterate through friends
+        		LOG.debug("number of friends for user {} : {}", userId, response.get("total").getIntValue());
+            	for(JsonNode friend : (ArrayNode) data) {
+            		LOG.debug("friend found with id = {}", friend.get("id").getTextValue());
+                    Entity ent = storeHelper.addEntity(friend.get("id").getTextValue());
+                    ent.addProperty("name", "" + friend.get("name").getTextValue());
+                    ent.addProperty("url", author.get("url").getTextValue());
+                    ent.addAttribute(att, 1); 
+            	}
+        	}
+        	*/
+        	
+        	// Start by getting user id
+        	UrlHelper deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/user/me");
+        	deezerClient.addParameter("access_token", access_token);
+        	deezerClient.openConnections();
+        	JsonNode me = mapper.readTree(deezerClient.getStream());
+        	deezerClient.closeConnections();
+
+        	addUser(storeHelper, access_token, me, 1);
+        	
+        	
+        	/*
+        	String userId = me.get("id").getTextValue();
+            Entity ent = storeHelper.addEntity(userId);
+            ent.addProperty("name", me.get("name").getTextValue());
+            ent.addProperty("url", me.get("link").getTextValue());
+            deezerClient.closeConnections();        	
+            
+        	// With the user id, get his favorites albums and query for the fans
+        	deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/user/" + userId + "/albums");
+        	deezerClient.addParameter("access_token", access_token);
+        	deezerClient.addParameter("nb_items", "10");
+        	deezerClient.openConnections();
+        	JsonNode albumsResponse = mapper.readTree(deezerClient.getStream());
+        	deezerClient.closeConnections();
+        	if(albumsResponse.has("data")) {
+        		JsonNode albums = albumsResponse.get("data");
+        		
+        		// Iterate through albums
+        		LOG.debug("number of albums for user {} : {}", userId, albumsResponse.get("total").getIntValue());
+            	for(JsonNode album : (ArrayNode) albums) {
+            		String albumId = album.get("id").getTextValue();
+            		LOG.debug("album with id = {}", albumId);
+            		Attribute att = storeHelper.addAttribute(albumId);
+            		att.addProperty("name", album.get("name").getTextValue());
+            		att.addProperty("url", album.get("url").getTextValue());
+            		ent.addAttribute(att, 1);
+            		
+            		
+            		// For each album get a list of fans
+            		deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/album/" + albumId + "/fans");
+                	deezerClient.addParameter("access_token", access_token);
+                	deezerClient.addParameter("nb_items", "50");
+                	deezerClient.openConnections();
+                	JsonNode fansResponse = mapper.readTree(deezerClient.getStream());
+                	deezerClient.closeConnections();
+                	
+                	if(fansResponse.has("data")) {
+                		// Iterate through fans and get a list of favorite albums
+                		JsonNode fans = fansResponse.get("data");
+                		LOG.debug("number of fans for album {} : {}", albumId, fansResponse.get("total").getIntValue());
+                		for(JsonNode fan : (ArrayNode) fans) {
+                			String fanId = fan.get("id").getTextValue();
+                            Entity e = storeHelper.addEntity(fanId);
+                            e.addProperty("name", fan.get("name").getTextValue());
+                            e.addProperty("url", fan.get("link").getTextValue());
+                		}
+                	}
+            	}
+        	}
+        	*/
+            
+
+        }
+        catch (Exception e) {
+            return StoreHelper.ErrorToJson(e);
+        }
+        return storeHelper.toJson();
+    }
+
+    
+    
+    
+    /**
+     * Helper function to add a friend as an entity
+     * 
+     * @param storeHelper an instance of a StoreHelper used to manipulate and construct the jmi json format for the RestEntityConnector
+     * @param user     a JsonNode of the current content being read
+     * @param att         the attribute (post) to which this entity is linked 
+     * @throws JMIException 
+     * @throws IOException 
+     * @throws JsonProcessingException 
+     */
+    public static void addUser(StoreHelper storeHelper, String access_token, JsonNode user, int level) 
+    		throws JMIException, JsonProcessingException, IOException {
+    	String userId = user.get("id").getTextValue();
+    	LOG.debug("add user with id = {}", userId);
+        Entity ent = storeHelper.addEntity(userId);
+        ent.addProperty("name", user.get("name").getTextValue());
+        ent.addProperty("url", user.get("link").getTextValue());
+        
+    	// With the user id, get his favorites albums and query for the fans
+    	UrlHelper deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/user/" + userId + "/albums");
+    	deezerClient.addParameter("access_token", access_token);
+    	deezerClient.addParameter("nb_items", "10");
+    	deezerClient.openConnections();
+    	JsonNode albumsResponse = mapper.readTree(deezerClient.getStream());
+    	deezerClient.closeConnections();
+    	
+    	if(albumsResponse.has("data")) {
+    		JsonNode albums = albumsResponse.get("data");
+    		
+    		// Iterate through albums
+    		LOG.debug("number of albums for user {} : {}", userId, albumsResponse.get("total").getIntValue());
+        	for(JsonNode album : (ArrayNode) albums) {
+        		String albumId = album.get("id").getTextValue();
+        		LOG.debug("album with id = {}", albumId);
+        		Attribute att = storeHelper.addAttribute(albumId);
+        		att.addProperty("name", album.get("name").getTextValue());
+        		att.addProperty("url", album.get("url").getTextValue());
+        		ent.addAttribute(att, 1);
+        		
+        		// For each album get a list of fans
+        		if(level > 0) {
+	        		deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/album/" + albumId + "/fans");
+	            	deezerClient.addParameter("access_token", access_token);
+	            	deezerClient.addParameter("nb_items", "50");
+	            	deezerClient.openConnections();
+	            	JsonNode fansResponse = mapper.readTree(deezerClient.getStream());
+	            	deezerClient.closeConnections();
+	            	
+	            	if(fansResponse.has("data")) {
+	            		// Iterate through fans and get a list of favorite albums
+	            		JsonNode fans = fansResponse.get("data");
+	            		LOG.debug("number of fans for album {} : {}", albumId, fansResponse.get("total").getIntValue());
+	            		for(JsonNode fan : (ArrayNode) fans) {
+	            			addUser(storeHelper, access_token, fan, level - 1);
+	            		}
+	            	}
+        		}
+        	}
+    	}
+    }
+    
+    
+    /**
+     * Helper function used to get a user access token from a 
+     * code returned by deezer after authentication
+     * 
+     * @param code     the retruned code
+     * @param session  the current user http session
+     * @return         an access token
+     * 
+     * @throws JsonProcessingException
+     * @throws IOException
+     * @throws WPSConnectorException
+     */
+    public static String getAccessToken(String code, HttpSession session) 
+    		throws JsonProcessingException, IOException, JMIException {
+    	UrlHelper urlHelper = new UrlHelper(TOKEN_ENDPOINT);
+    	urlHelper.addParameter("app_id", APP_ID);
+    	urlHelper.addParameter("app_secret", APP_SECRET);
+    	urlHelper.addParameter("code", code);
+    	urlHelper.openConnections();
+    	
+    	String access_token = urlHelper.getResult();
+       	session.setAttribute("access_token", access_token);
+    	return access_token;
+    }
+}

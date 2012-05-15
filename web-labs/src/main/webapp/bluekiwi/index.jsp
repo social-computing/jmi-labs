@@ -1,19 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@page import="java.net.URLEncoder"%>
-<%@page import="com.socialcomputing.labs.bluekiwi.services.RestProvider"%>
+<%@page import="com.socialcomputing.labs.bluekiwi.services.BluekiwiRestProvider"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <%
-String token = (String) session.getAttribute("oauth_token");
+	String token = (String) session.getAttribute("oauth_token");
 if(token == null) {
 	token = request.getParameter("access_token");
 	if(token == null) {
 		String code = request.getParameter("code");
 		if(code != null) {
-			token = RestProvider.getAccessToken(code, session);
+	token = BluekiwiRestProvider.getAccessToken(code, session);
 		}
 		else {
-			response.sendRedirect(RestProvider.AUTHORIZE_ENDPOINT + "?client_id=" + RestProvider.CLIENT_ID + "&response_type=code&redirect_uri=" + URLEncoder.encode(RestProvider.CALLBACK_URL, "UTF-8"));
+	response.sendRedirect(BluekiwiRestProvider.AUTHORIZE_ENDPOINT + "?client_id=" + BluekiwiRestProvider.CLIENT_ID + "&response_type=code&redirect_uri=" + URLEncoder.encode(BluekiwiRestProvider.CALLBACK_URL, "UTF-8"));
 		}
 	}
 }
