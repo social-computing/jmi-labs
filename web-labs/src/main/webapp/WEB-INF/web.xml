@@ -21,28 +21,10 @@
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    <!-- servlet>
-        <servlet-name>spreadsheetAuth-servlet</servlet-name> 
-        <servlet-class>com.socialcomputing.labs.spreadsheet.SpreadsheetAuthServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet>
-        <servlet-name>spreadsheetCallbackAuth-servlet</servlet-name> 
-        <servlet-class>com.socialcomputing.labs.spreadsheet.SpreadsheetCallbackAuthServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet-->
     <servlet-mapping>
 		<servlet-name>jersey-servlet</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
-    <!-- servlet-mapping>
-		<servlet-name>spreadsheetAuth-servlet</servlet-name>
-		<url-pattern>/spreadsheet/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-		<servlet-name>spreadsheetCallbackAuth-servlet</servlet-name>
-		<url-pattern>/spreadsheet/*</url-pattern>
-    </servlet-mapping-->
     
     <session-config>
 		<session-timeout>30</session-timeout>

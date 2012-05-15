@@ -6,28 +6,32 @@ JMI.google.Visualization = function(container) {
   this.map = JMI.Map({
 		  parent: this.container, 
 		  clientUrl: 'http://labs.just-map-it.com/jmi-client/', 
-		  server: 'http://server.just-map-it.com',
+		  //server: 'http://localhost:8080/jmi-server/',
 		  method: 'POST'
 		});
   this.map.addEventListener(JMI.Map.event.ACTION, function(event) {
 	  JMI.google.Visualization[event.fn](event.map, event.args);
 	} );
-  new JMI.extensions.Breadcrumb('breadcrumb',this.map,{'namingFunc':JMI.google.Visualization.JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
-  new JMI.extensions.Slideshow(this.map);
-}	
+};
 	
 // Mandatory 
 JMI.google.Visualization.prototype.draw = function(data, options) {
+  if( options.breadcrumb) {
+	  new JMI.extensions.Breadcrumb(options.breadcrumb,this.map,{'namingFunc':JMI.google.Visualization.JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
+	  this.map.breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'Initial map' };
+  }
+  new JMI.extensions.Slideshow(this.map);
   
-  this.map.spreadsheetData = data;
-  this.map.breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'Initial map' };
+  this.map.source = options.source;
+  this.map.sourceId = options.sourceId;
+  this.map.visualizationData = data;
   this.map.invert = options.invert;
   
   var parameters = JMI.google.Visualization.getParams(this.map);
   parameters.analysisProfile='GlobalProfile';
   
   this.map.compute( parameters);
-}
+};
 
 JMI.google.Visualization.JMIF_breadcrumbTitlesFunc = function(event) {
   if( event.type === JMI.Map.event.EMPTY) {
@@ -40,11 +44,11 @@ JMI.google.Visualization.JMIF_breadcrumbTitlesFunc = function(event) {
 };
 
 JMI.google.Visualization.getParams = function(map) {
-  return {
-	map: 'SpreadSheet',
-	spreadsheetserverurl: 'http://labs.just-map-it.com',
-	sheetUrl: 'SpreadSheet hardcoded url',
-	data: gadgets.json.stringify(map.spreadsheetData),
+  return { 
+	map: 'GoogleVisualization',
+	source: map.source,
+	sourceId: map.sourceId,
+	data: map.visualizationData,
 	inverted: map.invert
 	};
 };

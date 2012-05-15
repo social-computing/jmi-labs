@@ -47,6 +47,8 @@
 			JMI.google.VisualizationGadget.gadgetHelper = new google.visualization.GadgetHelper(); 
 		}
         var query = JMI.google.VisualizationGadget.gadgetHelper.createQueryFromPrefs(prefs);
+		// Should work in most case 1/2
+		JMI.google.VisualizationGadget.sourceId = query.uj;
         query.send(JMI.google.VisualizationGadget.handleQueryResponse);
     };
 
@@ -61,10 +63,7 @@
         /**
          * GET THE DATA FROM THE SPREADSHEET
          */
-        var row, col, data = response.getDataTable();
-        
-        /* Initializing data */
-        var entities = [], attributes = [];
+        var row, col, sourceId = JMI.google.VisualizationGadget.sourceId, data = response.getDataTable(), entities = [], attributes = [];
                 
         /**
          * Reading the first line header as entities
@@ -96,7 +95,8 @@
 		var prefs = new gadgets.Prefs();
 
         var map = new JMI.google.Visualization('map');
-        map.draw( {"entities": entities, "attributes": attributes}, {invert:prefs.getBool('invert')});
+        map.draw( gadgets.json.stringify({"entities": entities, "attributes": attributes}), 
+        		 {source:'GSPREADSHEET',sourceId:sourceId,breadcrumb:'breadcrumb',invert:prefs.getBool('invert')});
 
 	};
 	

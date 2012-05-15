@@ -2,15 +2,15 @@
 
 <!DOCTYPE dictionary SYSTEM "WPS-dictionary.dtd" >
 
-<dictionary name="SpreadSheet">
-	<comment>Google SpreadSheet Map Dictionary</comment>
+<dictionary name="GoogleVisualization">
+	<comment>Google Visualization Map Dictionary</comment>
 
 	<entities>
 		<REST-entities name="SpreadSheet" type="json" invert="{$inverted}" data="data">
 			<URL-connection type="GET">
-				<url>{$spreadsheetserverurl}/rest/spreadsheet/maps/map.json</url>
-				<!--url-header name="Cookie">JSESSIONID={$jsessionid}</url-header-->
-				<url-parameter name="sheetUrl">{$sheetUrl}</url-parameter>
+				<url>http://labs.just-map-it.com/rest/googlevisualization/maps/map.json</url>
+				<url-parameter name="source">{$source}</url-parameter>
+				<url-parameter name="sourceId">{$sourceId}</url-parameter>
 				<url-parameter name="inverted" default="false">{$inverted}</url-parameter>
 			</URL-connection>
 	
