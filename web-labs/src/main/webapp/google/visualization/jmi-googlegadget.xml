@@ -4,6 +4,7 @@
     title="Just Map It! Spreadsheet Gadget"
     description="Just Map It! for Google spreadsheet"
     author="Social Computing" author_email="justmapit@social-computing.com" author_link="http://www.social-computing.com"
+    height="350"
     screenshot="http://feeds.just-map-it.com/images/screenshot.png" 
     thumbnail="http://feeds.just-map-it.com/images/thumbnail.png">
       <Icon>http://labs.just-map-it.com/favicon.ico</Icon>
