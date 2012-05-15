@@ -4,6 +4,7 @@
     title="Just Map It! Spreadsheet Gadget"
     description="Just Map It! for Google spreadsheet"
     author="Social Computing" author_email="justmapit@social-computing.com" author_link="http://www.social-computing.com"
+    height="350"
     screenshot="http://feeds.just-map-it.com/images/screenshot.png" 
     thumbnail="http://feeds.just-map-it.com/images/thumbnail.png">
       <Icon>http://labs.just-map-it.com/favicon.ico</Icon>
@@ -60,43 +61,14 @@
             return;     // Default error handling was done, just leave. 
         }
 
-        /**
-         * GET THE DATA FROM THE SPREADSHEET
-         */
-        var row, col, sourceId = JMI.google.VisualizationGadget.sourceId, data = response.getDataTable(), entities = [], attributes = [];
-                
-        /**
-         * Reading the first line header as entities
-         */
-        for (col = 1; col < data.getNumberOfColumns(); col++) {
-            entities.push({ "id": col, "name": data.getFormattedValue(0, col), "attributes": []});
-        }
-        
-        /**
-         * Reading the first line header as attributes
-         */
-        for (var row = 1; row < data.getNumberOfRows(); row++) {
-            attributes.push({"id": row, "name": data.getFormattedValue(row, 0)});
-        }
-        
-        /**
-         * Process all Rows in the specified range
-         */
-        for ( row = 1; row < data.getNumberOfRows(); row++) {
-            for ( col = 1; col < data.getNumberOfColumns(); col++) {
-                var formattedValue = data.getFormattedValue(row, col);
-                if(formattedValue != "") {
-                    var entity = entities[col-1];
-                    entity.attributes.push({"id": row+''});
-                }
-            }
-        }
-
 		var prefs = new gadgets.Prefs();
-
         var map = new JMI.google.Visualization('map');
-        map.draw( gadgets.json.stringify({"entities": entities, "attributes": attributes}), 
-        		 {source:'GSPREADSHEET',sourceId:sourceId,breadcrumb:'breadcrumb',invert:prefs.getBool('invert')});
+        map.draw( response.getDataTable(), 
+        		  {source:'GSPREADSHEET',
+        		   sourceId:JMI.google.VisualizationGadget.sourceId,
+        		   breadcrumb:'breadcrumb',
+        		   invert:prefs.getBool('invert')
+        		  });
 
 	};
 	
