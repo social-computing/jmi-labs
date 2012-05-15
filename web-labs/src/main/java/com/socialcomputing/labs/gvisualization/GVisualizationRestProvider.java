@@ -26,7 +26,7 @@ public class GVisualizationRestProvider {
         StoreHelper storeHelper = new StoreHelper();
         try {
             Session session = com.socialcomputing.labs.utils.HibernateUtil.getSessionFactory().getCurrentSession();
-            Source s = (Source) session.get(Source.class, source);
+            Source s = (Source) session.get(Source.class, sourceId);
             if( s == null) {
                 s = new Source( source, sourceId);
                 session.save( s);
