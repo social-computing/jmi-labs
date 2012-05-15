@@ -54,50 +54,19 @@
     };
 
     JMI.google.VisualizationGadget.handleQueryResponse = function(response) {
-        /**
-         * Use the visualization GadgetHelper class to handle errors 
-         */
+
         if (!JMI.google.VisualizationGadget.gadgetHelper.validateResponse(response)) {
             return;     // Default error handling was done, just leave. 
         }
 
-        /**
-         * GET THE DATA FROM THE SPREADSHEET
-         */
-        var row, col, sourceId = JMI.google.VisualizationGadget.sourceId, data = response.getDataTable(), entities = [], attributes = [];
-                
-        /**
-         * Reading the first line header as entities
-         */
-        for (col = 1; col < data.getNumberOfColumns(); col++) {
-            entities.push({ "id": col, "name": data.getFormattedValue(0, col), "attributes": []});
-        }
-        
-        /**
-         * Reading the first line header as attributes
-         */
-        for (var row = 1; row < data.getNumberOfRows(); row++) {
-            attributes.push({"id": row, "name": data.getFormattedValue(row, 0)});
-        }
-        
-        /**
-         * Process all Rows in the specified range
-         */
-        for ( row = 1; row < data.getNumberOfRows(); row++) {
-            for ( col = 1; col < data.getNumberOfColumns(); col++) {
-                var formattedValue = data.getFormattedValue(row, col);
-                if(formattedValue != "") {
-                    var entity = entities[col-1];
-                    entity.attributes.push({"id": row+''});
-                }
-            }
-        }
-
 		var prefs = new gadgets.Prefs();
-
         var map = new JMI.google.Visualization('map');
-        map.draw( gadgets.json.stringify({"entities": entities, "attributes": attributes}), 
-        		 {source:'GSPREADSHEET',sourceId:sourceId,breadcrumb:'breadcrumb',invert:prefs.getBool('invert')});
+        map.draw( response.getDataTable(), 
+        		  {source:'GSPREADSHEET',
+        		   sourceId:JMI.google.VisualizationGadget.sourceId,
+        		   breadcrumb:'breadcrumb',
+        		   invert:prefs.getBool('invert')
+        		  });
 
 	};
 	

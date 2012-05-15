@@ -28,10 +28,30 @@ google.load('visualization', '1');
 google.setOnLoadCallback(googleVisualizationPackagesLoaded);
 function googleVisualizationPackagesLoaded() {
     var source= 'TEST', sourceId= 'bof...';
-	var data = '{"entities":[{"id":"France","attributes":[{"id":"hjkh"}]},{"id":"Espagne ","attributes":[{"id":"Europe"},{"id":"hjkh"}]},{"id":"Italie","attributes":[{"id":"hkhjk"}]}],"attributes":[{"id":"Europe"},{"id":"hjkh"},{"id":"hkhjk"}]}';
-	
+	var data = {entities:[{id:"France",attributes:[{id:"hjkh"}]},{id:"Espagne ",attributes:[{id:"Europe"},{id:"hjkh"}]},{id:"Italie",attributes:[{id:"hkhjk"}]}],attributes:[{id:"Europe"},{id:"hjkh"},{id:"hkhjk"}]};
+	var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Pays');
+	data.addColumn('boolean', 'Bleu');
+	data.addColumn('boolean', 'Blanc');
+	data.addColumn('boolean', 'Rouge');
+	data.addColumn('boolean', 'Jaune');
+	data.addColumn('boolean', 'Vert');
+	data.addColumn('boolean', 'Noir');
+	data.addRows(5);
+	data.setCell(0, 0, 'France');
+	data.setCell(0, 1, true);
+	data.setCell(0, 2, true);
+	data.setCell(0, 3, true);
+	data.setCell(1, 0, 'Italie');
+	data.setCell(1, 5, true);
+	data.setCell(1, 2, true);
+	data.setCell(1, 3, true);
+	data.setCell(2, 0, 'Espagne');
+	data.setCell(2, 4, true);
+	data.setCell(2, 3, true);
+
 	var map = new JMI.google.Visualization('map');
-	map.draw( data, {source:source,sourceId:sourceId,breadcrumb:'breadcrumb',invert:<%=inverse%>});
+	map.draw(data, {source:source,sourceId:sourceId,breadcrumb:'breadcrumb',invert:<%=inverse%>});
 }
 </script>
 <jsp:include page="../ga.jsp" />

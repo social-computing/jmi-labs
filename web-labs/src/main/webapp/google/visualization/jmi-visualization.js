@@ -21,10 +21,33 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
 	  this.map.breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'Initial map' };
   }
   new JMI.extensions.Slideshow(this.map);
+
+  // Convert google.visualization.DataTable to JSon Object
+  if( typeof data !== 'object') {
+	  throw 'data is not a DataTable or a DataView';
+  }
+  var row, col, entities = [], attributes = [], firstrow = data.getColumnLabel(0) ? 0 : 1;
+  for (col = 1; col < data.getNumberOfColumns(); col++) {
+      entities.push({ "id": col, "name": (firstrow == 0 ? data.getColumnLabel(col) : data.getFormattedValue(0, col)), "attributes": []});
+  }
+  
+  for (row = firstrow; row < data.getNumberOfRows(); row++) {
+      attributes.push({"id": row, "name": data.getFormattedValue(row, 0)});
+  }
+  
+  for ( row = firstrow; row < data.getNumberOfRows(); row++) {
+      for ( col = 1; col < data.getNumberOfColumns(); col++) {
+          var formattedValue = data.getFormattedValue(row, col);
+          if(formattedValue != "") {
+              var entity = entities[col-1];
+              entity.attributes.push({"id": row});
+          }
+      }
+  }
   
   this.map.source = options.source;
   this.map.sourceId = options.sourceId;
-  this.map.visualizationData = data;
+  this.map.visualizationData = JSON.stringify({"entities": entities, "attributes": attributes});
   this.map.invert = options.invert;
   
   var parameters = JMI.google.Visualization.getParams(this.map);
@@ -73,3 +96,23 @@ JMI.google.Visualization.JMIF_Center = function(map, args) {
   map.breadcrumbTitles.shortTitle = "Centered";
   map.breadcrumbTitles.longTitle = "Centered on: " + args[1];
 };   
+
+JSON.stringify = JSON.stringify || function (obj) {
+    var t = typeof (obj);
+    if (t != "object" || obj === null) {
+        // simple data type
+        if (t == "string") obj = '"' + obj + '"';
+        return String(obj);
+    }
+    else {
+        // recurse array or object
+        var n, v, json = [], arr = (obj && obj.constructor == Array);
+        for (n in obj) {
+            v = obj[n]; t = typeof (v);
+            if (t == "string") v = '"' + v + '"';
+            else if (t == "object" && v !== null) v = JSON.stringify(v);
+            json.push((arr ? "" : '"' + n + '":') + String(v));
+        }
+        return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
+    }
+};
