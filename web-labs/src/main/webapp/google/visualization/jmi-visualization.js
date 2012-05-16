@@ -45,10 +45,11 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
       }
   }
   
-  this.map.source = options.source;
-  this.map.sourceId = options.sourceId;
-  this.map.visualizationData = JSON.stringify({"entities": entities, "attributes": attributes});
-  this.map.invert = options.invert;
+  this.map.gvisualization = {};
+  this.map.gvisualization.source = options.source || 'GSPREADSHEET';
+  this.map.gvisualization.sourceId = options.sourceId || window.location.href;
+  this.map.gvisualization.visualizationData = JSON.stringify({"entities": entities, "attributes": attributes});
+  this.map.gvisualization.invert = options.invert;
   
   var parameters = JMI.google.Visualization.getParams(this.map);
   parameters.analysisProfile='GlobalProfile';
@@ -69,10 +70,10 @@ JMI.google.Visualization.JMIF_breadcrumbTitlesFunc = function(event) {
 JMI.google.Visualization.getParams = function(map) {
   return { 
 	map: 'GoogleVisualization',
-	source: map.source,
-	sourceId: map.sourceId,
-	data: map.visualizationData,
-	inverted: map.invert
+	source: map.gvisualization.source,
+	sourceId: map.gvisualization.sourceId,
+	data: map.gvisualization.visualizationData,
+	inverted: map.gvisualization.invert
 	};
 };
 
