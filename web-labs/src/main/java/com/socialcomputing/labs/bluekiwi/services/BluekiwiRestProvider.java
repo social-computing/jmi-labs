@@ -39,7 +39,7 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.utils.NameValue
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper;
 
 @Path("/bluekiwi")
-public class RestProvider {
+public class BluekiwiRestProvider {
 
     public static final String CLIENT_ID = "914d4ad0f30e01d3b48c";
     public static final String CLIENT_SECRET = "c62cee6c330a39f0a786";
@@ -51,7 +51,7 @@ public class RestProvider {
     public static final String TOKEN_ENDPOINT = BK_URL + "/oauth2/token";
     public static final int SPACE_ID = 23;
     
-    private static final Logger LOG = LoggerFactory.getLogger(RestProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BluekiwiRestProvider.class);
     
     private static final ObjectMapper mapper = new ObjectMapper();
     
@@ -79,7 +79,7 @@ public class RestProvider {
         	ArrayNode spaces = q.putArray("destinationIds");
         	spaces.add(SPACE_ID);
         	      
-            UrlHelper bluekiwiClient = new UrlHelper(POST, RestProvider.BK_URL + "/api/v3/post/_search");
+            UrlHelper bluekiwiClient = new UrlHelper(POST, BluekiwiRestProvider.BK_URL + "/api/v3/post/_search");
             bluekiwiClient.addParameter("q", q.toString());
             bluekiwiClient.addParameter("oauth_token", token);
             bluekiwiClient.openConnections();
@@ -110,7 +110,7 @@ public class RestProvider {
             	
             	
 	            	// Author
-	                UrlHelper urlPost = new UrlHelper(RestProvider.BK_URL + "/api/v3/post/" + att.getId());
+	                UrlHelper urlPost = new UrlHelper(BluekiwiRestProvider.BK_URL + "/api/v3/post/" + att.getId());
 	                urlPost.addParameter("oauth_token", token);
 	                urlPost.openConnections();
 	                JsonNode cpost = mapper.readTree(urlPost.getStream());
@@ -119,7 +119,7 @@ public class RestProvider {
 	                
 	                
 	                // Comments authors 
-	                UrlHelper urlComments = new UrlHelper(RestProvider.BK_URL + "/api/v3/post/" + att.getId() + "/_reactions");
+	                UrlHelper urlComments = new UrlHelper(BluekiwiRestProvider.BK_URL + "/api/v3/post/" + att.getId() + "/_reactions");
 	                urlComments.addParameter("oauth_token", token);
 	                urlComments.openConnections();
 	                JsonNode commentsResponse = mapper.readTree(urlComments.getStream());
@@ -240,7 +240,7 @@ public class RestProvider {
     		signParameters += "&" + parameter.getName() + "=" + parameter.getValue();  
     	}
     	signParameters = signParameters.substring(1);
-    	String signature = HashUtil.getPHPSha1(RestProvider.CLIENT_ID + "&" + signParameters + "&" + RestProvider.CLIENT_SECRET);
+    	String signature = HashUtil.getPHPSha1(BluekiwiRestProvider.CLIENT_ID + "&" + signParameters + "&" + BluekiwiRestProvider.CLIENT_SECRET);
     	
     	
     	switch (urlHelper.getType()) {

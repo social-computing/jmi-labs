@@ -6,7 +6,7 @@
 <%@page import="org.codehaus.jackson.JsonNode"%>
 <%@page import="com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper"%>
 <%@page import="java.net.URLEncoder"%>
-<%@page import="com.socialcomputing.labs.bluekiwi.services.RestProvider"%>
+<%@page import="com.socialcomputing.labs.bluekiwi.services.BluekiwiRestProvider"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Just Map It! Lecko - super token test page</title>
@@ -29,7 +29,7 @@ img {
 </head>
 <body>
 <%
-/*
+	/*
 UrlHelper urlHelper = new UrlHelper(RestProvider.BK_URL + "/api/v3/user/43/_spaces");
 urlHelper.addParameter("limit", "1");
 //urlHelper.addParameter("text", "test");
@@ -44,10 +44,10 @@ q.put("text", "Wordpress");
 //ArrayNode spaces = q.putArray("destinationIds");
 //spaces.add(23);
 
-UrlHelper urlHelper = new UrlHelper(RestProvider.BK_URL + "/api/v3/post/_search");
+UrlHelper urlHelper = new UrlHelper(BluekiwiRestProvider.BK_URL + "/api/v3/post/_search");
 urlHelper.setType(Type.POST);
 urlHelper.addParameter("q", q.toString());
-RestProvider.addSuperToken(urlHelper, RestProvider.SUPER_TOKEN);
+BluekiwiRestProvider.addSuperToken(urlHelper, BluekiwiRestProvider.SUPER_TOKEN);
 urlHelper.openConnections();
 
 JsonNode jsonData = mapper.readTree(urlHelper.getStream());

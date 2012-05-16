@@ -1,23 +1,30 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@page import="com.socialcomputing.labs.deezer.services.RestProvider"%>
+<%@page import="com.socialcomputing.labs.deezer.services.DeezerRestProvider"%>
 <%@page import="java.net.URLEncoder"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <%
-String token = (String) session.getAttribute("access_token");
-if(token == null) {
+String access_token = (String) session.getAttribute("access_token");
+String errorMsg = "";
+if(access_token == null) {
 	String code = request.getParameter("code");
 	if(code != null) {
-		token = RestProvider.getAccessToken(code, session);
+		String state = (String) session.getAttribute("state");
+		if(state != null && state.equals(request.getParameter("state"))) {
+			access_token = DeezerRestProvider.getAccessToken(code, session);
+		}
+		else {
+		    errorMsg = "Invalid state received : CSRF";
+		}
 	}
 	else {
 		// TODO : find the equivalent from PHP
 		// $_SESSION['state'] = md5(uniqid(rand(), TRUE)); //CSRF protection
 		session.setAttribute("state", "test");
-		response.sendRedirect(RestProvider.AUTHORIZE_ENDPOINT + "?app_id=" + RestProvider.APP_ID  
-				+ "&redirect_uri=" + URLEncoder.encode(RestProvider.CALLBACK_URL, "UTF-8") 
-				+ "&perms=" + RestProvider.APP_PERMS
-				+ "&state=" + session.getAttribute("state")); 
+		response.sendRedirect(DeezerRestProvider.AUTHORIZE_ENDPOINT + "?app_id=" + DeezerRestProvider.APP_ID  
+		+ "&redirect_uri=" + URLEncoder.encode(DeezerRestProvider.CALLBACK_URL, "UTF-8") 
+		+ "&perms=" + DeezerRestProvider.APP_PERMS
+		+ "&state=" + session.getAttribute("state")); 
 	}
 }
 %>
@@ -61,7 +68,7 @@ function getParams() {
 		map: 'BlueKiwi',
 		jsessionid: '<%=session.getId()%>',
 		query: '<%=query%>',
-		token: '<%=token%>'
+		token: '<%=access_token%>'
     };
     return p;
 };
@@ -114,7 +121,7 @@ function JMIF_Center(map, args) {
 	<tr>
 		<td><a title="Just Map It! Deezer" href="./"><img alt="Just Map It! Lecko" src="../images/logo_lecko.gif" /></a></td>
 		<td>
-		    <input type="hidden" name="access_token" value="<%=token%>" />
+		    <input type="hidden" name="access_token" value="<%=access_token%>" />
 			<input type="text" name="query" title="Query" size="80" value="<%=query%>" />
 			<input type="submit" value="Just Map It!" />
 		</td>
