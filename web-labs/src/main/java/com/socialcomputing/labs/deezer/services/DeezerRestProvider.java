@@ -247,7 +247,7 @@ public class DeezerRestProvider {
     		throws JsonProcessingException, IOException, JMIException {
     	UrlHelper urlHelper = new UrlHelper(TOKEN_ENDPOINT);
     	urlHelper.addParameter("app_id", APP_ID);
-    	urlHelper.addParameter("app_secret", APP_SECRET);
+    	urlHelper.addParameter("secret", APP_SECRET);
     	urlHelper.addParameter("code", code);
     	urlHelper.openConnections();
     	
