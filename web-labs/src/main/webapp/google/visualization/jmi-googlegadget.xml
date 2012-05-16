@@ -62,7 +62,7 @@
         }
 
 		var prefs = new gadgets.Prefs();
-        var map = new JMI.google.Visualization('map');
+        var map = new JMI.google.Visualization(document.getElementById('map'));
         map.draw( response.getDataTable(), 
         		  {source:'GSPREADSHEET',
         		   sourceId:JMI.google.VisualizationGadget.sourceId,

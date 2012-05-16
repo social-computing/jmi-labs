@@ -28,10 +28,10 @@ if( sourceId == null || sourceId.length() == 0)
 <script type="text/javascript" src="../../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="./jmi-visualization.js"></script>
 <script type="text/javascript">
-google.load('visualization', '1');
+google.load('visualization', '1', {packages:['table']});
 google.setOnLoadCallback(googleVisualizationPackagesLoaded);
 function googleVisualizationPackagesLoaded() {
-	/* 
+
 	var data = new google.visualization.DataTable();
 	data.addColumn('string', 'Pays');
 	data.addColumn('boolean', 'Bleu');
@@ -53,23 +53,35 @@ function googleVisualizationPackagesLoaded() {
 	data.setCell(2, 4, true);
 	data.setCell(2, 3, true);
 
-	var map = new JMI.google.Visualization('map');
-	map.draw(data, {source:'Test',sourceId:'Bof...',breadcrumb:'breadcrumb',invert:<%=inverse%>});
-	*/
+	//display( data);
 	
 	var query = new google.visualization.Query('<%=sourceId%>');
     query.send(handleQueryResponse);
 };
 
 handleQueryResponse = function(response) {
-
     if (response.isError()) {
         document.getElementById('breadcrumb').innerHTML= "Error on data source: "+ response.getDetailedMessage();
     }
-	
-	var map = new JMI.google.Visualization('map');
-	map.draw(response.getDataTable(), {sourceId:'<%=sourceId%>',breadcrumb:'breadcrumb',invert:<%=inverse%>});
+    else {
+    	display( response.getDataTable());
+    }
 };
+
+function display(data) {
+    var table = new google.visualization.Table(document.getElementById('table'));
+    table.draw(data, {});
+	
+	var map = new JMI.google.Visualization(document.getElementById('map'));
+	map.draw(data, {sourceId:'<%=sourceId%>',breadcrumb:'breadcrumb',invert:<%=inverse%>});
+
+    google.visualization.events.addListener(map, 'select', function() {
+		table.setSelection( map.getSelection());	
+    });    
+    google.visualization.events.addListener(table, 'select', function() {
+		map.setSelection( table.getSelection());	
+    });    
+}
 </script>
 <jsp:include page="../../ga.jsp" />
 </head>
@@ -88,6 +100,7 @@ handleQueryResponse = function(response) {
 </table>
 </form>
 <div id="breadcrumb">&nbsp;</div>
-<div id="map"></div>
+<div id="map" style="width: 45%;float: left;"></div>
+<div id="table" style="width: 50%; height:600px;float: right;"></div>
 </body>
 </html>

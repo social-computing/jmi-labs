@@ -36,7 +36,7 @@
 
     <sat shape="voidShp" selection="search" transfo="titleTrf" isSub="true" isVisible="true" isSuper="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
         <slice alpha="1" linewidth="1">
-            <tip font="selFnt" label="{+20.1sNAME}" inCol="255 182 0" textCol="@whiteCol" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
+            <tip font="selFnt" label="{+20.1sNAME}" inCol="180 20 32" outCol="66 66 66" textCol="255 255 255" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
         </slice>
     </sat>
 
