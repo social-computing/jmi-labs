@@ -24,7 +24,7 @@ if(access_token == null) {
 		response.sendRedirect(DeezerRestProvider.AUTHORIZE_ENDPOINT + "?app_id=" + DeezerRestProvider.APP_ID  
 		+ "&redirect_uri=" + URLEncoder.encode(DeezerRestProvider.CALLBACK_URL, "UTF-8") 
 		+ "&perms=" + DeezerRestProvider.APP_PERMS
-		+ "&state=" + session.getAttribute("state")); 
+		+ "&state=" + session.getAttribute("state"));
 	}
 }
 %>
@@ -65,10 +65,10 @@ function JMIF_breadcrumbTitlesFunc(event) {
 }
 function getParams() {
 	var p = {
-		map: 'BlueKiwi',
+		map: 'Deezer',
 		jsessionid: '<%=session.getId()%>',
 		query: '<%=query%>',
-		token: '<%=access_token%>'
+		access_token: '<%=access_token%>'
     };
     return p;
 };

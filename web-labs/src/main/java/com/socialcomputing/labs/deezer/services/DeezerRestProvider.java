@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -41,8 +42,8 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper
 @Path("/deezer")
 public class DeezerRestProvider {
 
-	public static final String APP_ID = "TODO";
-	public static final String APP_SECRET = "YOUR_APP_SECRET";
+	public static final String APP_ID = "101811";
+	public static final String APP_SECRET = "853ab434e362306a6bc84f44afc04b71";
 	public static final String APP_PERMS = "basic_access,email,manage_community";
 	public static final String CALLBACK_URL = "http://labs.just-map-it.com/deezer/";
 
@@ -161,6 +162,7 @@ public class DeezerRestProvider {
 
         }
         catch (Exception e) {
+        	LOG.error(e.getMessage(), e);
             return StoreHelper.ErrorToJson(e);
         }
         return storeHelper.toJson();
@@ -182,7 +184,7 @@ public class DeezerRestProvider {
     public static void addUser(StoreHelper storeHelper, String access_token, JsonNode user, int level) 
     		throws JMIException, JsonProcessingException, IOException {
     	String userId = user.get("id").getTextValue();
-    	LOG.debug("add user with id = {}", userId);
+    	LOG.debug("Add user with id = {}", userId);
         Entity ent = storeHelper.addEntity(userId);
         ent.addProperty("name", user.get("name").getTextValue());
         ent.addProperty("url", user.get("link").getTextValue());
@@ -202,10 +204,10 @@ public class DeezerRestProvider {
     		LOG.debug("number of albums for user {} : {}", userId, albumsResponse.get("total").getIntValue());
         	for(JsonNode album : (ArrayNode) albums) {
         		String albumId = album.get("id").getTextValue();
-        		LOG.debug("album with id = {}", albumId);
+        		LOG.debug("Add album with id = {}", albumId);
         		Attribute att = storeHelper.addAttribute(albumId);
-        		att.addProperty("name", album.get("name").getTextValue());
-        		att.addProperty("url", album.get("url").getTextValue());
+        		att.addProperty("name", album.get("title").getTextValue());
+        		att.addProperty("url", album.get("link").getTextValue());
         		ent.addAttribute(att, 1);
         		
         		// For each album get a list of fans
@@ -247,11 +249,12 @@ public class DeezerRestProvider {
     		throws JsonProcessingException, IOException, JMIException {
     	UrlHelper urlHelper = new UrlHelper(TOKEN_ENDPOINT);
     	urlHelper.addParameter("app_id", APP_ID);
-    	urlHelper.addParameter("app_secret", APP_SECRET);
+    	urlHelper.addParameter("secret", APP_SECRET);
     	urlHelper.addParameter("code", code);
     	urlHelper.openConnections();
     	
-    	String access_token = urlHelper.getResult();
+    	Map<String, String> parameters = UrlHelper.getParameters(urlHelper.getResult()); 
+    	String access_token = parameters.get("access_token");
        	session.setAttribute("access_token", access_token);
     	return access_token;
     }
