@@ -3,10 +3,12 @@ JMI.namespace("google.Visualization");
 // Mandatory 
 JMI.google.Visualization = function(container) {
   this.container = container;
+  this.selection = [];
   this.map = JMI.Map({
 		  parent: this.container, 
 		  clientUrl: 'http://labs.just-map-it.com/jmi-client/', 
 		  //server: 'http://localhost:8080/jmi-server/',
+		  //client: JMI.Map.SWF,
 		  method: 'POST'
 		});
   this.map.gvisualization = this;
@@ -73,7 +75,7 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
   var parameters = JMI.google.Visualization.getParams(this.map);
   parameters.analysisProfile='GlobalProfile';
   
-  this.map.compute( parameters);
+  this.map.compute(parameters);
 };
 
 JMI.google.Visualization.prototype.getSelection = function() {
@@ -81,12 +83,18 @@ JMI.google.Visualization.prototype.getSelection = function() {
 };
 
 JMI.google.Visualization.prototype.setSelection = function(sel) {
+	if( !this.map.ready) return;
 	if( sel && sel.length > 0) {
 		var selection = [];
 		for(var i = 0; i < sel.length; ++i) {
 			if( sel[i].row) {
 				var pattern= new RegExp('\\b' + sel[i].row + '\\b'); 
-				selection = selection.concat(this.map.attributes.match(pattern,['ID']));	
+				if( !this.invert) {
+					selection = selection.concat(this.map.attributes.match(pattern,['ID']));	
+				}
+				else {
+					selection = selection.concat(this.map.attributes.match(pattern,['POSS_ID']));	
+				}
 			}
 		}
 		this.map.selections['search'].set( selection);
