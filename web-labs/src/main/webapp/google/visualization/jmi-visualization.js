@@ -83,13 +83,11 @@ JMI.google.Visualization.prototype.getSelection = function() {
 JMI.google.Visualization.prototype.setSelection = function(sel) {
 	if( sel && sel.length > 0) {
 		var selection = [];
-		if( sel[0].row && !this.invert) {
-			var pattern= new RegExp('\\b' + sel[0].row + '\\b'); 
-			selection = this.map.attributes.match(pattern,['ID']);	
-		}
-		if( sel[0].row && this.invert) {
-			var pattern= new RegExp('\\b' + sel[0].row + '\\b'); 
-			selection = this.map.attributes.match(pattern,['POSS_ID']);
+		for(var i = 0; i < sel.length; ++i) {
+			if( sel[i].row) {
+				var pattern= new RegExp('\\b' + sel[i].row + '\\b'); 
+				selection = selection.concat(this.map.attributes.match(pattern,['ID']));	
+			}
 		}
 		this.map.selections['search'].set( selection);
 		this.map.selections['search'].show();
