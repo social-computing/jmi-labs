@@ -7,8 +7,7 @@ JMI.google.Visualization = function(container) {
   this.map = JMI.Map({
 		  parent: this.container, 
 		  clientUrl: 'http://labs.just-map-it.com/jmi-client/', 
-		  //server: 'http://localhost:8080/jmi-server/',
-		  //client: JMI.Map.SWF,
+		  //server: 'http://localhost:8080/jmi-server',
 		  method: 'POST'
 		});
   this.map.gvisualization = this;
@@ -66,7 +65,7 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
           }
       }
   }
-  
+ 
   this.source = options.source || 'GSPREADSHEET';
   this.sourceId = options.sourceId || window.location.href;
   this.visualizationData = JSON.stringify({"entities": entities, "attributes": attributes});
@@ -151,6 +150,7 @@ JMI.google.Visualization.JMIF_Center = function(map, args) {
   google.visualization.events.trigger(map.gvisualization, 'select', {});
 };   
 
+var JSON = JSON || {};
 JSON.stringify = JSON.stringify || function (obj) {
     var t = typeof (obj);
     if (t != "object" || obj === null) {
