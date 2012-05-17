@@ -82,7 +82,7 @@ JMI.google.Visualization.prototype.getSelection = function() {
 };
 
 JMI.google.Visualization.prototype.setSelection = function(sel) {
-	if( !this.map.ready) return;
+	if( !this.map.isReady()) return;
 	if( sel && sel.length > 0) {
 		var selection = [];
 		for(var i = 0; i < sel.length; ++i) {
