@@ -69,7 +69,7 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
   this.source = options.source || 'GSPREADSHEET';
   this.sourceId = options.sourceId || window.location.href;
   this.visualizationData = JSON.stringify({"entities": entities, "attributes": attributes});
-  this.invert = options.invert;
+  this.invert = options.invert || false;
   
   var parameters = JMI.google.Visualization.getParams(this.map);
   parameters.analysisProfile='GlobalProfile';

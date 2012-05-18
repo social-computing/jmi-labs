@@ -81,7 +81,7 @@ function display(data) {
     google.visualization.events.addListener(table, 'select', function() {
 		map.setSelection( table.getSelection());	
     });    
-}
+};
 </script>
 <jsp:include page="../../ga.jsp" />
 </head>
