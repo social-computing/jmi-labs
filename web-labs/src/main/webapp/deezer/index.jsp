@@ -5,18 +5,18 @@
 <html lang="fr">
 	<head>
 		<%
+		DeezerRestProvider.checkExpirationDate(session);
 		String access_token = (String) session.getAttribute("access_token");
 		
-		String errorMsg = "";
+		String errorMsg = null;
 		if(access_token == null) {
 			String code = request.getParameter("code");
 			if(code != null) {
-				String state = (String) session.getAttribute("state");
-				if(state != null && state.equals(request.getParameter("state"))) {
+				if(DeezerRestProvider.isStateValid(session, request.getParameter("state"))) {
 					access_token = DeezerRestProvider.getAccessToken(code, session);
 				}
 				else {
-				    errorMsg = "Invalid state received : CSRF";
+				    errorMsg = "Invalid state received from deezer api. You might be a victim of a CSRF attack.";
 				}
 			}
 			else {
@@ -120,6 +120,7 @@
 		}
 		</script>
 	</head>
+	<% if(errorMsg == null) { %>
 	<body onload="GoMap()">
 		<form id="main" method="get">
 			<table style="width:100%">
@@ -141,4 +142,15 @@
 		<div id="breadcrumb">&nbsp;</div>
 		<div id="map"></div>
 	</body>
+	<% } else { %>
+	<body>
+	   <header>
+    	   <a title="Just Map It! Deezer" href="./"><img alt="Just Map It! Lecko" src="../images/logo-deezer.png" /></a>
+	   </header>
+	   <div>
+	       <h1>An error occured</h1>
+	       <p><%=errorMsg %></p>
+	   </div>
+	</body>
+	<% } %>
 </html>

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -17,6 +16,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,6 @@ public class DeezerRestProvider {
 	public static final String APP_PERMS = "basic_access,email,manage_community";
 	public static final String CALLBACK_URL = "http://labs.just-map-it.com/deezer/";
 
-	
     public static final String DEEZER_CONNECT_URL = "http://connect.deezer.com";
     public static final String DEEZER_API_URL = "http://api.deezer.com/2.0";
     public static final String AUTHORIZE_ENDPOINT = DEEZER_CONNECT_URL + "/oauth/auth.php";
@@ -90,7 +89,8 @@ public class DeezerRestProvider {
      * 
      * @param storeHelper an instance of a StoreHelper used to manipulate and construct the jmi json format for the RestEntityConnector
      * @param user     a JsonNode of the current content being read
-     * @param att         the attribute (post) to which this entity is linked 
+     * @param att      the attribute (post) to which this entity is linked
+     *  
      * @throws JMIException 
      * @throws IOException 
      * @throws JsonProcessingException 
@@ -121,7 +121,7 @@ public class DeezerRestProvider {
         		LOG.debug("Add {} with id = {}", maptype, id);
         		Attribute att = storeHelper.addAttribute(id);
         		if("album".equalsIgnoreCase(maptype)) {
-        			att.addProperty("name", item.get("title").getTextValue());        			
+        			att.addProperty("name", item.get("title").getTextValue());
         		}
         		else {
         			att.addProperty("name", item.get("name").getTextValue());
@@ -156,7 +156,8 @@ public class DeezerRestProvider {
     
     /**
      * Helper function used to get a user access token from a 
-     * code returned by deezer after authentication
+     * code returned by deezer after authentication.
+     * It stores the given access token and an expiration date in session 
      * 
      * @param code     the retruned code
      * @param session  the current user http session
@@ -174,12 +175,49 @@ public class DeezerRestProvider {
     	urlHelper.addParameter("code", code);
     	urlHelper.openConnections();
     	
-    	Map<String, String> parameters = UrlHelper.getParameters(urlHelper.getResult()); 
+    	Map<String, String> parameters = UrlHelper.getParameters(urlHelper.getResult().replaceAll("(\\r|\\n)", "")); 
     	String access_token = parameters.get("access_token");
     
        	session.setAttribute("access_token", access_token);
-       	// TODO : Store expiration date ?
+       	
+       	// Store expiration date
+        DateTime expirationDate = new DateTime().plusSeconds(Integer.parseInt(parameters.get("expires")));
+        session.setAttribute("expiration_date", expirationDate);
        	
     	return access_token;
+    }
+
+    
+    /**
+     * Check that the expiration date was not reached.
+     * If it is the case, it discard the previously set access_token and expiration date from session
+     *  
+     * @param session the current user http session
+     */
+    public static void checkExpirationDate(HttpSession session) {
+    	DateTime now = new DateTime();
+    	DateTime expirationDate = (DateTime) session.getAttribute("expiration_date");
+    	
+    	// Expiration date reached
+    	if(now.isAfter(expirationDate)) {
+    		LOG.info("Expiration date reached, remove access token from session");
+    		session.removeAttribute("access_token");
+    		session.removeAttribute("expiration_date");
+    	}
+    }
+    
+    
+    /**
+     * Compares the state stored in the user session with the one provided 
+     * in the response returned when a authentication code is asked with deezer api
+     * 
+     * @param session   the current user http session
+     * @param state     state value given by deezer api call
+     * @return boolean  true if the states are equals, false otherwise
+     */
+    public static boolean isStateValid(HttpSession session, String state) {
+		String storedState = (String) session.getAttribute("state");
+		LOG.debug("Comparing state in session {} with state returned by the request {}", storedState, state);
+		return storedState != null && storedState.equals(state);
     }
 }
