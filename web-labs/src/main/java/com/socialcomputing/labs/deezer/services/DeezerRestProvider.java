@@ -1,16 +1,20 @@
 package com.socialcomputing.labs.deezer.services;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -25,6 +29,7 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attri
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper;
+import com.sun.jersey.api.Responses;
 
 @Path("/deezer")
 public class DeezerRestProvider {
@@ -58,6 +63,36 @@ public class DeezerRestProvider {
             //session.setAttribute( key, result);
         }
         return result;
+    }
+    
+    
+    @GET
+    @Path("image-proxy")
+    @Produces("image/*")
+    public Response getThumbnail( @HeaderParam("Accept-Encoding") String encoding, @HeaderParam("If-Modified-Since") String cache, @HeaderParam("If-Modified-Since") String modified, @HeaderParam("If-None-Match") String match, @QueryParam("url") String url) {
+        UrlHelper urlHelper = new UrlHelper( url);
+        try {
+            urlHelper.addHeader( "Accept-Encoding", encoding);
+            urlHelper.addHeader( "If-Modified-Since", modified);
+            urlHelper.addHeader( "If-None-Match", match);
+            urlHelper.addHeader( "Cache-Control", cache);
+            urlHelper.openConnections();
+            HttpURLConnection connection = (HttpURLConnection) urlHelper.getConnection();
+            String tag = connection.getHeaderField( "Etag");
+            if( tag == null) tag = "";
+            if( tag.startsWith("\"")) tag = tag.substring( 1);
+            if( tag.endsWith("\"")) tag = tag.substring( 0, tag.length()-1);
+            return Response.ok( urlHelper.getStream(), urlHelper.getContentType())
+                .lastModified( new Date( connection.getLastModified()))
+                .tag( tag)
+                .status( connection.getResponseCode())
+                .header( "Content-Length", connection.getContentLength())
+                .build();
+        }
+        catch (Exception e) {
+            Response.status( Responses.NOT_FOUND);
+        }
+        return null;
     }
     
     String build(String maptype, String access_token) {
@@ -122,9 +157,11 @@ public class DeezerRestProvider {
         		Attribute att = storeHelper.addAttribute(id);
         		if("album".equalsIgnoreCase(maptype)) {
         			att.addProperty("name", item.get("title").getTextValue());
+        			if(item.has("cover")) att.addProperty("image", item.get("cover").getTextValue());        				
         		}
         		else {
         			att.addProperty("name", item.get("name").getTextValue());
+        			if(item.has("picture")) att.addProperty("image", item.get("picture").getTextValue());
         		}
         		if(item.has("link")) {
         			att.addProperty("url", item.get("link").getTextValue());
@@ -197,7 +234,7 @@ public class DeezerRestProvider {
     public static void checkExpirationDate(HttpSession session) {
     	DateTime now = new DateTime();
     	DateTime expirationDate = (DateTime) session.getAttribute("expiration_date");
-    	
+    	LOG.debug("Checking for access token expiration, now = {}, expires = {}", now, expirationDate);
     	// Expiration date reached
     	if(now.isAfter(expirationDate)) {
     		LOG.info("Expiration date reached, remove access token from session");

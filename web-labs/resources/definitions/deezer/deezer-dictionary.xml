@@ -12,6 +12,7 @@
 				<url-header name="Cookie">JSESSIONID={$jsessionid}</url-header>
 				<url-parameter name="access_token">{$access_token}</url-parameter>
 				<url-parameter name="query">{$query}</url-parameter>
+				<url-parameter name="maptype">{$maptype}</url-parameter>
 			</URL-connection>
 	
 			<REST-entity markup="entities" id="id">
@@ -25,6 +26,7 @@
 			<REST-attribute markup="attributes" id="id">
 				<REST-property id="name" />
 				<REST-property id="url" />
+				<REST-property id="image" />
 				<REST-property id="poss_id" entity="id" />
 				<REST-property id="poss_name" entity="name" />
 				<REST-property id="poss_url" attribute="url" />
@@ -48,6 +50,7 @@
 				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
 				<mapping key="URL" value="url" />
+				<mapping key="IMAGE" value="image" />
 				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 				<mapping key="POSS_URL" value="poss_url" />
@@ -71,6 +74,7 @@
 				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
 				<mapping key="URL" value="url" />
+				<mapping key="IMAGE" value="image" />
 				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 				<mapping key="POSS_URL" value="poss_url" />
@@ -95,6 +99,7 @@
 				<mapping key="ID" value="id" />
 				<mapping key="NAME" value="name" />
 				<mapping key="URL" value="url" />
+				<mapping key="IMAGE" value="image" />
 				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 				<mapping key="POSS_URL" value="poss_url" />

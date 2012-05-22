@@ -10,12 +10,13 @@
         <slice inCol="255 182 0" outCol="238 242 245" alpha="1" linewidth="1">
             <transfo scale=".87" map="absolute" />
         </slice>
+        	<slice image="{s$deezerserverurl}/rest/deezer/image-proxy?url={sIMAGE}" transfo="imgTrf" alpha="1" linewidth="1" />
     </sat>
 
 <!-- Sub Spots -->
     <sat shape="diskShp" isSub="true" isSuper="false" isVisible="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
         <slice inCol="34 34 34" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
-        <slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={$POSTER}" transfo="voidTrf" alpha="1" linewidth="1" />
+        <slice image="{s$deezerserverurl}/rest/deezer/image-proxy?url={sIMAGE}" transfo="voidTrf" alpha="1" linewidth="1" />
     </sat>
 
 <!-- Super Spot -->
