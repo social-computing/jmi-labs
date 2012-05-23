@@ -105,6 +105,7 @@
 	<menu id="menu" font="menuFnt">
 		<item label="Display" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
 		<item label="Center" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
+		<item label="Add to favorites" font="nameFnt" url="javascript:JMIF_AddFavorites({sID})" />
 		<separator />
 		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
 	</menu>

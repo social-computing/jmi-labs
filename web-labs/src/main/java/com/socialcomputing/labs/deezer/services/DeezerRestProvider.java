@@ -36,7 +36,7 @@ public class DeezerRestProvider {
 
 	public static final String APP_ID = "101811";
 	public static final String APP_SECRET = "853ab434e362306a6bc84f44afc04b71";
-	public static final String APP_PERMS = "basic_access,email,manage_community";
+	public static final String APP_PERMS = "basic_access,email,manage_community,manage_library";
 	public static final String CALLBACK_URL = "http://labs.just-map-it.com/deezer/";
 
     public static final String DEEZER_CONNECT_URL = "http://connect.deezer.com";

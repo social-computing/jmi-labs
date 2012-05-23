@@ -118,10 +118,57 @@
 			breadcrumbTitles.longTitle = "Centered on: " + args[1];
 			map.compute( parameters);
 		}
+		function JMIF_AddFavorites(map, args) {
+			//var parameters = getParams();
+		    DZ.getLoginStatus(function(response) {
+		        if (response.authResponse) {
+		        	var userID = response.userID;
+		        	var accessToken = response.authResponse.accessToken;
+		        	console.debug("current user id: ", userID);
+		        	console.debug("artist id: ", args[0]);
+		        	console.debug("access_token with get login status: ", accessToken);
+		        	console.debug("access token stored in session: ", '<%=access_token%>');
+		        	DZ.api("/user/" +  userID + "/artists",
+		        		   'post',
+		        		   {
+		        		       'access_token': accessToken,
+		        		       'artist_id': args[0]
+		        		   },
+		        		   function(response) {
+		        			    //alert("add artist api function called : " + response);
+		        		        console.debug(response);
+		        		   }
+		            );
+		    		// logged in and connected user, someone you know
+		        	// alert("user logged in");
+		        } else {
+		        // no user session available, someone you dont know
+		        	alert("user session not available");
+		        }
+		    });
+			
+		}
 		</script>
 	</head>
 	<% if(errorMsg == null) { %>
 	<body onload="GoMap()">
+	    <div id="dz-root"></div>
+        <script>
+	        window.dzAsyncInit = function() {
+	            DZ.init({
+	                appId : '<%=DeezerRestProvider.APP_ID%>',
+	                channelUrl : '<%=DeezerRestProvider.CALLBACK_URL%>channel.html'
+	            });
+	        };
+	        (function() {
+	        	     var e = document.createElement('script');
+	                 e.src = 'http://cdn-files.deezer.com/js/min/dz.js';
+	                 e.async = true;
+	                 document.getElementById('dz-root').appendChild(e);
+	             }()
+	        );
+	    </script>
+	
 		<form id="main" method="get">
 			<table style="width:100%">
 				<tr>
