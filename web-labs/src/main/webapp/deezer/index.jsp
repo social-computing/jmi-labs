@@ -184,7 +184,7 @@
 		<form id="main" method="get">
 			<table style="width:100%">
 				<tr>
-					<td><a title="Just Map It! Deezer" href="./"><img alt="Just Map It! Lecko" src="../images/logo-deezer.png" /></a></td>
+					<td><a title="Just Map It! Deezer" href="./"><img alt="Just Map It! Lecko" src="../images/justmapit_deezer.png" /></a></td>
 					<td>
 					    <input type="hidden" name="access_token" value="<%=access_token%>" />
 					    <fieldset>
