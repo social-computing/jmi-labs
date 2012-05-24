@@ -210,17 +210,37 @@ public class DeezerRestProvider {
     	urlHelper.addParameter("app_id", APP_ID);
     	urlHelper.addParameter("secret", APP_SECRET);
     	urlHelper.addParameter("code", code);
+    	urlHelper.addParameter("output", "json");
     	urlHelper.openConnections();
     	
-    	Map<String, String> parameters = UrlHelper.getParameters(urlHelper.getResult().replaceAll("(\\r|\\n)", "")); 
+    	
+    	// Reading data from the response body (path parameters formatted answer) :
+    	Map<String, String> parameters = UrlHelper.getParameters(urlHelper.getResult().replaceAll("(\\r|\\n)", ""));
+    	urlHelper.closeConnections();
+    	
+    	// Store user access token in session
     	String access_token = parameters.get("access_token");
-    
        	session.setAttribute("access_token", access_token);
        	
        	// Store expiration date
         DateTime expirationDate = new DateTime().plusSeconds(Integer.parseInt(parameters.get("expires")));
         session.setAttribute("expiration_date", expirationDate);
        	
+    	
+    	// Trying to get the values from a JSON response
+    	// Not working for now : need to validate this with deezer dev team
+        /*
+    	JsonNode response = mapper.readTree(urlHelper.getStream());
+    	LOG.debug("Get access token returned json value: ", response.getTextValue());
+    	urlHelper.closeConnections();
+    	
+    	String access_token = response.get("access_token").getTextValue();
+    	session.setAttribute("access_token", access_token);
+    	
+    	DateTime expirationDate = new DateTime().plusSeconds(response.get("expires").getIntValue());
+        session.setAttribute("expiration_date", expirationDate);
+        */
+        
     	return access_token;
     }
 
