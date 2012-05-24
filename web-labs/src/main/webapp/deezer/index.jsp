@@ -186,11 +186,12 @@
 				<tr>
 					<td><a title="Just Map It! Deezer" href="./"><img alt="Just Map It! Lecko" src="../images/justmapit_deezer.png" /></a></td>
 					<td>
+					    <p>Discover music with the Just Map It! map for deezer</p>					    
 					    <input type="hidden" name="access_token" value="<%=access_token%>" />
 					    <fieldset>
-                          <legend>Type de carte:</legend>
-                          <label><input type="radio" name="maptype" value="artist" <%=("".equals(maptype) || "artist".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%> />Artistes</label>
-                          <label><input type="radio" name="maptype" value="album" <%=("album".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%>  />Albums</label>
+                          <legend>Please select a category :</legend>
+                          <label><input type="radio" name="maptype" value="artist" <%=("".equals(maptype) || "artist".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%> />By artist</label>
+                          <label><input type="radio" name="maptype" value="album" <%=("album".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%>  />By album</label>
                         </fieldset>
 					</td>
 					<td><input type="submit" value="Just Map It!" /></td>
