@@ -117,12 +117,13 @@
 	<menu id="menu" font="menuFnt">
 		<item label="Display" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
 		<item label="Center" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
-		<item label="Add to favorites" font="nameFnt" url="javascript:JMIF_AddFavorites({sID})" />
+		<item label="Add to my favorite {s$maptype}s" font="nameFnt" url="javascript:JMIF_AddFavorites({sID}, {s$maptype})" />
 		<separator />
+		<item label="This {s$maptype}'s fans on deezer" />
 		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
 	</menu>
 
-		<font id="menuFnt" name="Arial" size="11" style="plain" />
+	<font id="menuFnt" name="Arial" size="11" style="plain" />
 
 	<!-- DblClkEvt event -->
 	<event id="dblClkEvt">

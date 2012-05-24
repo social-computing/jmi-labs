@@ -122,28 +122,40 @@
 			//var parameters = getParams();
 		    DZ.getLoginStatus(function(response) {
 		        if (response.authResponse) {
-		        	var userID = response.userID;
-		        	var accessToken = response.authResponse.accessToken;
-		        	console.debug("current user id: ", userID);
-		        	console.debug("artist id: ", args[0]);
-		        	console.debug("access_token with get login status: ", accessToken);
-		        	console.debug("access token stored in session: ", '<%=access_token%>');
-		        	DZ.api("/user/" +  userID + "/artists",
+		        	var userID       = response.userID,
+		        	    maptype      = args[1],
+		        	    service_uri  = "/user/" +  userID + "/" + maptype + "s";
+		        	    query_params = { 'access_token': response.authResponse.accessToken};
+		        	query_params[maptype + '_id'] = args[0];
+		        	// param_name  = maptype + '_id';
+		        	console.log("calling deezer api service with post request method and parameters", service_uri, query_params);
+		        	DZ.api(service_uri,
 		        		   'post',
-		        		   {
-		        		       'access_token': accessToken,
-		        		       'artist_id': args[0]
-		        		   },
+		        		   query_params,
 		        		   function(response) {
-		        			    //alert("add artist api function called : " + response);
-		        		        console.debug(response);
+		        			   switch(response) {
+		        			   case true:
+		        				   alert("" + maptype + " was sucessfully added to your favorite list");
+		        				   break;
+		        			   case false:
+		        				   alert("this " + maptype + " is already in your favorite list")
+		        				   break;
+		        			   default:
+		        				   console.debug(response);
+		        			       var err_msg = "sorry an error occured";
+		        			       
+		        			       if(response.error) err_msg += ': ' + response.error.type + ', ' + response.error.message;
+		        				   alert(err_msg);
+		        			   }
+		        			   
+		        			   // #http://tools.ietf.org/html/rfc2616#section-10.4.1
 		        		   }
 		            );
 		    		// logged in and connected user, someone you know
 		        	// alert("user logged in");
 		        } else {
-		        // no user session available, someone you dont know
-		        	alert("user session not available");
+		            // no user session available, someone you dont know
+		        	alert("Sorry, you are not logged in on deezer");
 		        }
 		    });
 			
