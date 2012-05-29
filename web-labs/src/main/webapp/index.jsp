@@ -5,11 +5,11 @@
 <meta http-equiv="content-language" content="en" />
 <meta name="author" content="Social Computing" /> 
 <meta name="robots" content="index,follow" /> 
-<meta name="description" content="Just Map It! Labs: experiment our data visualization tool" /> 
-<meta name="keywords" content="labs, rss, netvibes, google, blogger, feeds, feed, map, cartography, visualization, social, blog, gadget, widget, social computing, category, representation, information" />
+<meta name="description" content="Just Map It! Labs: experiment our HTML5 data visualization tool" /> 
+<meta name="keywords" content="HTML5, canas, labs, rss, netvibes, google, chart, blogger, feeds, feed, map, cartography, visualization, social, blog, gadget, widget, social computing, category, representation, information" />
 <meta name="author" content="Social Computing" /> 
 <meta property="og:title" content="Just Map It! Labs" />
-<meta property="og:description" content="Just Map It! Labs: experiment our data visualization tool" />
+<meta property="og:description" content="Just Map It! Labs: experiment our HTML5 data visualization tool" />
 <link rel="shortcut icon" href="./favicon.ico" />
 <style type="text/css">
 h1
