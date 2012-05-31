@@ -136,7 +136,7 @@ public class DeezerRestProvider {
     		throws JMIException, JsonProcessingException, IOException {
     	
     	// Add the user given in paramaters to the map entities list
-    	if(storeHelper.hasEntity(user.id)) {
+    	if(storeHelper.getEntity(user.id) != null) {
     		LOG.debug("user {} was already added, skipping...", user);
     		return;
     	}
@@ -152,10 +152,10 @@ public class DeezerRestProvider {
     	
     	// Iterate through albums and add them as user attributes.
     	for(Album favAlbum : favAlbums) {
-    		Attribute att;
+    		Attribute att = storeHelper.getAttribute(favAlbum.id);
     		// If the album was not already stored as attribute create it
     		// And go through this album fans
-    		if(!storeHelper.hasAttribute(favAlbum.id)) {
+    		if(att == null) {
     			att = storeHelper.addAttribute(favAlbum.id);
     	    	att.addProperty("name", favAlbum.title);
     	    	att.addProperty("image", favAlbum.cover);
@@ -173,9 +173,6 @@ public class DeezerRestProvider {
     				}
     			}
     		}
-    		else {
-    			att = storeHelper.getAttribute(favAlbum.id);
-    		}
     		ent.addAttribute(att, 1);    		
     	}
     }
@@ -184,7 +181,7 @@ public class DeezerRestProvider {
     		throws JMIException, JsonProcessingException, IOException {
     	
     	// Add the user given in paramaters to the map entities list
-    	if(storeHelper.hasEntity(user.id)) {
+    	if(storeHelper.getEntity(user.id) != null) {
     		LOG.debug("user {} was already added, skipping...", user);
     		return;
     	}
@@ -200,10 +197,10 @@ public class DeezerRestProvider {
     	
     	// Iterate through artits and add them as user attributes.
     	for(Artist favArtist: favArtists) {
-    		Attribute att;
+    		Attribute att = storeHelper.getAttribute(favArtist.id);
     		// If the album was not already stored as attribute create it
     		// And go through this album fans
-    		if(!storeHelper.hasAttribute(favArtist.id)) {
+    		if(att == null) {
     			att = storeHelper.addAttribute(favArtist.id);
     	    	att.addProperty("name", favArtist.name);
     	    	att.addProperty("image", favArtist.picture);
@@ -220,9 +217,6 @@ public class DeezerRestProvider {
     					addUserByArtist(storeHelper, accessToken, fan, favIds, level - 1);
     				}
     			}
-    		}
-    		else {
-    			att = storeHelper.getAttribute(favArtist.id);
     		}
     		ent.addAttribute(att, 1);    		
     	}
