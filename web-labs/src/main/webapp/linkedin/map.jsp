@@ -65,7 +65,7 @@ html, body {
 img {
 	border: 0;
 }
-.jmi-breadcrumb li a {
+.jmi-breadcrumb li, .jmi-breadcrumb a {
 	color: #006699;
 	font-size: 14px;
 	font-weight: bold;
@@ -80,7 +80,12 @@ function JMIF_breadcrumbTitlesFunc(event) {
 		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
 	}
 	if( event.type === JMI.Map.event.ERROR) {
-		return {shortTitle: 'Sorry, an error occured.', longTitle: 'Sorry, an error occured. Error: ' + event.message};
+		if(event.track) {
+			return {shortTitle: 'Sorry, an error occured. If you want to be informed about it, please <a title="Fill the form" href="http://www.just-map-it.com/p/report.html?track='+ event.track +'" target="_blank">fill the form</a>', longTitle: 'Sorry, an error occured. Error: ' + event.message};
+		}
+		else {
+			return {shortTitle: 'Sorry, an error occured: ' + event.message, longTitle: 'Sorry, an error occured. Error: ' + event.message};
+		}
 	}
 	return breadcrumbTitles;
 }
