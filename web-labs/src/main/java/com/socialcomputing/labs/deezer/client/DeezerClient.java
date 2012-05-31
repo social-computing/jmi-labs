@@ -116,8 +116,8 @@ public class DeezerClient {
     		for(JsonNode artist : (ArrayNode) artistsResponse.get("data")) {
     			artists.add(new Artist(artist.get("id").getTextValue(), 
     					             artist.get("name").getTextValue(),
-    					             artist.get("link").getTextValue(),
-    					             artist.get("picture").getTextValue()));
+    					             artist.has("link") ? artist.get("link").getTextValue() : "",
+    					             artist.has("picture") ? artist.get("picture").getTextValue() : ""));
     		}
     	}
     	return artists;
