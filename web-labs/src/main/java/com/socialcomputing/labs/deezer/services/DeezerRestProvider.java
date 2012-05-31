@@ -2,7 +2,9 @@ package com.socialcomputing.labs.deezer.services;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,14 +18,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.socialcomputing.labs.deezer.client.Album;
+import com.socialcomputing.labs.deezer.client.Artist;
+import com.socialcomputing.labs.deezer.client.DeezerClient;
+import com.socialcomputing.labs.deezer.client.User;
 import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
@@ -45,69 +48,68 @@ public class DeezerRestProvider {
     public static final String TOKEN_ENDPOINT = DEEZER_CONNECT_URL + "/oauth/access_token.php";
     
     private static final Logger LOG = LoggerFactory.getLogger(DeezerRestProvider.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
     
     @GET
     @Path("maps/map.json")
     @Produces(MediaType.APPLICATION_JSON)
-    public String kind(@Context HttpServletRequest request, @QueryParam("maptype") String maptype, 
-    			                                            @QueryParam("access_token") String access_token) {
-        // HttpSession session = request.getSession(true);
-        //String key = query;
-        String result = null;//( String)session.getAttribute( key);
-        if (result == null || result.length() == 0) {
-        	// TODO : Sanitize inputs (maptype)
-        	// Should throw an exception -> HTTP Error -> invalid input
-        	LOG.debug("maptype = {}", maptype);
-            result = build(maptype, access_token);
-            //session.setAttribute( key, result);
+    public Response kind(@Context HttpServletRequest request, @QueryParam("maptype") String maptype, 
+    			                                              @QueryParam("access_token") String access_token) {
+    	// TODO : Sanitize inputs
+        if(!"album".equalsIgnoreCase(maptype) && !"artist".equalsIgnoreCase(maptype)) {
+        	return Response.status(Responses.CLIENT_ERROR).build();
+        	// TODO : Add an error code and an error message
         }
-        return result;
-    }
-    
-    
-    @GET
-    @Path("image-proxy")
-    @Produces("image/*")
-    public Response getThumbnail( @HeaderParam("Accept-Encoding") String encoding, @HeaderParam("If-Modified-Since") String cache, @HeaderParam("If-Modified-Since") String modified, @HeaderParam("If-None-Match") String match, @QueryParam("url") String url) {
-        UrlHelper urlHelper = new UrlHelper( url);
-        try {
-            urlHelper.addHeader( "Accept-Encoding", encoding);
-            urlHelper.addHeader( "If-Modified-Since", modified);
-            urlHelper.addHeader( "If-None-Match", match);
-            urlHelper.addHeader( "Cache-Control", cache);
-            urlHelper.openConnections();
-            HttpURLConnection connection = (HttpURLConnection) urlHelper.getConnection();
-            String tag = connection.getHeaderField( "Etag");
-            if( tag == null) tag = "";
-            if( tag.startsWith("\"")) tag = tag.substring( 1);
-            if( tag.endsWith("\"")) tag = tag.substring( 0, tag.length()-1);
-            return Response.ok( urlHelper.getStream(), urlHelper.getContentType())
-                .lastModified( new Date( connection.getLastModified()))
-                .tag( tag)
-                .status( connection.getResponseCode())
-                .header( "Content-Length", connection.getContentLength())
-                .build();
-        }
-        catch (Exception e) {
-            Response.status( Responses.NOT_FOUND);
-        }
-        return null;
-    }
-    
-    String build(String maptype, String access_token) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-        	ObjectMapper mapper = new ObjectMapper();
         	
+    	// Store the last generated map of each maptype in session (helps to center / navigate)
+        // TODO : set an expiration date ?
+    	HttpSession session = request.getSession(true);
+        String result = (String) session.getAttribute(maptype);
+        if (result == null || result.length() == 0) {
+        	LOG.debug("Generating map for type = {}", maptype);
+            result = buildUsersMap(maptype, access_token);
+            session.setAttribute(maptype, result);
+        }
+        return Response.ok(result).build(); // result;
+    }
+    
+    
+    String buildUsersMap(String maptype, String accessToken) {
+    	StoreHelper storeHelper = new StoreHelper();
+        try {
         	// Start by getting user id
-        	UrlHelper deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/user/me");
-        	deezerClient.addParameter("access_token", access_token);
-        	deezerClient.openConnections();
-        	JsonNode me = mapper.readTree(deezerClient.getStream());
-        	deezerClient.closeConnections();
-
-        	addUser(storeHelper, access_token, maptype, me, 1);
+        	DeezerClient dzClient = new DeezerClient(DEEZER_API_URL, accessToken);
+        	User me = dzClient.getMyProfile();
+        	
+        	Collection<String> favIds = new HashSet<String>();
+        	if("artist".equalsIgnoreCase(maptype)) {
+        		Collection<Artist> myFavArtists = dzClient.getMyFavoriteArtists();
+        		for(Artist favArtist : myFavArtists) {
+        			favIds.add(favArtist.id);
+        		}
+        		addUserByArtist(storeHelper, accessToken, me, favIds, 1);
+        		/*
+        		Map<String, Artist> myFavArtistsMap = new HashMap<String, Artist>();
+        		for(Artist favArtist : myFavArtists) {
+        			myFavArtistsMap.put(favArtist.id, favArtist);
+        		}
+        		*/
+        		//addUserByArtist(storeHelper, accessToken, me, myFavArtistsMap, 1);
+        	}
+        	else {
+        		Collection<Album> myFavAlbums = dzClient.getMyFavoriteAlbums();
+        		for(Album favAlbum : myFavAlbums) {
+        			favIds.add(favAlbum.id);
+        		}
+        		addUserByAlbum(storeHelper, accessToken, me, favIds, 1);
+        		/*
+        		Map<String, Album> myFavAlbumsMap = new HashMap<String, Album>();
+        		for(Album favAlbum : myFavAlbums) {
+        			myFavAlbumsMap.put(favAlbum.id, favAlbum);
+        		}
+        		addUserByAlbum(storeHelper, accessToken, me, myFavAlbumsMap, 1);
+        		*/
+        		//addUser(storeHelper, accessToken, maptype, me, favIds, 1);
+        	}
         }
         catch (Exception e) {
         	LOG.error(e.getMessage(), e);
@@ -115,81 +117,181 @@ public class DeezerRestProvider {
         }
         return storeHelper.toJson();
     }
-
-    
     
     
     /**
-     * Helper function to add a friend as an entity and to explore recursively his prefered albums or artists
+     * Add a user to the map entities and his favortie albums to the attributes list of that user
      * 
-     * @param storeHelper an instance of a StoreHelper used to manipulate and construct the jmi json format for the RestEntityConnector
-     * @param user     a JsonNode of the current content being read
-     * @param att      the attribute (post) to which this entity is linked
-     *  
-     * @throws JMIException 
-     * @throws IOException 
-     * @throws JsonProcessingException 
+     * @param storeHelper
+     * @param access_token
+     * @param user
+     * @param myFavoriteAlbums
+     * @param level
+     * 
+     * @throws JMIException
+     * @throws JsonProcessingException
+     * @throws IOException
      */
-    public static void addUser(StoreHelper storeHelper, String access_token, String maptype, JsonNode user, int level) 
+    public static void addUserByAlbum(StoreHelper storeHelper, String accessToken, User user,  Collection<String> favIds, int level) 
     		throws JMIException, JsonProcessingException, IOException {
-    	String userId = user.get("id").getTextValue();
-    	LOG.debug("Add user with id = {}", userId);
-        Entity ent = storeHelper.addEntity(userId);
-        ent.addProperty("name", user.get("name").getTextValue());
-        ent.addProperty("url", user.get("link").getTextValue());
-        
-    	// With the user id, get his favorites albums and query for the fans
-    	UrlHelper deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/user/" + userId + "/" + maptype + "s");
-    	deezerClient.addParameter("access_token", access_token);
-    	deezerClient.addParameter("nb_items", "10");
-    	deezerClient.openConnections();
-    	JsonNode albumsResponse = mapper.readTree(deezerClient.getStream());
-    	deezerClient.closeConnections();
     	
-    	if(albumsResponse.has("data")) {
-    		JsonNode data = albumsResponse.get("data");
-    		
-    		// Iterate through albums
-    		LOG.debug("number of " + maptype + "s for user {} : {}", userId, albumsResponse.get("total").getIntValue());
-        	for(JsonNode item : (ArrayNode) data) {
-        		String id = item.get("id").getTextValue();
-        		LOG.debug("Add {} with id = {}", maptype, id);
-        		Attribute att = storeHelper.addAttribute(id);
-        		if("album".equalsIgnoreCase(maptype)) {
-        			att.addProperty("name", item.get("title").getTextValue());
-        			if(item.has("cover")) att.addProperty("image", item.get("cover").getTextValue());        				
-        		}
-        		else {
-        			att.addProperty("name", item.get("name").getTextValue());
-        			if(item.has("picture")) att.addProperty("image", item.get("picture").getTextValue());
-        		}
-        		if(item.has("link")) {
-        			att.addProperty("url", item.get("link").getTextValue());
-        		}
-        		ent.addAttribute(att, 1);
-        		
-        		// For each album get a list of fans
-        		if(level > 0) {
-	        		deezerClient = new UrlHelper(DeezerRestProvider.DEEZER_API_URL + "/" + maptype + "/" + id + "/fans");
-	            	deezerClient.addParameter("access_token", access_token);
-	            	deezerClient.addParameter("nb_items", "50");
-	            	deezerClient.openConnections();
-	            	JsonNode fansResponse = mapper.readTree(deezerClient.getStream());
-	            	deezerClient.closeConnections();
-	            	
-	            	if(fansResponse.has("data")) {
-	            		// Iterate through fans and get a list of favorite albums
-	            		JsonNode fans = fansResponse.get("data");
-	            		LOG.debug("number of fans for " + maptype + "{} : {}", id, fansResponse.get("total").getIntValue());
-	            		for(JsonNode fan : (ArrayNode) fans) {
-	            			addUser(storeHelper, access_token, maptype, fan, level - 1);
-	            		}
-	            	}
-        		}
-        	}
+    	// Add the user given in paramaters to the map entities list
+    	if(storeHelper.hasEntity(user.id)) {
+    		LOG.debug("user {} was already added, skipping...", user);
+    		return;
+    	}
+    	LOG.info("Add user {} to the entities list", user);
+    	Entity ent = storeHelper.addEntity(user.id);
+    	ent.addProperty("name", user.name);
+    	ent.addProperty("url", user.link);
+    			
+    	// Get user favorite albums
+    	DeezerClient dzClient = new DeezerClient(DEEZER_API_URL, accessToken);
+    	Collection<Album> favAlbums = dzClient.getUserFavoriteAlbums(user.id);
+    	
+    	
+    	// Iterate through albums and add them as user attributes.
+    	for(Album favAlbum : favAlbums) {
+    		Attribute att;
+    		// If the album was not already stored as attribute create it
+    		// And go through this album fans
+    		if(!storeHelper.hasAttribute(favAlbum.id)) {
+    			att = storeHelper.addAttribute(favAlbum.id);
+    	    	att.addProperty("name", favAlbum.title);
+    	    	att.addProperty("image", favAlbum.cover);
+    	    	att.addProperty("url", favAlbum.link);
+    			
+    	    	// If this album is in my favorite list set infavlist to true otherwise to false 
+    	    	// It is usefull for the menu item state at the map initialization
+    	    	att.addProperty("infavlist", favIds.contains(favAlbum.id));
+    	    	
+    			if(level > 0) {
+    				// For each album get a list of fans
+    				Collection<User> fans = dzClient.getAlbumFans(favAlbum.id);
+    				for(User fan : fans) {
+    					addUserByAlbum(storeHelper, accessToken, fan, favIds, level - 1);
+    				}
+    			}
+    		}
+    		else {
+    			att = storeHelper.getAttribute(favAlbum.id);
+    		}
+    		ent.addAttribute(att, 1);    		
     	}
     }
     
+    public static void addUserByArtist(StoreHelper storeHelper, String accessToken, User user,  Collection<String> favIds, int level) 
+    		throws JMIException, JsonProcessingException, IOException {
+    	
+    	// Add the user given in paramaters to the map entities list
+    	if(storeHelper.hasEntity(user.id)) {
+    		LOG.debug("user {} was already added, skipping...", user);
+    		return;
+    	}
+    	LOG.info("Add user {} to the entities list", user);
+    	Entity ent = storeHelper.addEntity(user.id);
+    	ent.addProperty("name", user.name);
+    	ent.addProperty("url", user.link);
+    			
+    	// Get user favorite albums
+    	DeezerClient dzClient = new DeezerClient(DEEZER_API_URL, accessToken);
+    	Collection<Artist> favArtists = dzClient.getUserFavoriteArtists(user.id);
+    	
+    	
+    	// Iterate through artits and add them as user attributes.
+    	for(Artist favArtist: favArtists) {
+    		Attribute att;
+    		// If the album was not already stored as attribute create it
+    		// And go through this album fans
+    		if(!storeHelper.hasAttribute(favArtist.id)) {
+    			att = storeHelper.addAttribute(favArtist.id);
+    	    	att.addProperty("name", favArtist.name);
+    	    	att.addProperty("image", favArtist.picture);
+    	    	att.addProperty("url", favArtist.link);
+    			
+    	    	// If this artist is in my favorite list set infavlist to true otherwise to false 
+    	    	// It is usefull for the menu item state at the map initialization
+    	    	att.addProperty("infavlist", favIds.contains(favArtist.id));
+    	    	
+    			if(level > 0) {
+    				// For each album get a list of fans
+    				Collection<User> fans = dzClient.getArtistFans(favArtist.id);
+    				for(User fan : fans) {
+    					addUserByArtist(storeHelper, accessToken, fan, favIds, level - 1);
+    				}
+    			}
+    		}
+    		else {
+    			att = storeHelper.getAttribute(favArtist.id);
+    		}
+    		ent.addAttribute(att, 1);    		
+    	}
+    }
+    
+    /*
+    public static void addUser(StoreHelper storeHelper, String accessToken, String maptype, User user, Collection<String> favIds, int level) 
+    		throws JMIException, JsonProcessingException, IOException {
+    	
+    	// Add the user given in paramaters to the map entities list
+    	if(storeHelper.hasEntity(user.id)) {
+    		LOG.debug("user {} was already added, skipping...", user);
+    		return;
+    	}
+    	LOG.info("Add user {} to the entities list", user);
+    	Entity ent = storeHelper.addEntity(user.id);
+    	ent.addProperty("name", user.name);
+    	ent.addProperty("url", user.link);
+    			
+
+    	DeezerClient dzClient = new DeezerClient(DEEZER_API_URL, accessToken);
+
+    	Collection<Favorite> favorites = new ArrayList<Favorite>();
+    	if(maptype.equalsIgnoreCase("artist")) {
+    		// Get user favorite artists
+    		Collection<Artist> favArtists = dzClient.getUserFavoriteArtists(user.id);
+    		for(Artist artist : favArtists) {
+    			favorites.add(new Favorite(artist.id, artist.name, artist.picture, artist.link));
+    		}
+    		
+    	}
+    	else {
+    		Collection<Album> favAlbums = dzClient.getUserFavoriteAlbums(user.id);
+    		for(Album album : favAlbums) {
+    			favorites.add(new Favorite(album.id, album.title, album.cover, album.link));
+    		}
+    	}
+    	
+    	// Iterate through artits and add them as user attributes.
+    	for(Favorite favorite: favorites) {
+    		Attribute att;
+    		// If the album was not already stored as attribute create it
+    		// And go through this album fans
+    		if(!storeHelper.hasAttribute(favorite.id)) {
+    			att = storeHelper.addAttribute(favorite.id);
+    	    	att.addProperty("name", favorite.name);
+    	    	att.addProperty("image", favorite.image);
+    	    	att.addProperty("url", favorite.url);
+    			
+    	    	// If this artist is in my favorite list set infavlist to true otherwise to false 
+    	    	// It is usefull for the menu item state at the map initialization
+    	    	att.addProperty("infavlist", favIds.containsKey(favorite.id));
+    	    	
+    			if(level > 0) {
+    				// For each album get a list of fans
+    				Collection<User> fans = dzClient.getArtistFans(favArtist.id);
+    				for(User fan : fans) {
+    					addUserByArtist(storeHelper, accessToken, fan, myFavoriteArtists, level - 1);
+    				}
+    			}
+    		}
+    		else {
+    			att = storeHelper.getAttribute(favArtist.id);
+    		}
+    		ent.addAttribute(att, 1);    		
+    	}
+
+    }
+    */
     
     /**
      * Helper function used to get a user access token from a 
@@ -260,6 +362,7 @@ public class DeezerRestProvider {
     		LOG.info("Expiration date reached, remove access token from session");
     		session.removeAttribute("access_token");
     		session.removeAttribute("expiration_date");
+    		session.removeAttribute("state");
     	}
     }
     
@@ -276,5 +379,52 @@ public class DeezerRestProvider {
 		String storedState = (String) session.getAttribute("state");
 		LOG.debug("Comparing state in session {} with state returned by the request {}", storedState, state);
 		return storedState != null && storedState.equals(state);
+    }
+    
+    /*
+    public static List<Album> getMyFavoriteAlbums() {
+    	
+    }
+    *
+    */
+    
+    /**
+     * Images proxy to be able to load images from the map 
+     * 
+     * @param encoding
+     * @param cache
+     * @param modified
+     * @param match
+     * @param url
+     * 
+     * @return 
+     */
+    @GET
+    @Path("image-proxy")
+    @Produces("image/*")
+    public Response getThumbnail( @HeaderParam("Accept-Encoding") String encoding, @HeaderParam("If-Modified-Since") String cache, @HeaderParam("If-Modified-Since") String modified, @HeaderParam("If-None-Match") String match, @QueryParam("url") String url) {
+        UrlHelper urlHelper = new UrlHelper( url);
+        try {
+            urlHelper.addHeader( "Accept-Encoding", encoding);
+            urlHelper.addHeader( "If-Modified-Since", modified);
+            urlHelper.addHeader( "If-None-Match", match);
+            urlHelper.addHeader( "Cache-Control", cache);
+            urlHelper.openConnections();
+            HttpURLConnection connection = (HttpURLConnection) urlHelper.getConnection();
+            String tag = connection.getHeaderField( "Etag");
+            if( tag == null) tag = "";
+            if( tag.startsWith("\"")) tag = tag.substring( 1);
+            if( tag.endsWith("\"")) tag = tag.substring( 0, tag.length()-1);
+            return Response.ok( urlHelper.getStream(), urlHelper.getContentType())
+                .lastModified( new Date( connection.getLastModified()))
+                .tag( tag)
+                .status( connection.getResponseCode())
+                .header( "Content-Length", connection.getContentLength())
+                .build();
+        }
+        catch (Exception e) {
+            Response.status( Responses.NOT_FOUND);
+        }
+        return null;
     }
 }

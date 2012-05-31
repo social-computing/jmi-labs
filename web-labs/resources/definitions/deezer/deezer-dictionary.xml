@@ -27,6 +27,7 @@
 				<REST-property id="name" />
 				<REST-property id="url" />
 				<REST-property id="image" />
+				<REST-property id="infavlist" />
 				<REST-property id="poss_id" entity="id" />
 				<REST-property id="poss_name" entity="name" />
 				<REST-property id="poss_url" attribute="url" />
@@ -51,6 +52,7 @@
 				<mapping key="NAME" value="name" />
 				<mapping key="URL" value="url" />
 				<mapping key="IMAGE" value="image" />
+				<mapping key="INFAVLIST" value="infavlist" />
 				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 				<mapping key="POSS_URL" value="poss_url" />
@@ -75,6 +77,7 @@
 				<mapping key="NAME" value="name" />
 				<mapping key="URL" value="url" />
 				<mapping key="IMAGE" value="image" />
+				<mapping key="INFAVLIST" value="infavlist" />
 				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 				<mapping key="POSS_URL" value="poss_url" />
@@ -100,6 +103,7 @@
 				<mapping key="NAME" value="name" />
 				<mapping key="URL" value="url" />
 				<mapping key="IMAGE" value="image" />
+				<mapping key="INFAVLIST" value="infavlist" />
 				<mapping key="POSS_ID" value="poss_id" />
 				<mapping key="POSS_NAME" value="poss_name" />
 				<mapping key="POSS_URL" value="poss_url" />

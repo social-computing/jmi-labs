@@ -105,7 +105,7 @@
 	<menu id="menu" font="menuFnt">
 		<item label="Display" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
 		<item label="Center" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
-		<item label="Add to my favorite {s$maptype}s" font="nameFnt" url="javascript:JMIF_AddFavorites({sID},{s$maptype})" />
+		<item label="In my favorite {s$maptype}s" font="nameFnt" url="javascript:JMIF_AddFavorites({sID},{s$maptype})" checked="{sINFAVLIST}" /> 
 		<separator />
         <item label="This {s$maptype}'s fans on deezer" />
 		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
@@ -117,5 +117,4 @@
     <event id="dblClkEvt">
         <open url="javascript:center({sID},{sNAME})" />
     </event>
-
 </swatch>

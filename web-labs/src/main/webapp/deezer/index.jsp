@@ -118,27 +118,47 @@
 			breadcrumbTitles.longTitle = "Centered on: " + args[1];
 			map.compute( parameters);
 		}
+		
 		function JMIF_AddFavorites(map, args) {
 			//var parameters = getParams();
 		    DZ.getLoginStatus(function(response) {
 		        if (response.authResponse) {
-		        	var userID       = response.userID,
-		        	    maptype      = args[1],
-		        	    service_uri  = "/user/" +  userID + "/" + maptype + "s";
-		        	    query_params = { 'access_token': response.authResponse.accessToken};
-		        	query_params[maptype + '_id'] = args[0];
-		        	// param_name  = maptype + '_id';
-		        	console.log("calling deezer api service with post request method and parameters", service_uri, query_params);
+                    var userID       = response.userID,
+                        id           = args[0],
+                        maptype      = args[1],
+                        service_uri  = "/user/" +  userID + "/" + maptype + "s";
+                        query_params = { 'access_token': response.authResponse.accessToken},
+		                attribute = map.attributes.match(new RegExp('\\b' + id + '\\b'), ['ID']),
+		                action = attribute[0].INFAVLIST ? 'delete' : 'post';
+		            
+	
+		            query_params[maptype + '_id'] = args[0];
+	
+		        	console.log("calling deezer api %s service with %s request method and %s parameters", service_uri, action, query_params);
 		        	DZ.api(service_uri,
-		        		   'post',
+		        		   action,
 		        		   query_params,
 		        		   function(response) {
+		        		       var msg = "this " + maptype + " ";
 		        			   switch(response) {
 		        			   case true:
-		        				   alert("" + maptype + " was sucessfully added to your favorite list");
+		        				   if(action == "post") {
+		        					   msg += "was sucessfully added to your favorite list";
+		        				   } else {
+		        					   msg += "was sucessfully removed from your favorite list";
+		        				   }
+		        				   console.debug("Attribute infavlist value before setProperty call : %s", attribute[0].INFAVLIST);
+		        				   attribute[0].setProperty('INFAVLIST', !attribute[0].INFAVLIST);
+		        				   console.debug("Attribute infavlist value after setProperty call : %s", attribute[0].INFAVLIST);
+		        				   alert(msg);
 		        				   break;
 		        			   case false:
-		        				   alert("this " + maptype + " is already in your favorite list")
+		        				   if(action == "post") {
+                                       msg += "is already in your favorite list";
+                                   } else {
+                                       msg += "is not in your favorite list";
+                                   }
+		        				   alert(msg);
 		        				   break;
 		        			   default:
 		        				   console.debug(response);
