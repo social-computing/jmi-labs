@@ -37,7 +37,7 @@ public class RestProvider {
     public static final String REQUEST_TOKEN_URL = "https://api.linkedin.com/uas/oauth/requestToken";
     public static final String ACCESS_TOKEN_URL = "https://api.linkedin.com/uas/oauth/accessToken";
     public static final String OAUTH_URL = "https://www.linkedin.com/uas/oauth/authorize";
-    public static final String CALLBACK = "https://labs.just-map-it.com/linkedin/map.jsp";
+    public static final String CALLBACK = "http://labs.just-map-it.com/linkedin/map.jsp";
     private static final ObjectMapper mapper = new ObjectMapper();
     
     @GET
