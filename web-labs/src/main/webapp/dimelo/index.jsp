@@ -37,7 +37,7 @@ function JMIF_breadcrumbTitlesFunc(event) {
 			return {shortTitle: 'Sorry, an error occured. If you want to be informed about it, please <a title="Fill the form" href="http://www.just-map-it.com/p/report.html?track='+ event.track +'" target="_blank">fill the form</a>', longTitle: 'Sorry, an error occured. Error: ' + event.message};
 		}
 		else {
-			return {shortTitle: 'Sorry, an error occured: ' + event.message, longTitle: 'Sorry, an error occured. Error: ' + event.message};
+			return {shortTitle: 'Sorry, an error occured. ' + event.message, longTitle: 'Sorry, an error occured. ' + event.message};
 		}
 	}
 	return breadcrumbTitles;
