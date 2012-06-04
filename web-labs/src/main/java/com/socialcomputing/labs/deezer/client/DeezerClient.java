@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
+import com.socialcomputing.wps.server.planDictionnary.connectors.utils.NameValuePair;
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper;
 
 /**
@@ -44,18 +45,14 @@ public class DeezerClient {
 	 */
 	public User getMyProfile() 
 			throws JsonProcessingException, JMIException, IOException {
-		LOG.debug("getting my profile information");
-		UrlHelper deezerConnection = new UrlHelper(this.deezerApiUrl + "/user/me");
-		deezerConnection.addParameter("access_token", this.accessToken);
-		deezerConnection.openConnections();
-    	JsonNode me = mapper.readTree(deezerConnection.getStream());
-    	deezerConnection.closeConnections();
+    	JsonNode me = this.api("/user/me");
     	return new User(me.get("id").getTextValue(),
     			        me.get("name").getTextValue(), 
     			        me.get("link").getTextValue(),
     			        me.get("picture").getTextValue(),
     			        me.get("country").getTextValue());
 	}
+
 	
 	public Collection<Album> getMyFavoriteAlbums() 
 			throws JMIException, JsonProcessingException, IOException {
@@ -66,28 +63,11 @@ public class DeezerClient {
 	
 	public Collection<Album> getUserFavoriteAlbums(String userId) 
 			throws JMIException, JsonProcessingException, IOException {
-		LOG.debug("getting user {} favorite albums", userId);
-		// Open connection to the remote server
-		UrlHelper deezerConnection = new UrlHelper(this.deezerApiUrl + "/user/" + userId + "/albums");
-    	deezerConnection.addParameter("access_token", this.accessToken);
-    	deezerConnection.addParameter("nb_items", "10");
-    	deezerConnection.openConnections();
-    	
-    	// Parse the reponse as a json tree with jackson and close the connection
-    	JsonNode albumsResponse = mapper.readTree(deezerConnection.getStream());
-    	deezerConnection.closeConnections();	
-    	
+		LOG.debug("Getting user {} favorite albums", userId);		
+		JsonNode response = this.api("/user/" + userId + "/albums", new NameValuePair("nb_items", "10"));
+		
     	// Construct the list of albums from the data given in the json object
-    	List<Album> albums= new ArrayList<Album>();
-    	if(albumsResponse.has("data")) {
-    		for(JsonNode album : (ArrayNode) albumsResponse.get("data")) {
-    			albums.add(new Album(album.get("id").getTextValue(), 
-    					             album.get("title").getTextValue(),
-    					             album.get("link").getTextValue(),
-    					             album.get("cover").getTextValue()));
-    		}
-    	}
-    	return albums;
+		return mapAlbumsFromJSON(response);
 	}
 	
 	
@@ -99,18 +79,10 @@ public class DeezerClient {
 	
 	public Collection<Artist> getUserFavoriteArtists(String userId) 
 			throws JMIException, JsonProcessingException, IOException {
-		LOG.debug("getting user {} favorite artists", userId);
-		// Open connection to the remote server
-		UrlHelper deezerConnection = new UrlHelper(this.deezerApiUrl + "/user/" + userId + "/artists");
-    	deezerConnection.addParameter("access_token", this.accessToken);
-    	deezerConnection.addParameter("nb_items", "10");
-    	deezerConnection.openConnections();
-    	
-    	// Parse the reponse as a json tree with jackson and close the connection
-    	JsonNode artistsResponse = mapper.readTree(deezerConnection.getStream());
-    	deezerConnection.closeConnections();	
-    	
-    	// Construct the list of albums from the data given in the json object
+		LOG.debug("Getting user {} favorite artists", userId);
+		JsonNode artistsResponse = this.api("/user/" + userId + "/artists", new NameValuePair("nb_items", "10"));
+		    	
+    	// Construct the list of artists from the data given in the json object
     	List<Artist> artists= new ArrayList<Artist>();
     	if(artistsResponse.has("data")) {
     		for(JsonNode artist : (ArrayNode) artistsResponse.get("data")) {
@@ -125,17 +97,73 @@ public class DeezerClient {
 	
 	public Collection<User> getAlbumFans(String albumId) 
 			throws JMIException, JsonProcessingException, IOException {
-		LOG.debug("getting album {} fans", albumId);
-		UrlHelper deezerConnection = new UrlHelper(this.deezerApiUrl + "/album/" + albumId + "/fans");
+		LOG.debug("Getting album {} fans", albumId);
+		JsonNode fansResponse = this.api("/album/" + albumId + "/fans", new NameValuePair("nb_items", "50"));
+
+		return mapFansFromJSON(fansResponse);
+	}
+	
+	
+	public Collection<Album> getAlbumRelated(String albumId) 
+			throws JMIException, JsonProcessingException, IOException {
+		LOG.debug("Getting album {} related albums", albumId);
+		JsonNode response = this.api("/album/" + albumId + "/related", new NameValuePair("nb_items", "20"));
+		
+		// Construct the list of albums from the data given in the json object
+		return mapAlbumsFromJSON(response);
+	}
+	
+
+	public Collection<User> getArtistFans(String artistId) 
+			throws JMIException, JsonProcessingException, IOException {
+		LOG.debug("Getting artist {} fans", artistId);
+		JsonNode fansResponse = this.api("/artist/" + artistId + "/fans", new NameValuePair("nb_items", "50"));
+		
+		return mapFansFromJSON(fansResponse);
+	}
+	
+	
+	
+	private JsonNode api(String path)
+			throws JsonProcessingException, JMIException, IOException {
+		return this.api(path, new ArrayList<NameValuePair>());
+	}
+	
+	
+	private JsonNode api(String path, NameValuePair parameter)
+			throws JsonProcessingException, JMIException, IOException {
+		
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(parameter);
+		return this.api(path, parameters);
+	}
+
+	
+	private JsonNode api(String path, Collection<NameValuePair> parameters) 
+			throws JMIException, JsonProcessingException, IOException {
+		// Constructing the complete url used to call the deezer service
+		UrlHelper deezerConnection = new UrlHelper(this.deezerApiUrl + path);
+		
+		// Add the access token as one of the parameters
 		deezerConnection.addParameter("access_token", this.accessToken);
-		deezerConnection.addParameter("nb_items", "50");
+		
+		// Also pass the additional parameters given as argument
+		for(NameValuePair parameter : parameters) {
+			deezerConnection.addParameter(parameter);
+		}
+		
+		// Connect to the endpoint, parse the response as a json tree and return a jsonnode 
 		deezerConnection.openConnections();
-    	JsonNode fansResponse = mapper.readTree(deezerConnection.getStream());
+    	JsonNode response = mapper.readTree(deezerConnection.getStream());
     	deezerConnection.closeConnections();
-    	
-    	List<User> fans = new ArrayList<User>();
-    	if(fansResponse.has("data")) {
-	    	for(JsonNode fan : (ArrayNode) fansResponse.get("data")) {
+    	return response;
+	}
+	
+	
+	public static List<User> mapFansFromJSON(JsonNode fansNode) {
+		List<User> fans = new ArrayList<User>();
+    	if(fansNode.has("data")) {
+	    	for(JsonNode fan : (ArrayNode) fansNode.get("data")) {
 	    		fans.add(new User(fan.get("id").getTextValue(),
 	    				fan.get("name").getTextValue(), 
 	    				fan.get("link").getTextValue(),
@@ -144,26 +172,17 @@ public class DeezerClient {
     	}
     	return fans;
 	}
-
-	public Collection<User> getArtistFans(String artistId) 
-			throws JMIException, JsonProcessingException, IOException {
-		LOG.debug("getting artist {} fans", artistId);
-		UrlHelper deezerConnection = new UrlHelper(this.deezerApiUrl + "/artist/" + artistId + "/fans");
-		deezerConnection.addParameter("access_token", this.accessToken);
-		deezerConnection.addParameter("nb_items", "50");
-		deezerConnection.openConnections();
-    	JsonNode fansResponse = mapper.readTree(deezerConnection.getStream());
-    	deezerConnection.closeConnections();
-    	
-    	List<User> fans = new ArrayList<User>();
-    	if(fansResponse.has("data")) {
-	    	for(JsonNode fan : (ArrayNode) fansResponse.get("data")) {
-	    		fans.add(new User(fan.get("id").getTextValue(),
-	    				fan.get("name").getTextValue(), 
-	    				fan.get("link").getTextValue(),
-	    				fan.get("picture").getTextValue()));
+	
+	public static List<Album> mapAlbumsFromJSON(JsonNode albumsNode) {
+		List<Album> albums = new ArrayList<Album>();
+    	if(albumsNode.has("data")) {
+	    	for(JsonNode album : (ArrayNode) albumsNode.get("data")) {
+    			albums.add(new Album(album.get("id").getTextValue(), 
+			             album.get("title").getTextValue(),
+			             album.get("link").getTextValue(),
+			             album.get("cover").getTextValue()));
 			}
     	}
-    	return fans;
+    	return albums;
 	}
 }
