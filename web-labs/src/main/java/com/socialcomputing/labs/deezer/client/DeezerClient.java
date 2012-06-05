@@ -117,6 +117,7 @@ public class DeezerClient {
 		LOG.debug("Getting artist {} related artists", artistId);
 		JsonNode response = this.api("/artist/" + artistId + "/related", parameters);
 		// Construct the list of albums from the data given in the json object
+		LOG.debug("Number of related artists found {}", response.get("total"));
 		return mapArtistsFromJSON(response);
 	}
 	

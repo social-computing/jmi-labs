@@ -115,8 +115,10 @@ public class DeezerRestProvider {
 	        		int i = 0;
 	        		Iterator<Artist> it = favArtists.iterator();
 	        		while(it.hasNext() && i < 10) {
-	        			addRelatedArtists(storeHelper, dzClient, it.next(), favIds, 1);
+	        			Artist a = it.next();
 	        			i++;
+	        			LOG.debug("Add related artists for user favorite artist = {}", a);
+	        			addRelatedArtists(storeHelper, dzClient, a, favIds, 1);
 	        		}
 	        		break;
         	}
@@ -134,7 +136,7 @@ public class DeezerRestProvider {
     public static void addRelatedArtists(StoreHelper storeHelper, DeezerClient dzClient, Artist artist, Collection<String> favIds, int level) 
     		throws JsonProcessingException, JMIException, IOException {
     	if(storeHelper.getEntity(artist.id) != null) {
-    		LOG.debug("Album {} was already added, skipping...", artist);
+    		LOG.debug("Artist {} was already added, skipping...", artist);
     		return;
     	}
     	
