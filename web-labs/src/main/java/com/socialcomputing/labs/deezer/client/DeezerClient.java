@@ -54,33 +54,35 @@ public class DeezerClient {
 	}
 
 	
-	public Collection<Album> getMyFavoriteAlbums() 
+	public Collection<Album> getMyFavoriteAlbums(NameValuePair... parameters) 
 			throws JMIException, JsonProcessingException, IOException {
 		
-		return this.getUserFavoriteAlbums("me");
+		return this.getUserFavoriteAlbums("me", parameters);
 	}
+
 	
-	
-	public Collection<Album> getUserFavoriteAlbums(String userId) 
+	public Collection<Album> getUserFavoriteAlbums(String userId, NameValuePair... parameters) 
 			throws JMIException, JsonProcessingException, IOException {
 		LOG.debug("Getting user {} favorite albums", userId);		
-		JsonNode response = this.api("/user/" + userId + "/albums", new NameValuePair("nb_items", "10"));
+		JsonNode response = this.api("/user/" + userId + "/albums", parameters);
 		
     	// Construct the list of albums from the data given in the json object
 		return mapAlbumsFromJSON(response);
 	}
+
 	
-	
-	public Collection<Artist> getMyFavoriteArtists() 
+	public Collection<Artist> getMyFavoriteArtists(NameValuePair... parameters) 
 			throws JMIException, JsonProcessingException, IOException {
 		
-		return this.getUserFavoriteArtists("me");
+		return this.getUserFavoriteArtists("me", parameters);
 	}
 	
-	public Collection<Artist> getUserFavoriteArtists(String userId) 
+	
+	
+	public Collection<Artist> getUserFavoriteArtists(String userId, NameValuePair... parameters) 
 			throws JMIException, JsonProcessingException, IOException {
 		LOG.debug("Getting user {} favorite artists", userId);
-		JsonNode artistsResponse = this.api("/user/" + userId + "/artists", new NameValuePair("nb_items", "10"));
+		JsonNode artistsResponse = this.api("/user/" + userId + "/artists", parameters);
 		    	
     	// Construct the list of artists from the data given in the json object
     	List<Artist> artists= new ArrayList<Artist>();
@@ -95,51 +97,31 @@ public class DeezerClient {
     	return artists;
 	}
 	
-	public Collection<User> getAlbumFans(String albumId) 
-			throws JMIException, JsonProcessingException, IOException {
+	public Collection<User> getAlbumFans(String albumId, NameValuePair... parameters) 
+			throws JsonProcessingException, JMIException, IOException {
 		LOG.debug("Getting album {} fans", albumId);
-		JsonNode fansResponse = this.api("/album/" + albumId + "/fans", new NameValuePair("nb_items", "50"));
-
+		JsonNode fansResponse = this.api("/album/" + albumId + "/fans", parameters);
 		return mapFansFromJSON(fansResponse);
 	}
-	
-	
-	public Collection<Album> getAlbumRelated(String albumId) 
-			throws JMIException, JsonProcessingException, IOException {
-		LOG.debug("Getting album {} related albums", albumId);
-		JsonNode response = this.api("/album/" + albumId + "/related", new NameValuePair("nb_items", "20"));
 		
-		// Construct the list of albums from the data given in the json object
-		return mapAlbumsFromJSON(response);
-	}
 	
-
-	public Collection<User> getArtistFans(String artistId) 
+	public Collection<User> getArtistFans(String artistId, NameValuePair... parameters) 
 			throws JMIException, JsonProcessingException, IOException {
 		LOG.debug("Getting artist {} fans", artistId);
-		JsonNode fansResponse = this.api("/artist/" + artistId + "/fans", new NameValuePair("nb_items", "50"));
-		
+		JsonNode fansResponse = this.api("/artist/" + artistId + "/fans", parameters);
 		return mapFansFromJSON(fansResponse);
 	}
 	
-	
-	
-	private JsonNode api(String path)
-			throws JsonProcessingException, JMIException, IOException {
-		return this.api(path, new ArrayList<NameValuePair>());
+	public Collection<Artist> getRelatedArtists(String artistId, NameValuePair... parameters) 
+			throws JMIException, JsonProcessingException, IOException {
+		LOG.debug("Getting artist {} related artists", artistId);
+		JsonNode response = this.api("/artist/" + artistId + "/related", parameters);
+		// Construct the list of albums from the data given in the json object
+		return mapArtistsFromJSON(response);
 	}
 	
 	
-	private JsonNode api(String path, NameValuePair parameter)
-			throws JsonProcessingException, JMIException, IOException {
-		
-		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-		parameters.add(parameter);
-		return this.api(path, parameters);
-	}
-
-	
-	private JsonNode api(String path, Collection<NameValuePair> parameters) 
+	private JsonNode api(String path, NameValuePair... parameters) 
 			throws JMIException, JsonProcessingException, IOException {
 		// Constructing the complete url used to call the deezer service
 		UrlHelper deezerConnection = new UrlHelper(this.deezerApiUrl + path);
@@ -184,5 +166,18 @@ public class DeezerClient {
 			}
     	}
     	return albums;
+	}
+	
+	public static List<Artist> mapArtistsFromJSON(JsonNode artistNode) {
+		List<Artist> artists = new ArrayList<Artist>();
+    	if(artistNode.has("data")) {
+	    	for(JsonNode artist : (ArrayNode) artistNode.get("data")) {
+    			artists.add(new Artist(artist.get("id").getTextValue(), 
+    					artist.get("name").getTextValue(),
+    					artist.get("link").getTextValue(),
+    					artist.get("picture").getTextValue()));
+			}
+    	}
+    	return artists;
 	}
 }

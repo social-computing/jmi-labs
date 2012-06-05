@@ -215,8 +215,9 @@
 					    <input type="hidden" name="access_token" value="<%=access_token%>" />
 					    <fieldset>
                           <legend>Please select a category :</legend>
-                          <label><input type="radio" name="maptype" value="artist" <%=("".equals(maptype) || "artist".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%> />By artist</label>
-                          <label><input type="radio" name="maptype" value="album" <%=("album".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%>  />By album</label>
+                          <label><input type="radio" name="maptype" value="artist" <%=("".equals(maptype) || "artist".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%> />Favorite artists fans</label>
+                          <label><input type="radio" name="maptype" value="album" <%=("album".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%>  />Favorite albums fans</label>
+                          <label><input type="radio" name="maptype" value="relArtist" <%=("relArtist".equalsIgnoreCase(maptype)) ? "checked=\"checked\"" : ""%> />Favorite artists deezer recommendations</label>
                         </fieldset>
 					</td>
 					<td><input type="submit" value="Just Map It!" /></td>
