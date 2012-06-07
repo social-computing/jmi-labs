@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE swatch SYSTEM "swatch.dtd">
+
+<swatch name="NODE_NORM" title="{sNAME}">
+
+<!-- Base Satellite definition -->
+    <sat shape="diskShp" transfo="baseTrf" isBack="true" isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isTip="false" isNoSided="false">
+        <slice inCol="34 34 34" outCol="238 242 245" alpha="1" linewidth="1" />
+        <slice inCol="238 242 245" outCol="238 242 245" alpha="1" linewidth="1">
+            <transfo scale=".87" map="absolute" />
+        </slice>
+        <slice image="{s$deezerserverurl}/rest/deezer/image-proxy?url={sIMAGE}" transfo="imgTrf" alpha="1" linewidth="1" />
+    </sat>
+
+<!-- Sub Spots -->
+    <sat shape="diskShp" isSub="true" isSuper="false" isVisible="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
+        <slice inCol="255 182 0" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
+        <slice image="{s$deezerserverurl}/rest/deezer/image-proxy?url={sIMAGE}" transfo="voidTrf" alpha="1" linewidth="1" />
+    </sat>
+
+<!-- Super Spot -->
+    <sat shape="diskShp" isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
+        <slice inCol="255 182 0" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
+    </sat>
+
+<!-- Title -->
+    <sat shape="voidShp" transfo="titleTrf" isSub="true" isSuper="true" isTip="true" isVisible="true" isCur="false" isRest="true" isBack="false" isNoSided="false">
+        <slice alpha="1" linewidth="1">
+            <tip font="nameFnt" label="{+20.1sNAME}" textCol="34 34 34" rounded="10" isCorner="true" blur="-1" dir="SW" align="left" isFloating="false" />
+        </slice>
+    </sat>
+
+    <sat shape="voidShp" selection="search" transfo="titleTrf" isSub="true" isVisible="true" isSuper="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
+        <slice alpha="1" linewidth="1">
+            <tip font="selFnt" label="{+20.1sNAME}" textCol="180 20 32" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
+        </slice>
+    </sat>
+
+<!-- References -->
+    <string id="nameStr" label="{sNAME}" />
+
+    <color id="blackCol" rgb="000000" />
+    <color id="whiteCol" rgb="ffffff" />
+    <color id="hLinkDrkCol" rgb="0 0 127" />
+    <color id="hLinkCol" rgb="0 0 255" />
+    <color id="hLinkLitCol" rgb="191 191 255" />
+
+    <shape id="voidShp" scale="0" anchor="center" />
+    <shape id="diskShp" scale="1" anchor="center">
+    </shape>
+    <shape id="spotShp" scale="0.2" anchor="center">
+    </shape>
+
+    <font id="nameFnt" name="Arial" size="11" style="bold" />
+    <font id="titleFnt" name="Arial" size="11" style="plain" />
+    <font id="selFnt" name="Arial" style="bold" size="11" />
+
+    <transfo id="voidTrf" scale="0.01" map="absolute" />
+    <transfo id="spotTrf" scale="0.2" map="absolute" />
+    <transfo id="imgTrf" scale="0.87" map="absolute" />
+    <transfo id="baseTrf" map="interpol" scale="0">
+        <polar dir="90" rad="1" />
+    </transfo>
+    <transfo id="titleTrf" map="interpol" scale="0">
+        <polar dir="0" rad="1.1" />
+    </transfo>
+    <transfo id="selTrf" map="interpol" scale="0">
+        <polar dir="0" rad="1.4" />
+    </transfo>
+
+    <tip id="textTip" font="nameFnt" label="{+sNAME}" textCol="@blackCol" isCorner="true" blur="-1" rounded="-1" dir="SW" align="left" isFloating="false" />
+                    
+</swatch>

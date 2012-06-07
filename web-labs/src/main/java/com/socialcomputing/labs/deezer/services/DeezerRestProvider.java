@@ -135,33 +135,39 @@ public class DeezerRestProvider {
     
     public static void addRelatedArtists(StoreHelper storeHelper, DeezerClient dzClient, Artist artist, Collection<String> favIds, int level) 
     		throws JsonProcessingException, JMIException, IOException {
+    	
+    	/*
     	if(storeHelper.getEntity(artist.id) != null) {
     		LOG.debug("Artist {} was already added, skipping...", artist);
     		return;
     	}
+    	*/
     	
-    	LOG.info("Add Artist {} to the entities list", artist);
-    	Entity ent = storeHelper.addEntity(artist.id);
-    	ent.addProperty("name", artist.name);
-    	ent.addProperty("url", artist.link);
+    	LOG.info("Add Artist {} to the attributes list", artist);
+    	Attribute att = storeHelper.addAttribute(artist.id);
+    	att.addProperty("name", artist.name);
+    	att.addProperty("image", artist.picture);
+    	att.addProperty("url", artist.link);
+    	att.addProperty("infavlist", favIds.contains(artist.id));
     	
     	// Ask for this artist related artists
     	Collection<Artist> relatedArtists = dzClient.getRelatedArtists(artist.id, new NameValuePair("nb_items", "20"));
     	
     	
-    	// Iterate through related artists and add them as the artist attributes.
+    	// Iterate through related artists and add them as the artist entities.
     	for(Artist relatedArtist : relatedArtists) {
-    		Attribute att = storeHelper.getAttribute(relatedArtist.id);
-    		// If the artist was not already stored as attribute create it
-    		if(att == null) {
-    			att = storeHelper.addAttribute(relatedArtist.id);
-    	    	att.addProperty("name", relatedArtist.name);
-    	    	att.addProperty("image", relatedArtist.picture);
-    	    	att.addProperty("url", relatedArtist.link);
+    		Entity ent = storeHelper.getEntity(relatedArtist.id);
+
+    		// If the artist was not already stored as entity create it
+    		if(ent == null) {
+    			ent = storeHelper.addEntity(relatedArtist.id);
+    			ent.addProperty("name", relatedArtist.name);
+    			ent.addProperty("image", relatedArtist.picture);
+    			ent.addProperty("url", relatedArtist.link);
     			
     	    	// If this artist is in my favorite list set infavlist to true otherwise to false 
     	    	// It is usefull for the menu item state at the map initialization phase
-    	    	att.addProperty("infavlist", favIds.contains(relatedArtist.id));
+    	    	ent.addProperty("infavlist", favIds.contains(relatedArtist.id));
     	    	
     			if(level > 0) {
     				// Call that function again for that related artist

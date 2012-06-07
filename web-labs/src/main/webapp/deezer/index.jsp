@@ -56,7 +56,9 @@
 		<link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 		<script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 		<script type="text/javascript">
-		var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: '<%=maptype%>s map' };
+		var mapType = '<%=maptype%>';
+		if(mapType == "relArtist") mapType = "artist";
+		var breadcrumbTitles = { shortTitle: 'Initial query', longTitle: mapType + 's map' };
 		function JMIF_breadcrumbTitlesFunc(event) {
 			if( event.type === JMI.Map.event.EMPTY) {
 				return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
@@ -128,16 +130,16 @@
 			//var parameters = getParams();
 		    DZ.getLoginStatus(function(response) {
 		        if (response.authResponse) {
-                    var userID       = response.userID,
+		        	var maptype = args[1];
+		        	if(maptype == "relArtist") maptype = "artist";
+		        	var userID       = response.userID,
                         id           = args[0],
-                        maptype      = args[1],
                         service_uri  = "/user/" +  userID + "/" + maptype + "s";
                         query_params = { 'access_token': response.authResponse.accessToken},
 		                attribute = map.attributes.match(new RegExp('\\b' + id + '\\b'), ['ID']),
 		                action = attribute[0].INFAVLIST ? 'delete' : 'post';
-		            
-	
-		            query_params[maptype + '_id'] = args[0];
+
+                        query_params[maptype + '_id'] = args[0];
 	
 		        	console.log("calling deezer api %s service with %s request method and %s parameters", service_uri, action, query_params);
 		        	DZ.api(service_uri,
