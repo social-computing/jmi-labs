@@ -1,7 +1,10 @@
 package com.socialcomputing.labs.allocine;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -17,9 +20,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
+import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
@@ -34,27 +39,44 @@ public class AllocineRestProvider {
     public static final String API_KEY = "U29jaWFsQ29tcHV0aW5n";
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    protected class Movie {
+        public Movie( String id, String title, String image) {
+            this.id = id;
+            this.title = title;
+            this.image = image;
+        }
+        public String id, title, image;
+    }
+    
     @GET
     @Path("maps/{kind}.json")
     @Produces(MediaType.APPLICATION_JSON)
     public String kind(@Context HttpServletRequest request, @PathParam("kind") String kind, @DefaultValue("top:month") @QueryParam("filter") String filter) {
         HttpSession session = request.getSession(true);
         String key = kind + "_" + filter;
-        String result = null; //( String)session.getAttribute( key);
+        String result = ( String)session.getAttribute( key);
         if (result == null || result.length() == 0) {
-            if( kind.equalsIgnoreCase( "film_gender")) {
-                result = film_gender( filter);
+            StoreHelper storeHelper = new StoreHelper();
+            try {
+                if( kind.equalsIgnoreCase( "film_gender")) {
+                    film_gender( storeHelper, filter);
+                }
+                else if( kind.equalsIgnoreCase( "film_tag")) {
+                    film_tag( storeHelper, filter);
+                }
+                else if( kind.equalsIgnoreCase( "film_casting")) {
+                    film_casting( storeHelper, filter);
+                }
+                else if( kind.equalsIgnoreCase( "film_same")) {
+                    //film_same( storeHelper, filter);
+                    film_similarity( storeHelper, filter);
+                }
+                result = storeHelper.toJson();
+                session.setAttribute( key, result);
             }
-            else if( kind.equalsIgnoreCase( "film_tag")) {
-                result = film_tag( filter);
+            catch (Exception e) {
+                return StoreHelper.ErrorToJson(e);
             }
-            else if( kind.equalsIgnoreCase( "film_casting")) {
-                result = film_casting( filter);
-            }
-            else if( kind.equalsIgnoreCase( "film_same")) {
-                result = film_same( filter);
-            }
-            session.setAttribute( key, result);
         }
         return result;
     }
@@ -63,6 +85,10 @@ public class AllocineRestProvider {
     @Path("image-proxy")
     @Produces("image/*")
     public Response getThumbnail( @HeaderParam("Accept-Encoding") String encoding, @HeaderParam("If-Modified-Since") String cache, @HeaderParam("If-Modified-Since") String modified, @HeaderParam("If-None-Match") String match, @QueryParam("url") String url) {
+        if( url.length() == 0) {
+            Response.status( Responses.NOT_FOUND);
+            return null;
+        }
         UrlHelper urlHelper = new UrlHelper( url);
         try {
             urlHelper.addHeader( "Accept-Encoding", encoding);
@@ -88,86 +114,100 @@ public class AllocineRestProvider {
         return null;
     }
 
-    private String film_gender(String filter) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode node = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) node.get("feed").get("movie")) {
-                movie_gender( movie, storeHelper);
-            }
+    private void film_gender(StoreHelper storeHelper, String filter) throws Exception {
+        UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
+        urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
+        urlHelper.addParameter( "format", "json");
+        urlHelper.addParameter( "count", "200");
+        urlHelper.addParameter( "filter", filter);
+        urlHelper.openConnections();
+        JsonNode node = mapper.readTree(urlHelper.getStream());
+        for (JsonNode movie : (ArrayNode) node.get("feed").get("movie")) {
+            movie_gender( movie, storeHelper);
         }
-        catch (Exception e) {
-            return StoreHelper.ErrorToJson(e);
-        }
-        return storeHelper.toJson();
     }
     
-    private String film_tag(String filter) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_tag( movie, storeHelper);
-            }
+    private void film_tag(StoreHelper storeHelper, String filter) throws Exception {
+        UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
+        urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
+        urlHelper.addParameter( "format", "json");
+        urlHelper.addParameter( "count", "200");
+        urlHelper.addParameter( "filter", filter);
+        urlHelper.openConnections();
+        JsonNode movies = mapper.readTree(urlHelper.getStream());
+        for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
+            movie_tag( movie, storeHelper);
         }
-        catch (Exception e) {
-            return StoreHelper.ErrorToJson(e);
-        }
-        return storeHelper.toJson();
     }
     
-    private String film_casting(String filter) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "200");
-            urlHelper.addParameter( "filter", filter);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_casting( movie, storeHelper);
-            }
+    private void film_casting(StoreHelper storeHelper, String filter) throws Exception {
+        UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
+        urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
+        urlHelper.addParameter( "format", "json");
+        urlHelper.addParameter( "count", "200");
+        urlHelper.addParameter( "filter", filter);
+        urlHelper.openConnections();
+        JsonNode movies = mapper.readTree(urlHelper.getStream());
+        for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
+            movie_casting( movie, storeHelper);
         }
-        catch (Exception e) {
-            return StoreHelper.ErrorToJson(e);
-        }
-        return storeHelper.toJson();
     }
 
-    private String film_same( String id) {
-        StoreHelper storeHelper = new StoreHelper();
-        try {
-            UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
-            urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
-            urlHelper.addParameter( "format", "json");
-            urlHelper.addParameter( "count", "50");
-            urlHelper.addParameter( "filter", "similar:" + id);
-            urlHelper.openConnections();
-            JsonNode movies = mapper.readTree(urlHelper.getStream());
-            for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
-                movie_same( movie, storeHelper);
-                Thread.sleep( 3000);
+    private void film_similarity(StoreHelper storeHelper, String id) throws Exception {
+        UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/similarities");
+        urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
+        urlHelper.addParameter( "format", "json");
+        urlHelper.addParameter( "count", "10");
+        urlHelper.addParameter( "code", id);
+        urlHelper.openConnections();
+        JsonNode similarities = mapper.readTree(urlHelper.getStream());
+
+        Map<String, Movie> movies = new HashMap<String, Movie>();
+        Movie movie = getMovie( id);
+        movies.put(id, movie);
+        Attribute reference = storeHelper.addAttribute( id);
+        reference.addProperty("name", movie.title);
+        reference.addProperty("poster", movie.image);
+        for (JsonNode similarity : (ArrayNode) similarities.get("similarities").get("similar")) {
+            String i = String.valueOf(similarity.get("movieid").getLongValue());
+            movie = movies.get( i);
+            if( movie == null) {
+                movie = getMovie( i);
+                movies.put( i, movie);
             }
-            movie_same( get_movie( id), storeHelper);
+            Entity entity = storeHelper.addEntity( i);
+            entity.addProperty("name", movie.title);
+            entity.addProperty("poster", movie.image);
+            entity.addAttribute(reference, 1);
+            for (JsonNode samemovie : (ArrayNode) similarity.get("child")) {
+                String j = String.valueOf(samemovie.get("movieid").getLongValue());
+                movie = movies.get( j);
+                if( movie == null) {
+                    movie = getMovie( j);
+                    movies.put( j, movie);
+                }
+                Attribute attribute = storeHelper.addAttribute( j);
+                entity.addAttribute(attribute, 1);
+                attribute.addProperty("name", movie.title);
+                attribute.addProperty("poster", movie.image);
+            }
         }
-        catch (Exception e) {
-            return StoreHelper.ErrorToJson(e);
+        urlHelper.closeConnections();
+    }
+    
+    private void film_same( StoreHelper storeHelper, String id) throws Exception {
+        UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/movieList");
+        urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
+        urlHelper.addParameter( "format", "json");
+        urlHelper.addParameter( "count", "50");
+        urlHelper.addParameter( "filter", "similar:" + id);
+        urlHelper.openConnections();
+        JsonNode movies = mapper.readTree(urlHelper.getStream());
+        for (JsonNode movie : (ArrayNode) movies.get("feed").get("movie")) {
+            movie_same( movie, storeHelper);
+            Thread.sleep( 3000);
         }
-        return storeHelper.toJson();
+        movie_same( get_movie( id), storeHelper);
     }
 
     private void movie_same( JsonNode movie, StoreHelper storeHelper) throws Exception {
@@ -242,6 +282,12 @@ public class AllocineRestProvider {
         urlHelper.addParameter( "code", id);
         urlHelper.openConnections();
         return mapper.readTree(urlHelper.getStream()).get("movie");
+    }
+
+    private Movie getMovie( String id) throws Exception {
+        //return new Movie(id, id, "");
+        JsonNode movie = get_movie( id);
+        return new Movie(id, movie.get("title").getTextValue(), get_poster_url( movie));
     }
     
     private String get_poster_url( JsonNode movie) {
