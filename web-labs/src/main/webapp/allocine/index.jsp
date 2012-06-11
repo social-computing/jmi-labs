@@ -90,7 +90,7 @@ function focus(map, args) {
 	parameters["entityId"] = args[0];
 	completeParameters( parameters);
 	breadcrumbTitles.shortTitle = "Focus";
-	breadcrumbTitles.longTitle = "Focus on: " + args[1];
+	breadcrumbTitles.longTitle = "Focus sur : " + args[1];
 	map.compute( parameters);
 }
 function center(map, args) {
@@ -98,8 +98,8 @@ function center(map, args) {
 	parameters["attributeId"] = args[0];
 	parameters["analysisProfile"] = "DiscoveryProfile";
 	completeParameters( parameters);
-	breadcrumbTitles.shortTitle = "Centered";
-	breadcrumbTitles.longTitle = "Centered on: " + args[1];
+	breadcrumbTitles.shortTitle = "Centré";
+	breadcrumbTitles.longTitle = "Centré sur : " + args[1];
 	map.compute( parameters);
 }
 function same(map, args) {
@@ -109,6 +109,8 @@ function same(map, args) {
 	completeParameters( parameters);
 	parameters.kind = 'film_same';
 	parameters.filter = args[0];
+	breadcrumbTitles.shortTitle = "Similaires";
+	breadcrumbTitles.longTitle = "Similaires de : " + args[1];
 	map.compute( parameters);
 }
 function completeParameters(parameters) {
