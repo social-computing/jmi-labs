@@ -110,7 +110,7 @@ function same(map, args) {
 	parameters.kind = 'film_same';
 	parameters.filter = args[0];
 	breadcrumbTitles.shortTitle = "Similaires";
-	breadcrumbTitles.longTitle = "Similaires de : " + args[1];
+	breadcrumbTitles.longTitle = "Similaires à : " + args[1];
 	map.compute( parameters);
 }
 function completeParameters(parameters) {
