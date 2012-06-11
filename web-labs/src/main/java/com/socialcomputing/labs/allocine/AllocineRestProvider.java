@@ -285,9 +285,9 @@ public class AllocineRestProvider {
     }
 
     private Movie getMovie( String id) throws Exception {
-        //return new Movie(id, id, "");
-        JsonNode movie = get_movie( id);
-        return new Movie(id, movie.get("title").getTextValue(), get_poster_url( movie));
+        return new Movie(id, id, "");
+//        JsonNode movie = get_movie( id);
+//        return new Movie(id, movie.get("title").getTextValue(), get_poster_url( movie));
     }
     
     private String get_poster_url( JsonNode movie) {
