@@ -162,34 +162,20 @@ public class AllocineRestProvider {
         urlHelper.openConnections();
         JsonNode similarities = mapper.readTree(urlHelper.getStream());
 
-        Map<String, Movie> movies = new HashMap<String, Movie>();
-        Movie movie = getMovie( id);
-        movies.put(id, movie);
-        Attribute reference = storeHelper.addAttribute( id);
-        reference.addProperty("name", movie.title);
-        reference.addProperty("poster", movie.image);
-        for (JsonNode similarity : (ArrayNode) similarities.get("similarities").get("similar")) {
-            String i = String.valueOf(similarity.get("movieid").getLongValue());
-            movie = movies.get( i);
-            if( movie == null) {
-                movie = getMovie( i);
-                movies.put( i, movie);
-            }
-            Entity entity = storeHelper.addEntity( i);
-            entity.addProperty("name", movie.title);
-            entity.addProperty("poster", movie.image);
+        JsonNode movie = similarities.get("similarities");
+        Attribute reference = storeHelper.addAttribute( String.valueOf(movie.get("movieid").getLongValue()));
+        reference.addProperty("name", movie.get("title").getTextValue());
+        reference.addProperty("poster", movie.get("href").getTextValue());
+        for (JsonNode similarity : (ArrayNode) movie.get("similar")) {
+            Entity entity = storeHelper.addEntity( String.valueOf(similarity.get("movieid").getLongValue()));
+            entity.addProperty("name", similarity.get("title").getTextValue());
+            entity.addProperty("poster", similarity.get("href").getTextValue());
             entity.addAttribute(reference, 1);
             for (JsonNode samemovie : (ArrayNode) similarity.get("child")) {
-                String j = String.valueOf(samemovie.get("movieid").getLongValue());
-                movie = movies.get( j);
-                if( movie == null) {
-                    movie = getMovie( j);
-                    movies.put( j, movie);
-                }
-                Attribute attribute = storeHelper.addAttribute( j);
+                Attribute attribute = storeHelper.addAttribute( String.valueOf(samemovie.get("movieid").getLongValue()));
                 entity.addAttribute(attribute, 1);
-                attribute.addProperty("name", movie.title);
-                attribute.addProperty("poster", movie.image);
+                attribute.addProperty("name", samemovie.get("title").getTextValue());
+                attribute.addProperty("poster", samemovie.get("href").getTextValue());
             }
         }
         urlHelper.closeConnections();
@@ -284,10 +270,11 @@ public class AllocineRestProvider {
         return mapper.readTree(urlHelper.getStream()).get("movie");
     }
 
-    private Movie getMovie( String id) throws Exception {
-        return new Movie(id, id, "");
-//        JsonNode movie = get_movie( id);
-//        return new Movie(id, movie.get("title").getTextValue(), get_poster_url( movie));
+    private Movie getMovie( JsonNode movie) throws Exception {
+        String j = String.valueOf(movie.get("movieid").getLongValue());
+        return new Movie(String.valueOf(movie.get("movieid").getLongValue()), 
+                         movie.get("title").getTextValue(), 
+                         movie.get("href").getTextValue());
     }
     
     private String get_poster_url( JsonNode movie) {
