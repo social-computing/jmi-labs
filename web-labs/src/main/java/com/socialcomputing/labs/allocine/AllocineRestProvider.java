@@ -165,17 +165,17 @@ public class AllocineRestProvider {
         JsonNode movie = similarities.get("similarities");
         Attribute reference = storeHelper.addAttribute( String.valueOf(movie.get("movieid").getLongValue()));
         reference.addProperty("name", movie.get("title").getTextValue());
-        reference.addProperty("poster", movie.get("href").getTextValue());
+        reference.addProperty("poster", movie.get("href") != null ? movie.get("href").getTextValue() : "");
         for (JsonNode similarity : (ArrayNode) movie.get("similar")) {
             Entity entity = storeHelper.addEntity( String.valueOf(similarity.get("movieid").getLongValue()));
             entity.addProperty("name", similarity.get("title").getTextValue());
-            entity.addProperty("poster", similarity.get("href").getTextValue());
+            entity.addProperty("poster", similarity.get("href") != null ? similarity.get("href").getTextValue() : "");
             entity.addAttribute(reference, 1);
             for (JsonNode samemovie : (ArrayNode) similarity.get("child")) {
                 Attribute attribute = storeHelper.addAttribute( String.valueOf(samemovie.get("movieid").getLongValue()));
                 entity.addAttribute(attribute, 1);
                 attribute.addProperty("name", samemovie.get("title").getTextValue());
-                attribute.addProperty("poster", samemovie.get("href").getTextValue());
+                attribute.addProperty("poster", samemovie.get("href") != null ? samemovie.get("href").getTextValue() : "");
             }
         }
         urlHelper.closeConnections();
