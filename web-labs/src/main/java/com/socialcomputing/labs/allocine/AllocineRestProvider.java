@@ -55,7 +55,7 @@ public class AllocineRestProvider {
         HttpSession session = request.getSession(true);
         String key = kind + "_" + filter;
         String result = ( String)session.getAttribute( key);
-        if (result == null || result.length() == 0) {
+        if (result == null || result.length() == 0 || kind.equalsIgnoreCase( "film_same")) {
             StoreHelper storeHelper = new StoreHelper();
             try {
                 if( kind.equalsIgnoreCase( "film_gender")) {
