@@ -102,16 +102,17 @@ function JMIF_Center(map, args) {
 	map.compute( parameters);
 }
 function search(value) {
+	var pattern = new RegExp(value, 'i'); 
 	if( mapHtml5) {
-		var res1 = mapHtml5.attributes.match(value,['NAME']);	
-		var res2 = mapHtml5.links.match(value,['REC_NAME']);	
+		var res1 = mapHtml5.attributes.match(pattern,['NAME']);	
+		var res2 = mapHtml5.links.match(pattern,['REC_NAME']);	
 		mapHtml5.selections['search'].set( res1.concat(res2));
 		mapHtml5.selections['search'].show();
 		document.getElementById('statusHtml5').innerHTML = res1.length + ' objects(s) found / ' + res2.length + ' link(s) found'; 
 	}
 	if( mapFlex) {
-		var res1 = mapFlex.attributes.match(value,['NAME']);	
-		var res2 = mapFlex.links.match(value,['REC_NAME']);	
+		var res1 = mapFlex.attributes.match(pattern,['NAME']);	
+		var res2 = mapFlex.links.match(pattern,['REC_NAME']);	
 		mapFlex.selections['search'].set( res1.concat(res2));
 		mapFlex.selections['search'].show();
 		document.getElementById('statusFlex').innerHTML = res1.length + ' objects(s) found / ' + res2.length + ' link(s) found'; 

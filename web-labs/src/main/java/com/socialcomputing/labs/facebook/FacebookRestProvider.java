@@ -36,7 +36,7 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper.Type;
 import com.sun.jersey.api.Responses;
 
-@Path("/")
+@Path("/facebook")
 public class FacebookRestProvider {
    // JMI Test
 //    public static final String CLIENT_ID = "136353756473765";

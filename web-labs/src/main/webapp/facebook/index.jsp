@@ -94,6 +94,7 @@ img {
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="../js/jquery-ui-1.8.21.custom.min.js"></script>
+<script type="text/javascript" src="../js/jquery.base64.js"></script>
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="./facebook.js"></script>
 <script type="text/javascript">
@@ -109,12 +110,12 @@ $(document).ready( function() {
 $(function() {
 	$( "#mode" ).buttonset();
 	$( "#mode").change( function() { 
-		JMI.facebook.Map.mode = $("input[@name=mode]:checked").attr('id');
+		$("#jmi-map")[0].JMI.facebook.mode = $("input[@name=mode]:checked").attr('id');
 		$("#jmi-map")[0].JMI.facebook.compute();
 	});
 	$( "#upload, #tag").button();	
 	$( "#upload").click( function() {
-		alert($("#jmi-map").attr('id'));
+		$("#jmi-map")[0].JMI.facebook.uploadAsPhoto(false,$("#jmi-map")[0].JMI.facebook.mode);
 	});
 	$( "#tag").change( function() {
 		var mode = $("input[@name=tag]:checked");

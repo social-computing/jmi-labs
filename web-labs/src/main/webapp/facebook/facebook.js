@@ -37,8 +37,8 @@ JMI.facebook.Map.prototype.draw = function(mode,options) {
 JMI.facebook.Map.prototype.getParams = function() {
   return { 
 	map: 'Facebook',
-    //fbserverurl: 'http://localhost:8080/web-labs',
-    fbserverurl: 'http://facebook.just-map-it.com',
+    fbserverurl: 'http://localhost:8080/web-labs',
+    //fbserverurl: 'http://labs.just-map-it.com',
     jsessionid: this.session,
     access_token: this.accessToken,
     fbuserid: this.fbuserid,
@@ -52,13 +52,13 @@ JMI.facebook.Map.prototype.compute = function() {
   this.map.compute(parameters);
 };
 
-JMI.facebook.Map.prototype.JMIF_Focus = function(map, args) {
+/*JMI.facebook.Map.prototype.JMIF_Focus = function(map, args) {
   var parameters = map.getParams();
   parameters.entityId = args[0];
   map.compute( parameters);
   map.facebook.breadcrumbTitles.shortTitle = "Focus";
   map.facebook.breadcrumbTitles.longTitle = "Focus on: " + args[1];
-};
+};*/
 
 JMI.facebook.Map.prototype.Discover = function(map, args) {
   var parameters = this.getParams();
@@ -66,7 +66,7 @@ JMI.facebook.Map.prototype.Discover = function(map, args) {
   parameters.analysisProfile = "DiscoveryProfile";
   map.compute( parameters);
   map.facebook.breadcrumbTitles.shortTitle = "Centered";
-  map.facebook.breadcrumbTitles.longTitle = "Centered on: " + args[1];
+  map.facebook.breadcrumbTitles.longTitle = "Centered on " + args[1];
 };   
 
 JMI.facebook.Map.prototype.Display=function( map, args) {
@@ -83,26 +83,37 @@ JMI.facebook.Map.prototype.Display=function( map, args) {
 	});
 };
 
-/*JMI.facebook.Map.prototype.uploadAsPhoto = function( doTag) {
-	var name = "My friends sharing " + type.selectedItem.type;
-		image = this.getImage();
-	var mploader:MultipartURLLoader = new MultipartURLLoader();
-	mploader.addEventListener(
-		Event.COMPLETE, 
-		function onComplete(e:Event):void {
-			var jso:Object = decodeJson( mploader.getData());
-			if( doTag && jso.hasOwnProperty( "id")) {
-				map.tagUsersInPhoto( jso["id"]);
-			}
-			photo.enabled = true;
-			tag.enabled = true;
-		});
-	mploader.addVariable( "access_token", this.getProperty( "$access_token"));
-	mploader.addFile( image, "just-map-it.png", "filedata", "image/png");
-	mploader.load( "https://graph.facebook.com/" + this.getProperty("$MY_FB_ID") + "/photos");
+JMI.facebook.Map.prototype.uploadAsPhoto = function( doTag, mode) {
+	var data = [], file = {};
+	//data.access_token = this.map.getProperty( "$access_token");
+	file.name = "name"; //"My friends sharing " + mode;
+	file.size = this.map.getImage().substring(22).length;
+	file.file = this.map.getImage().substring(22);
+	data.push( file);
+	var formData = new FormData();
+    formData.append("access_token", this.map.getProperty( "$access_token"));
+    /*var bb = new BlobBuilder();
+    bb.append($.base64Decode(this.map.getImage().substring(22)));
+    var blob = bb.getBlob('image/png'); */
+    formData.append("file", $.base64Decode(this.map.getImage().substring(22)), "just-map-it.png");
+    data = formData;
+    //mploader.addFile( image, "just-map-it.png", "filedata", "image/png");
+	$.ajax({
+		  type: "POST",
+		  contentType: "multipart/form-data",
+		  url: "https://graph.facebook.com/" + this.map.getProperty("$MY_FB_ID") + "/photos",
+		  contentType: false,
+		  processData: false,
+		  data: data
+	}).done(function( msg ) {
+		var jso = jQuery.parseJSON(msg);
+		if( doTag && jso.id) {
+			map.tagUsersInPhoto( jso.id);
+		}
+	});
 };
 
-JMI.facebook.Map.prototype.tagUsersInPhoto = function(photo) {
+/*JMI.facebook.Map.prototype.tagUsersInPhoto = function(photo) {
 	for each( var user:Attribute in map.attributes) {
 		if( user._VERTICES) {
 			var x = user._VERTICES[0].x - 10,
