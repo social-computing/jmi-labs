@@ -65,8 +65,8 @@ JMI.facebook.Map.prototype.Discover = function(map, args) {
   parameters.attributeId = args[0];
   parameters.analysisProfile = "DiscoveryProfile";
   map.compute( parameters);
-  map.facebook.breadcrumbTitles.shortTitle = "Centered";
-  map.facebook.breadcrumbTitles.longTitle = "Centered on " + args[1];
+  map.facebook.breadcrumbTitles.shortTitle = map.facebook.mode+', centered';
+  map.facebook.breadcrumbTitles.longTitle = 'friends according ' + map.facebook.mode + ', centered on ' + args[1];
 };   
 
 JMI.facebook.Map.prototype.Display=function( map, args) {

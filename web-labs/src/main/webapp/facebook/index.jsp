@@ -41,7 +41,10 @@ $(document).ready( function() {
 $(function() {
 	$( "#mode" ).buttonset();
 	$( "#mode").change( function() { 
-		$("#jmi-map")[0].JMI.facebook.mode = $("input[@name=mode]:checked").attr('id');
+		var map = $("#jmi-map").get(0).JMI.facebook;
+		map.mode = $("input[@name=mode]:checked").attr('id');
+	    map.breadcrumbTitles.shortTitle = map.mode;
+	    map.breadcrumbTitles.longTitle = 'friends according ' + map.mode;
 		$("#jmi-map")[0].JMI.facebook.compute();
 	});
 	$( "#upload, #tag").button();	
