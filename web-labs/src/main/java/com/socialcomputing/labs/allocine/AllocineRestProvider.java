@@ -1,10 +1,7 @@
 package com.socialcomputing.labs.allocine;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,11 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
-import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Entity;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.StoreHelper;
@@ -233,10 +228,12 @@ public class AllocineRestProvider {
         attribute.addProperty("poster", get_poster_url( movie));
         
         JsonNode fullMovie = get_movie( attribute.getId());
-        for (JsonNode tag : (ArrayNode) fullMovie.get("movie").get("tag")) {
-            Entity entity = storeHelper.addEntity( tag.get("code").getValueAsText());
-            entity.addProperty("name", tag.get("$").getTextValue());
-            entity.addAttribute(attribute, 1);
+        if( fullMovie.get("tag") != null) {
+            for (JsonNode tag : (ArrayNode) fullMovie.get("tag")) {
+                Entity entity = storeHelper.addEntity( tag.get("code").getValueAsText());
+                entity.addProperty("name", tag.get("$").getTextValue());
+                entity.addAttribute(attribute, 1);
+            }
         }
     }
     
@@ -245,19 +242,23 @@ public class AllocineRestProvider {
         attribute.addProperty("name", movie.get("title").getTextValue());
         attribute.addProperty("poster", get_poster_url( movie));
         
-        String directors = movie.get("castingShort").get("directors").getTextValue();
-        for( String director : directors.split( ",")) {
-            director = director.trim();
-            Entity entity = storeHelper.addEntity( director);
-            entity.addProperty("name", director);
-            entity.addAttribute(attribute, 1);
+        JsonNode directors = movie.get("castingShort").get("directors");
+        if( directors != null) {
+            for( String director : directors.getTextValue().split( ",")) {
+                director = director.trim();
+                Entity entity = storeHelper.addEntity( director);
+                entity.addProperty("name", director);
+                entity.addAttribute(attribute, 1);
+            }
         }
-        String actors = movie.get("castingShort").get("actors").getTextValue();
-        for( String actor : actors.split( ",")) {
-            actor = actor.trim();
-            Entity entity = storeHelper.addEntity( actor);
-            entity.addProperty("name", actor);
-            entity.addAttribute(attribute, 1);
+        JsonNode actors = movie.get("castingShort").get("actors");
+        if( actors != null) {
+            for( String actor : actors.getTextValue().split( ",")) {
+                actor = actor.trim();
+                Entity entity = storeHelper.addEntity( actor);
+                entity.addProperty("name", actor);
+                entity.addAttribute(attribute, 1);
+            }
         }
     }
     
