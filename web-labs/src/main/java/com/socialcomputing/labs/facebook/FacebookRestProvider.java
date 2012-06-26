@@ -2,7 +2,9 @@ package com.socialcomputing.labs.facebook;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,8 +13,11 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,12 +25,22 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-
-import sun.misc.BASE64Decoder;
 
 import com.socialcomputing.wps.server.planDictionnary.connectors.JMIException;
 import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.Attribute;
@@ -35,6 +50,9 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.datastore.socia
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper;
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper.Type;
 import com.sun.jersey.api.Responses;
+import com.sun.jersey.core.util.Base64;
+import com.sun.jersey.multipart.FormDataParam;
+
 
 @Path("/facebook")
 public class FacebookRestProvider {
@@ -219,14 +237,45 @@ public class FacebookRestProvider {
         if (signed_request != null) {
             int pos = signed_request.indexOf('.');
             if (pos > 0) {
-                BASE64Decoder decoder = new BASE64Decoder();
-                String json = new String(decoder.decodeBuffer(signed_request.substring(pos + 1)));
+                String json = new String(Base64.decode(signed_request.substring(pos + 1)));
                 JsonNode node = mapper.readTree(json);
                 if (node.get(property) != null)
                     ret = node.get(property).getTextValue();
             }
         }
         return ret;
+    }
+    
+    @POST
+    @Path("upload-photo")
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED}) 
+    public Response uploadPhoto( @FormParam("token") String token, 
+                                 @FormParam("id") String id, 
+                                 @FormParam("title") String title, 
+                                 @FormParam("image") String image) {
+        //url: "https://graph.facebook.com/" + this.map.getProperty("$MY_FB_ID") + "/photos",
+        // If the url is provided, get the data from the remote url
+        try {
+            HttpClient      client = new DefaultHttpClient();
+            HttpPost        post   = new HttpPost("https://graph.facebook.com/" + id + "/photos");
+            //HttpPost        post   = new HttpPost("http://localhost:8080/web-labs/rest/facebook/simulate" );
+            MultipartEntity entity = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
+            entity.addPart( "access_token", new StringBody( token, "text/plain", Charset.forName( "UTF-8" )));
+            entity.addPart( "name", new StringBody( title, "text/plain", Charset.forName( "UTF-8" )));
+            entity.addPart( "filedata", new ByteArrayBody( Base64.decode(image), "image/png", "image.png"));
+            post.setEntity( entity );
+            HttpResponse response = client.execute( post);
+            HttpEntity rentity = response.getEntity();
+            String contentType = "application/json";//rentity.getContentType() == null ? "text/plain" : rentity.getContentType().getValue();
+            ResponseBuilder rb = Response.ok( EntityUtils.toString( rentity, "UTF-8" ), contentType);
+            rb.status(response.getStatusLine().getStatusCode());
+            client.getConnectionManager().shutdown();
+            return rb.build();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.serverError().build();
     }
 
     public static String GetAccessToken(String code) {

@@ -84,53 +84,51 @@ JMI.facebook.Map.prototype.Display=function( map, args) {
 };
 
 JMI.facebook.Map.prototype.uploadAsPhoto = function( doTag, mode) {
-	var data = [], file = {};
-	//data.access_token = this.map.getProperty( "$access_token");
-	file.name = "name"; //"My friends sharing " + mode;
-	file.size = this.map.getImage().substring(22).length;
-	file.file = this.map.getImage().substring(22);
-	data.push( file);
-	var formData = new FormData();
-    formData.append("access_token", this.map.getProperty( "$access_token"));
-    /*var bb = new BlobBuilder();
-    bb.append($.base64Decode(this.map.getImage().substring(22)));
-    var blob = bb.getBlob('image/png'); */
-    formData.append("file", $.base64Decode(this.map.getImage().substring(22)), "just-map-it.png");
-    data = formData;
-    //mploader.addFile( image, "just-map-it.png", "filedata", "image/png");
+	var map = this;
 	$.ajax({
-		  type: "POST",
-		  contentType: "multipart/form-data",
-		  url: "https://graph.facebook.com/" + this.map.getProperty("$MY_FB_ID") + "/photos",
-		  contentType: false,
-		  processData: false,
-		  data: data
+		  type: 'POST',
+		  url: this.getParams().fbserverurl + '/rest/facebook/upload-photo',
+		  //contentType: false,
+		  //processData: false,
+		  data: {
+			  token: this.map.getProperty( '$access_token'),
+			  id: this.map.getProperty( '$MY_FB_ID'),
+			  image: this.map.getImage().substring(22),
+			  title: 'Just Map It!'
+		  }
 	}).done(function( msg ) {
-		var jso = jQuery.parseJSON(msg);
-		if( doTag && jso.id) {
-			map.tagUsersInPhoto( jso.id);
-		}
+		if( doTag && msg.id) {
+			map.tagUsersInPhoto( msg.id);
+		};
+	}).fail(function() { 
+		alert("error while uploading photo"); 
 	});
 };
 
-/*JMI.facebook.Map.prototype.tagUsersInPhoto = function(photo) {
-	for each( var user:Attribute in map.attributes) {
+JMI.facebook.Map.prototype.tagUsersInPhoto = function(photo) {
+	var i, user;
+	for( i = 0; i < this.map.attributes.length; ++i) {
+		user = this.map.attributes[i];
 		if( user._VERTICES) {
 			var x = user._VERTICES[0].x - 10,
 				y = user._VERTICES[0].y - 10;
-			var mploader:MultipartURLLoader = new MultipartURLLoader();
-			mploader.addEventListener(
-				Event.COMPLETE, 
-				function onReady(e:Event):void {
-					//Alert.show( "ok");
-				});
-			mploader.addVariable( "access_token", this.getProperty( "$access_token"));
-			mploader.addVariable( "x", int( x * 100 /map.width));
-			mploader.addVariable( "y", int( y * 100 /map.height));
-			mploader.load( "https://graph.facebook.com/" + photo + "/tags/" + user.ID);
+			$.ajax({
+				  type: 'GET',
+				  url: 'https://graph.facebook.com/' + photo + '/tags/' + user.ID,
+				  data: {
+					  access_token: this.map.getProperty( '$access_token'),
+					  x: Math.round( x * 100 /this.map.size.width),
+					  y: Math.round( y * 100 /this.map.size.height)
+				  }
+			}).done(function( msg ) {
+				alert("ok"); 
+			}).fail(function() { 
+				alert("error while tagging photo"); 
+			});
 		}
+		break;
 	}
-};*/
+};
 
 JMI.facebook.Map.breadcrumbTitlesFunc = function(event) {
   if( event.type === JMI.Map.event.EMPTY) {

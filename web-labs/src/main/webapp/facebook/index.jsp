@@ -115,7 +115,7 @@ $(function() {
 	});
 	$( "#upload, #tag").button();	
 	$( "#upload").click( function() {
-		$("#jmi-map")[0].JMI.facebook.uploadAsPhoto(false,$("#jmi-map")[0].JMI.facebook.mode);
+		$("#jmi-map")[0].JMI.facebook.uploadAsPhoto(true,$("#jmi-map")[0].JMI.facebook.mode);
 	});
 	$( "#tag").change( function() {
 		var mode = $("input[@name=tag]:checked");
