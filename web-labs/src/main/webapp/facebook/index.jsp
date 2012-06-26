@@ -22,83 +22,14 @@ Sorry...
 <%} else {%>
 <meta name="google" value="notranslate">         
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<style type="text/css" media="screen"> 
-html, body	{ height:100%; }
-body { margin:0; padding:0; overflow:auto; text-align:left; background-color: #FFFFFF; }   
-#content {
-	width: 810px;
-	height: 80%;
-	background-color: #FFFFFF;
-}
-#jmi-map {
-	width: 100%;
-	height: 100%;
-	background-color: #FFFFFF;
-}
-img {
-	border: 0;
-}
-#mode .ui-button-text { 
-	font-family:Arial, Verdana, sans-serif;	
-	font-size:11px;	
-	color:#ffffff;
-	background:#335595;
-	border:1px solid #343434;
-	width: 45px;
-}
-#mode .ui-button-text:hover {
-	background:#eeeeee;
-	color:#343434;
-}
-#mode .ui-state-active .ui-button-text { 
-	color:#335595;
-	background:#dfdfdf;
-	border:1px solid #343434;
-}
-#mode .ui-state-active .ui-button-text:hover {
-	background:#eeeeee;
-	color:#335595;
-}
-#mode .ui-state-active {
-	border: 1px solid #CCCCCC;
-}
-#upload .ui-button-text { 
-	font-family:Arial, Verdana, sans-serif;	
-	font-size:11px;	
-	color:#343434;
-	background:#ffffff;
-	border:1px solid #343434;
-}
-#upload .ui-button-text:hover {
-	background:#CCCCCC;
-	color:#343434;
-}
-#tagl .ui-button-text { 
-	font-family:Arial, Verdana, sans-serif;	
-	font-size:10px;	
-	color:#fff0000;
-	background:#ffffff;
-	border:none;
-}
-#tagl .ui-button-text:hover {
-	background:#eeeeee;
-	color:#343434;
-}
-#tagl .ui-state-active .ui-button-text { 
-	color:#00ff00;
-	background:#dfdfdf;
-	border:none;
-}
-</style>
 <link type="text/css" href="../css/jquery-ui-1.8.21.custom.css" rel="Stylesheet" />	
-<link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
+<link type="text/css" href="../jmi-client/css/jmi-client.css" rel="stylesheet" />
+<link type="text/css" href="./facebook.css" rel="Stylesheet" />	
 <script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="../js/jquery-ui-1.8.21.custom.min.js"></script>
-<script type="text/javascript" src="../js/jquery.base64.js"></script>
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="./facebook.js"></script>
 <script type="text/javascript">
-
 $(document).ready( function() {
 	var map = new JMI.facebook.Map('jmi-map');
 	map.session = '<%=session.getId()%>';
@@ -115,11 +46,11 @@ $(function() {
 	});
 	$( "#upload, #tag").button();	
 	$( "#upload").click( function() {
-		$("#jmi-map")[0].JMI.facebook.uploadAsPhoto(true,$("#jmi-map")[0].JMI.facebook.mode);
+		$("#jmi-map")[0].JMI.facebook.uploadAsPhoto($( "#tag").get(0).checked,$("#jmi-map").get(0).JMI.facebook.mode);
 	});
 	$( "#tag").change( function() {
-		var mode = $("input[@name=tag]:checked");
-		alert(mode);
+		$( "#tag").button( "option", "label", this.checked ? 'with friends tags' : 'without friends tags');
+		//$( "#tag").button( "refresh" );
 	});
 });
 </script>
@@ -137,12 +68,19 @@ $(function() {
 		<input type="radio" id="events" name="mode" /><label for="events">events</label>
 		<input type="radio" id="groups" name="mode" /><label for="groups">groups</label>
 	</div>
-	<button id="upload">Upload a photo</button>
-	<!-- input type="checkbox" id="tag" name="tag"/><label id="tagl" for="tag">and don't tag friends</label-->
+	<button id="upload">snapshot in album</button>
+	<input type="checkbox" id="tag" name="tag"/><label id="tagl" for="tag">whithout friends tags</label>
 </div>
 <div id="content">
 	<div id="jmi-breadcrumb">&nbsp;</div>
-	<div id="jmi-map">
+	<div id="jmi-map"></div>
+</div>
+<div id="slideshow" style="visibility:hidden;">
+	<ul>
+		<li><img src="http://labs.just-map-it.com/images/justmapit_facebook.png"></img><p>Just Map It! Facebook displays the map of your Facebook friends</p></li>
+		<li><img src="http://labs.just-map-it.com/images/justmapit_facebook.png"></img><p>Your friends are displayed according the pages, the books, the music... they like.</p><p>You can focus on a friend.</p><p>It's a new way to discover your entourage.</p></li>
+		<li><img src="http://labs.just-map-it.com/images/justmapit_facebook.png"></img><p>You can save the map in your photo album.</p><p>You can automatically tag your friends in the map photo.</p><p>It's a new way to share your entourage.</p></li>
+	</ul>
 </div>
 </body>
 <%}%>

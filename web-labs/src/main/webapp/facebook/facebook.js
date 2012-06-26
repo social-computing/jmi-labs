@@ -27,7 +27,7 @@ JMI.facebook.Map.prototype.draw = function(mode,options) {
 	  new JMI.extensions.Breadcrumb(options.breadcrumb,this.map,{'namingFunc':JMI.facebook.Map.breadcrumbTitlesFunc,'thumbnail':{}});
 	  this.breadcrumbTitles = { shortTitle: this.mode, longTitle: 'friends according ' + this.mode };
   }
-  new JMI.extensions.Slideshow(this.map);
+  new JMI.extensions.Slideshow(this.map, 'slideshow', 500, 300, 5000);
 
   var parameters = this.getParams(mode);
   parameters.analysisProfile='GlobalProfile';
