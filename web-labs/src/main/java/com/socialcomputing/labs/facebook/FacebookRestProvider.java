@@ -2,7 +2,6 @@ package com.socialcomputing.labs.facebook;
 
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -51,7 +49,6 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper
 import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper.Type;
 import com.sun.jersey.api.Responses;
 import com.sun.jersey.core.util.Base64;
-import com.sun.jersey.multipart.FormDataParam;
 
 
 @Path("/facebook")
@@ -73,8 +70,13 @@ public class FacebookRestProvider {
         HttpSession session = request.getSession(true);
         String result = ( String)session.getAttribute(kind);
         if (result == null || result.length() == 0) {
-            result = kind(kind, token);
-            session.setAttribute(kind, result);
+            try {
+                result = kind(kind, token);
+                session.setAttribute(kind, result);
+            }
+            catch (Exception e) {
+                result = StoreHelper.ErrorToJson(e);
+            }
         }
         return result;
     }
@@ -108,126 +110,121 @@ public class FacebookRestProvider {
         return null;
     }
     
-    private String kind(String kind, String token) {
+    private String kind(String kind, String token) throws Exception {
         StoreHelper storeHelper = new StoreHelper();
-        try {
-            if (kind.equalsIgnoreCase("friends")) {
-                SocialHelper socialHelper = new SocialHelper( storeHelper);
-                
-                // Liste amis
-                UrlHelper urlHelper = new UrlHelper();
-                urlHelper.setUrl("https://graph.facebook.com/me/friends");
-                urlHelper.addParameter("access_token", token);
-                urlHelper.openConnections();
+        if (kind.equalsIgnoreCase("friends")) {
+            SocialHelper socialHelper = new SocialHelper( storeHelper);
+            
+            // Liste amis
+            UrlHelper urlHelper = new UrlHelper();
+            urlHelper.setUrl("https://graph.facebook.com/me/friends");
+            urlHelper.addParameter("access_token", token);
+            urlHelper.openConnections();
 
-                JsonNode node = mapper.readTree(urlHelper.getStream());
-                List<String> friendslist = new ArrayList<String>();
-                ArrayNode friends = (ArrayNode) node.get("data");
-                for (JsonNode friend : friends) {
-                    socialHelper.addPerson(friend.get("id").getTextValue()).addProperty("name", friend.get("name").getTextValue());
-                    friendslist.add(friend.get("id").getTextValue());
+            JsonNode node = mapper.readTree(urlHelper.getStream());
+            List<String> friendslist = new ArrayList<String>();
+            ArrayNode friends = (ArrayNode) node.get("data");
+            for (JsonNode friend : friends) {
+                socialHelper.addPerson(friend.get("id").getTextValue()).addProperty("name", friend.get("name").getTextValue());
+                friendslist.add(friend.get("id").getTextValue());
+            }
+
+            // My self
+            UrlHelper uh = new UrlHelper();
+            uh.setUrl("https://graph.facebook.com/me");
+            uh.addParameter("access_token", token);
+            uh.openConnections();
+            JsonNode me = mapper.readTree(uh.getStream());
+            storeHelper.addGlobal("$MY_FB_ID", me.get("id").getTextValue());
+
+            // Les amis entre eux
+            for (int i = 0; i < friendslist.size() - 1; i++) {
+                StringBuilder sb1 = new StringBuilder();
+                StringBuilder sb2 = new StringBuilder();
+                for (int j = i + 1; j < friendslist.size(); j++) {
+                    sb1.append(friendslist.get(i)).append(",");
+                    sb2.append(friendslist.get(j)).append(",");
                 }
-
-                // My self
-                UrlHelper uh = new UrlHelper();
-                uh.setUrl("https://graph.facebook.com/me");
-                uh.addParameter("access_token", token);
-                uh.openConnections();
-                JsonNode me = mapper.readTree(uh.getStream());
-                storeHelper.addGlobal("$MY_FB_ID", me.get("id").getTextValue());
-
-                // Les amis entre eux
-                for (int i = 0; i < friendslist.size() - 1; i++) {
-                    StringBuilder sb1 = new StringBuilder();
-                    StringBuilder sb2 = new StringBuilder();
-                    for (int j = i + 1; j < friendslist.size(); j++) {
-                        sb1.append(friendslist.get(i)).append(",");
-                        sb2.append(friendslist.get(j)).append(",");
-                    }
-                    String areFriends = "https://api.facebook.com/method/friends.areFriends";
-                    UrlHelper uh1 = new UrlHelper();
-                    uh1.setUrl(areFriends);
-                    uh1.setType(Type.POST);
-                    uh1.addParameter("uids1", sb1.toString());
-                    uh1.addParameter("uids2", sb2.toString());
-                    uh1.addParameter("access_token", token);
-                    uh1.addParameter("format", "json");
-                    uh1.openConnections();
-                    ArrayNode r = (ArrayNode) mapper.readTree(uh1.getStream());
-                    for (JsonNode rs : r) {
-                        // System.out.println(rs.get("uid1") + "=>" +
-                        // rs.get("uid2") + "=>" + rs.get("are_friends"));
-                        if (rs.get("are_friends").getBooleanValue())
-                            socialHelper.setFriendShip(String.valueOf(rs.get("uid1").getLongValue()),
-                                          String.valueOf(rs.get("uid2").getLongValue()).toString());
-                    }
-                }
-
-                // Je suis ami avec tous mes amis
-                // setFriendShip((String)me.get("id"), friendslist);
-
-                // Delete entities with only one attribute
-                Set<String> toRemove = new HashSet<String>();
-                for (Entity entity : storeHelper.getEntities().values()) {
-                    if (entity.getAttributes().size() == 1) {
-                        toRemove.add(entity.getId());
-                    }
-                }
-                for (String id : toRemove) {
-                    storeHelper.removeEntity(id);
+                String areFriends = "https://api.facebook.com/method/friends.areFriends";
+                UrlHelper uh1 = new UrlHelper();
+                uh1.setUrl(areFriends);
+                uh1.setType(Type.POST);
+                uh1.addParameter("uids1", sb1.toString());
+                uh1.addParameter("uids2", sb2.toString());
+                uh1.addParameter("access_token", token);
+                uh1.addParameter("format", "json");
+                uh1.openConnections();
+                ArrayNode r = (ArrayNode) mapper.readTree(uh1.getStream());
+                for (JsonNode rs : r) {
+                    // System.out.println(rs.get("uid1") + "=>" +
+                    // rs.get("uid2") + "=>" + rs.get("are_friends"));
+                    if (rs.get("are_friends").getBooleanValue())
+                        socialHelper.setFriendShip(String.valueOf(rs.get("uid1").getLongValue()),
+                                      String.valueOf(rs.get("uid2").getLongValue()).toString());
                 }
             }
-            else {
-                UrlHelper urlHelper = new UrlHelper();
-                urlHelper.setUrl("https://graph.facebook.com/me/friends");
-                urlHelper.addParameter("access_token", token);
-                urlHelper.openConnections();
 
-                JsonNode node = mapper.readTree(urlHelper.getStream());
-                ArrayNode friends = (ArrayNode) node.get("data");
+            // Je suis ami avec tous mes amis
+            // setFriendShip((String)me.get("id"), friendslist);
 
-                // My self
-                UrlHelper uh = new UrlHelper();
-                uh.setUrl("https://graph.facebook.com/me");
-                uh.addParameter("access_token", token);
-                uh.openConnections();
-                JsonNode me = mapper.readTree(uh.getStream());
-                storeHelper.addGlobal("$MY_FB_ID", me.get("id").getTextValue());
-                friends.add(me);
-
-                for (JsonNode friend : friends) {
-                    Attribute attribute = storeHelper.addAttribute(friend.get("id").getTextValue());
-                    attribute.addProperty("name", friend.get("name").getTextValue());
-
-                    UrlHelper urlHelper2 = new UrlHelper();
-                    urlHelper2.setUrl("https://graph.facebook.com/" + friend.get("id").getTextValue() + "/" + kind);
-                    urlHelper2.addParameter("access_token", token);
-                    urlHelper2.openConnections();
-
-                    JsonNode node2 = mapper.readTree(urlHelper2.getStream());
-                    ArrayNode kinds = (ArrayNode) node2.get("data");
-                    for (JsonNode curkind : kinds) {
-                        if (curkind.get("id") != null && curkind.get("name") != null) {
-                            Entity entity = storeHelper.addEntity(curkind.get("id").getTextValue());
-                            entity.addProperty("name", curkind.get("name").getTextValue());
-                            entity.addAttribute(attribute, 1);
-                        }
-                    }
+            // Delete entities with only one attribute
+            Set<String> toRemove = new HashSet<String>();
+            for (Entity entity : storeHelper.getEntities().values()) {
+                if (entity.getAttributes().size() == 1) {
+                    toRemove.add(entity.getId());
                 }
-                // Delete entities with only one attribute
-                Set<String> toRemove = new HashSet<String>();
-                for (Entity entity : storeHelper.getEntities().values()) {
-                    if (entity.getAttributes().size() == 1) {
-                        toRemove.add(entity.getId());
-                    }
-                }
-                for (String id : toRemove) {
-                    storeHelper.removeEntity(id);
-                }
+            }
+            for (String id : toRemove) {
+                storeHelper.removeEntity(id);
             }
         }
-        catch (Exception e) {
-            return StoreHelper.ErrorToJson(e);
+        else {
+            UrlHelper urlHelper = new UrlHelper();
+            urlHelper.setUrl("https://graph.facebook.com/me/friends");
+            urlHelper.addParameter("access_token", token);
+            urlHelper.openConnections();
+
+            JsonNode node = mapper.readTree(urlHelper.getStream());
+            ArrayNode friends = (ArrayNode) node.get("data");
+
+            // My self
+            UrlHelper uh = new UrlHelper();
+            uh.setUrl("https://graph.facebook.com/me");
+            uh.addParameter("access_token", token);
+            uh.openConnections();
+            JsonNode me = mapper.readTree(uh.getStream());
+            storeHelper.addGlobal("$MY_FB_ID", me.get("id").getTextValue());
+            friends.add(me);
+
+            for (JsonNode friend : friends) {
+                Attribute attribute = storeHelper.addAttribute(friend.get("id").getTextValue());
+                attribute.addProperty("name", friend.get("name").getTextValue());
+
+                UrlHelper urlHelper2 = new UrlHelper();
+                urlHelper2.setUrl("https://graph.facebook.com/" + friend.get("id").getTextValue() + "/" + kind);
+                urlHelper2.addParameter("access_token", token);
+                urlHelper2.openConnections();
+
+                JsonNode node2 = mapper.readTree(urlHelper2.getStream());
+                ArrayNode kinds = (ArrayNode) node2.get("data");
+                for (JsonNode curkind : kinds) {
+                    if (curkind.get("id") != null && curkind.get("name") != null) {
+                        Entity entity = storeHelper.addEntity(curkind.get("id").getTextValue());
+                        entity.addProperty("name", curkind.get("name").getTextValue());
+                        entity.addAttribute(attribute, 1);
+                    }
+                }
+            }
+            // Delete entities with only one attribute
+            Set<String> toRemove = new HashSet<String>();
+            for (Entity entity : storeHelper.getEntities().values()) {
+                if (entity.getAttributes().size() == 1) {
+                    toRemove.add(entity.getId());
+                }
+            }
+            for (String id : toRemove) {
+                storeHelper.removeEntity(id);
+            }
         }
         return storeHelper.toJson();
     }
@@ -258,7 +255,6 @@ public class FacebookRestProvider {
         try {
             HttpClient      client = new DefaultHttpClient();
             HttpPost        post   = new HttpPost("https://graph.facebook.com/" + id + "/photos");
-            //HttpPost        post   = new HttpPost("http://localhost:8080/web-labs/rest/facebook/simulate" );
             MultipartEntity entity = new MultipartEntity( HttpMultipartMode.BROWSER_COMPATIBLE );
             entity.addPart( "access_token", new StringBody( token, "text/plain", Charset.forName( "UTF-8" )));
             entity.addPart( "name", new StringBody( title, "text/plain", Charset.forName( "UTF-8" )));

@@ -5,7 +5,7 @@ JMI.facebook.Map = function(container) {
   this.container = container;
   this.map = JMI.Map({
 		  parent: this.container, 
-		  server: 'http://localhost:8080/jmi-server',
+		  //server: 'http://localhost:8080/jmi-server',
 		  clientUrl: 'http://labs.just-map-it.com/jmi-client/' 
 		});
   this.map.facebook = this;
@@ -13,10 +13,13 @@ JMI.facebook.Map = function(container) {
 	  event.map.facebook[event.fn](event.map, event.args);
 	} );
   this.map.addEventListener(JMI.Map.event.READY, function(event) {
+	  event.map.facebook.toolbarEnable( true, true);
 	} );
   this.map.addEventListener(JMI.Map.event.EMPTY, function(event) {
+	  event.map.facebook.toolbarEnable( true, false);
 	} );
   this.map.addEventListener(JMI.Map.event.ERROR, function(event) {
+	  event.map.facebook.toolbarEnable( true, false);
 	} );
 };
 	
@@ -36,9 +39,9 @@ JMI.facebook.Map.prototype.draw = function(mode,options) {
 
 JMI.facebook.Map.prototype.getParams = function() {
   return { 
-	map: 'Facebook',
-    fbserverurl: 'http://localhost:8080/web-labs',
-    //fbserverurl: 'http://labs.just-map-it.com',
+	map: 'FacebookLabs',
+    //fbserverurl: 'http://localhost:8080/web-labs',
+    fbserverurl: 'http://labs.just-map-it.com',
     jsessionid: this.session,
     access_token: this.accessToken,
     fbuserid: this.fbuserid,
@@ -49,7 +52,13 @@ JMI.facebook.Map.prototype.getParams = function() {
 JMI.facebook.Map.prototype.compute = function() {
   var parameters = this.getParams();
   parameters.analysisProfile='GlobalProfile';
+  this.toolbarEnable( false, false);
   this.map.compute(parameters);
+};
+
+JMI.facebook.Map.prototype.toolbarEnable = function(mode, photo) {
+	$( "#mode" ).buttonset(  { disabled: !mode} );
+	$( "#upload, #tag" ).button(  { disabled: !photo} );
 };
 
 /*JMI.facebook.Map.prototype.JMIF_Focus = function(map, args) {
@@ -121,12 +130,11 @@ JMI.facebook.Map.prototype.tagUsersInPhoto = function(photo) {
 					  y: Math.round( y * 100 /this.map.size.height)
 				  }
 			}).done(function( msg ) {
-				alert("ok"); 
 			}).fail(function() { 
 				alert("error while tagging photo"); 
 			});
 		}
-		break;
+		//break;
 	}
 };
 

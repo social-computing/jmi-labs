@@ -20,7 +20,7 @@ Sorry...
 <script> top.location.href='https://www.facebook.com/dialog/oauth?client_id=<%=FacebookRestProvider.CLIENT_ID%>&redirect_uri=<%=java.net.URLEncoder.encode("http://facebook.just-map-it.com/postinstall.jsp", "UTF-8")%>&scope=friends_likes,friends_groups,friends_activities,friends_events,publish_stream,user_photos'</script>
 </body>
 <%} else {%>
-<meta name="google" value="notranslate">         
+<meta name="google" value="notranslate" />         
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link type="text/css" href="../css/jquery-ui-1.8.21.custom.css" rel="Stylesheet" />	
 <link type="text/css" href="../jmi-client/css/jmi-client.css" rel="stylesheet" />
@@ -35,7 +35,8 @@ $(document).ready( function() {
 	map.session = '<%=session.getId()%>';
 	map.accessToken = '<%=code != null ? FacebookRestProvider.GetAccessToken(code) : oauth_token%>';
 	map.fbuserid = '<%=user_id%>';
-	map.mode = 'likes';
+	map.mode = $("input[@name=mode]:checked").attr('id');
+	map.toolbarEnable( false, false);
 	map.draw(map.mode,{breadcrumb:'jmi-breadcrumb'});
 });
 $(function() {
@@ -45,11 +46,11 @@ $(function() {
 		map.mode = $("input[@name=mode]:checked").attr('id');
 	    map.breadcrumbTitles.shortTitle = map.mode;
 	    map.breadcrumbTitles.longTitle = 'friends according ' + map.mode;
-		$("#jmi-map")[0].JMI.facebook.compute();
+		map.compute();
 	});
 	$( "#upload, #tag").button();	
 	$( "#upload").click( function() {
-		$("#jmi-map")[0].JMI.facebook.uploadAsPhoto($( "#tag").get(0).checked,$("#jmi-map").get(0).JMI.facebook.mode);
+		$("#jmi-map").get(0).JMI.facebook.uploadAsPhoto($( "#tag").get(0).checked,$("#jmi-map").get(0).JMI.facebook.mode);
 	});
 	$( "#tag").change( function() {
 		$( "#tag").button( "option", "label", this.checked ? 'with friends tags' : 'without friends tags');
