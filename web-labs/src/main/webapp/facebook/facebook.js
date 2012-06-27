@@ -3,11 +3,15 @@ JMI.namespace("facebook.Map");
 // Mandatory 
 JMI.facebook.Map = function(container) {
   this.container = container;
-  this.map = JMI.Map({
+  var options = {
 		  parent: this.container, 
 		  //server: 'http://localhost:8080/jmi-server',
 		  clientUrl: 'http://labs.just-map-it.com/jmi-client/' 
-		});
+		};
+/*  if (jQuery.browser.msie) {
+	  options.client = JMI.Map.SWF;
+  }*/
+  this.map = JMI.Map(options);
   this.map.facebook = this;
   this.map.addEventListener(JMI.Map.event.ACTION, function(event) {
 	  event.map.facebook[event.fn](event.map, event.args);
@@ -80,6 +84,7 @@ JMI.facebook.Map.prototype.Discover = function(map, args) {
 };   
 
 JMI.facebook.Map.prototype.Display=function( map, args) {
+	var link = "http://www.facebook.com/profile.php?id=" + args[0];
 	$.ajax({
 		  type: "GET",
 		  url: "https://graph.facebook.com/" + args[0]
@@ -87,10 +92,8 @@ JMI.facebook.Map.prototype.Display=function( map, args) {
 		var jso = jQuery.parseJSON(msg);
 		if( jso && jso.link)
 			link = jso.link;
-		else
-			link = "http://www.facebook.com/profile.php?id=" + args[0];
-		window.open( link, "_blank");
 	});
+	window.open( link, "_blank");
 };
 
 JMI.facebook.Map.prototype.uploadAsPhoto = function( doTag, mode) {
