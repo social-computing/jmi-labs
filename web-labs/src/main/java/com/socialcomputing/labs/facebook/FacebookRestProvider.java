@@ -60,6 +60,7 @@ public class FacebookRestProvider {
     public static final String CLIENT_ID = "108710779211353";
     public static final String CLIENT_SECRET = "e155ed50ccf90de8d9c7dafbd88bb92d";
     public static final String APP_URL = "http://apps.facebook.com/just-map-it/";
+    public static final String REDIRECT_URL = "http://labs.just-map-it.com/facebook/";
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @GET
@@ -279,8 +280,7 @@ public class FacebookRestProvider {
         UrlHelper urlHelper = new UrlHelper();
         urlHelper.setUrl("https://graph.facebook.com/oauth/access_token");
         urlHelper.addParameter( "client_id", FacebookRestProvider.CLIENT_ID);
-        //urlHelper.addParameter( "redirect_uri", "http://apps.facebook.com/jmi-test");
-        urlHelper.addParameter( "redirect_uri", "http://facebook.just-map-it.com/postinstall.jsp");
+        urlHelper.addParameter( "redirect_uri", FacebookRestProvider.REDIRECT_URL + "postinstall.jsp");
         urlHelper.addParameter( "client_secret", FacebookRestProvider.CLIENT_SECRET);
         urlHelper.addParameter( "code", code);
         try {
