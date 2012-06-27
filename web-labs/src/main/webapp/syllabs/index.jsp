@@ -35,7 +35,7 @@ if( feed == null) {
 <!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
 <!-- BEGIN Browser History required section -->
 <link rel="stylesheet" type="text/css" href="../client/flex/history/history.css" />
-<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="../client/flex/history/history.js"></script>
 <!-- END Browser History required section -->
 <script type="text/javascript" src="../client/flex/swfobject.js"></script>

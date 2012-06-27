@@ -72,7 +72,7 @@ img {
 }
 </style>
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
-<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
 var breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'All your contacts and their skills' };
 function JMIF_breadcrumbTitlesFunc(event) {

@@ -37,6 +37,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
@@ -54,9 +55,10 @@ import com.sun.jersey.core.util.Base64;
 @Path("/facebook")
 public class FacebookRestProvider {
    // JMI Test
-//    public static final String CLIENT_ID = "136353756473765";
-//    public static final String CLIENT_SECRET = "67118f943664c3cb42d3cfa053ce4bed";
-//    public static final String APP_URL = "http://apps.facebook.com/jmi-test/";
+/*    public static final String CLIENT_ID = "136353756473765";
+    public static final String CLIENT_SECRET = "67118f943664c3cb42d3cfa053ce4bed";
+    public static final String APP_URL = "http://apps.facebook.com/jmi-test/";
+    */
     public static final String CLIENT_ID = "108710779211353";
     public static final String CLIENT_SECRET = "e155ed50ccf90de8d9c7dafbd88bb92d";
     public static final String APP_URL = "http://apps.facebook.com/just-map-it/";
@@ -230,15 +232,22 @@ public class FacebookRestProvider {
         return storeHelper.toJson();
     }
 
-    public static String GetProperty(String signed_request, String property) throws IOException {
+    public static String GetProperty(String signed_request, String property) {
         String ret = null;
         if (signed_request != null) {
             int pos = signed_request.indexOf('.');
             if (pos > 0) {
                 String json = new String(Base64.decode(signed_request.substring(pos + 1)));
-                JsonNode node = mapper.readTree(json);
-                if (node.get(property) != null)
-                    ret = node.get(property).getTextValue();
+                JsonNode node;
+                try {
+                    node = mapper.readTree(json);
+                    if (node.get(property) != null)
+                        ret = node.get(property).getTextValue();
+                }
+                catch (Exception e) {
+                    System.out.println(json);
+                    e.printStackTrace();
+                }
             }
         }
         return ret;

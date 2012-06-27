@@ -24,7 +24,7 @@ if( query == null) query = "";
 String kind = request.getParameter("kind");
 if( kind == null) kind = "search";%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
-<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
 var breadcrumbTitles = { };

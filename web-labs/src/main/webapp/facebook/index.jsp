@@ -81,9 +81,9 @@ $(function() {
 </div>
 <div id="slideshow" style="visibility:hidden;">
 	<ul>
-		<li><img src="http://labs.just-map-it.com/images/justmapit_facebook.png"></img><p>Just Map It! Facebook displays the map of your Facebook friends</p></li>
-		<li><img src="http://labs.just-map-it.com/images/justmapit_facebook.png"></img><p>Your friends are displayed according the pages, the books, the music... they like.</p><p>You can focus on a friend.</p><p>It's a new way to discover your entourage.</p></li>
-		<li><img src="http://labs.just-map-it.com/images/justmapit_facebook.png"></img><p>You can save the map in your photo album.</p><p>You can automatically tag your friends in the map photo.</p><p>It's a new way to share your entourage.</p></li>
+		<li><img src="../images/justmapit_facebook.png"></img><p>Just Map It! Facebook displays the map of your Facebook friends</p></li>
+		<li><img src="../images/justmapit_facebook.png"></img><p>Your friends are displayed according the pages, the books, the music... they like.</p><p>You can focus on a friend.</p><p>It's a new way to discover your entourage.</p></li>
+		<li><img src="../images/justmapit_facebook.png"></img><p>You can save the map in your photo album.</p><p>You can automatically tag your friends in the map photo.</p><p>It's a new way to share your entourage.</p></li>
 	</ul>
 </div>
 </body>
