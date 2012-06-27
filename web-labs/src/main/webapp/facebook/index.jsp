@@ -14,10 +14,10 @@ Sorry...
 </body>
 <%} else if( code == null && oauth_token == null && true) { %>
 <meta name="robots" content="noindex,follow" />
-<!--meta http-equiv="refresh" content="0; url=https://www.facebook.com/dialog/oauth?client_id=<%=FacebookRestProvider.CLIENT_ID%>&redirect_uri=<%=java.net.URLEncoder.encode("http://facebook.just-map-it.com/postinstall.jsp", "UTF-8")%>&scope=friends_likes,friends_groups,friends_activities,friends_events,publish_stream,user_photos" /-->
+<!--meta http-equiv="refresh" content="0; url=https://www.facebook.com/dialog/oauth?client_id=<%=FacebookRestProvider.CLIENT_ID%>&redirect_uri=<%=java.net.URLEncoder.encode("http://labs.just-map-it.com/facebook/postinstall.jsp", "UTF-8")%>&scope=friends_likes,friends_groups,friends_activities,friends_events,publish_stream,user_photos" /-->
 </head>
 <body>
-<script> top.location.href='https://www.facebook.com/dialog/oauth?client_id=<%=FacebookRestProvider.CLIENT_ID%>&redirect_uri=<%=java.net.URLEncoder.encode("http://facebook.just-map-it.com/postinstall.jsp", "UTF-8")%>&scope=friends_likes,friends_groups,friends_activities,friends_events,publish_stream,user_photos'</script>
+<script> top.location.href='https://www.facebook.com/dialog/oauth?client_id=<%=FacebookRestProvider.CLIENT_ID%>&redirect_uri=<%=java.net.URLEncoder.encode("http://labs.just-map-it.com/facebook/postinstall.jsp", "UTF-8")%>&scope=friends_likes,friends_groups,friends_activities,friends_events,publish_stream,user_photos'</script>
 </body>
 <%} else {%>
 <meta name="google" value="notranslate" />         
