@@ -57,29 +57,30 @@ $(document).ready(function() {
 	} );
 	map.addEventListener(JMI.Map.event.ERROR, function(event) {
 	} );
-	breadcrumbTitles.shortTitle = $('#filter option:selected')[0].label;
-	breadcrumbTitles.longTitle = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
+	breadcrumbTitles.shortTitle = $('#filter option:selected').get(0).label;
+	breadcrumbTitles.longTitle = $('#filter option:selected').get(0).label + ' - ' + $('#kind option:selected').get(0).label;
 	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
 	new JMI.extensions.Slideshow(map);
 	map.compute( parameters);
-	
+});
+$(function() {
 	$('#kind').change(function(){
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
 		 breadcrumb.flush();
-		 breadcrumbTitles.shortTitle = $('#filter option:selected')[0].label;
-		 breadcrumbTitles.longTitle = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
-		 $('#map')[0].JMI.compute( parameters);
+		 breadcrumbTitles.shortTitle = $('#filter option:selected').get(0).label;
+		 breadcrumbTitles.longTitle = $('#filter option:selected').get(0).label + ' - ' + $('#kind option:selected').get(0).label;
+		 $('#map').get(0).JMI.compute( parameters);
 	});
 	$('#filter').change(function(){
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
 		 breadcrumb.flush();
-		 breadcrumbTitles.shortTitle = $('#filter option:selected')[0].label;
-		 breadcrumbTitles.longTitle = $('#filter option:selected')[0].label + ' - ' + $('#kind option:selected')[0].label;
-		 $('#map')[0].JMI.compute( parameters);
+		 breadcrumbTitles.shortTitle = $('#filter option:selected').get(0).label;
+		 breadcrumbTitles.longTitle = $('#filter option:selected').get(0).label + ' - ' + $('#kind option:selected').get(0).label;
+		 $('#map').get(0).JMI.compute( parameters);
 	}); 
 });
 function navigate(map, id) {
@@ -118,8 +119,8 @@ function completeParameters(parameters) {
 	//parameters.allocineserverurl = "http://localhost:8080/web-labs";
 	parameters.allocineserverurl = "http://labs.just-map-it.com";
 	parameters.map = "Allocine";
-	parameters.kind = $('#kind option:selected')[0].value;
-	parameters.filter = $('#filter option:selected')[0].value;
+	parameters.kind = $('#kind option:selected').get(0).value;
+	parameters.filter = $('#filter option:selected').get(0).value;
 	parameters.jsessionid = '<%=session.getId()%>';
 }
 </script>
@@ -131,7 +132,7 @@ function completeParameters(parameters) {
 		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 		<td>
 		<select id="filter">
-		<option value="outthisweek" >Sorties de la semaine</option>
+		<option value="outthisweek">Sorties de la semaine</option>
 		<option value="nowshowing" >A l'écran</option>
 		<option value="comingsoon" >Bientôt à l'affiche</option>
 		<option value="top:week" >Meilleurs films de la semaine</option>
@@ -140,7 +141,7 @@ function completeParameters(parameters) {
 		<option value="worst" >Les pires films</option>
 		</select>
 		<select id="kind">
-		<option value="film_gender" >Film / genre</option>
+		<option value="film_gender">Film / genre</option>
 		<option value="film_tag" >Film / tag</option>
 		<option value="film_casting" >Film / casting</option>
 		</select>
