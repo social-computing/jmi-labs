@@ -48,7 +48,7 @@
 		<transfo map="interpol" scale="0">
 			<polar dir="180" rad="0" />
 		</transfo>
-	<slice image="{s$fbserverurl}/rest/image-proxy?url=https://graph.facebook.com/{sID}/picture" transfo="imgTrf" alpha="1" linewidth="1" />
+	<slice image="{s$fbserverurl}/rest/facebook/image-proxy?url=https://graph.facebook.com/{sID}/picture" transfo="imgTrf" alpha="1" linewidth="1" />
 	</sat>
 	
 <!-- Cur Title -->

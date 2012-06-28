@@ -10,13 +10,13 @@
         <slice inCol="238 242 245" outCol="189 172 164" alpha="1" linewidth="1">
             <transfo scale=".87" map="absolute" />
         </slice>
-	<slice image="{s$fbserverurl}/rest/image-proxy?url=https://graph.facebook.com/{sID}/picture" transfo="imgTrf" alpha="1" linewidth="1" />
+	<slice image="{s$fbserverurl}/rest/facebook/image-proxy?url=https://graph.facebook.com/{sID}/picture" transfo="imgTrf" alpha="1" linewidth="1" />
     </sat>
 
 <!-- Sub Spots -->
     <sat shape="diskShp" isSub="true" isSuper="false" isVisible="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
         <slice inCol="239 33 37" outCol="189 172 164" transfo="spotTrf" alpha="1" linewidth="1" />
-	<slice image="{s$fbserverurl}/rest/image-proxy?url=https://graph.facebook.com/{sID}/picture" transfo="voidTrf" alpha="1" linewidth="1" />
+	<slice image="{s$fbserverurl}/rest/facebook/image-proxy?url=https://graph.facebook.com/{sID}/picture" transfo="voidTrf" alpha="1" linewidth="1" />
     </sat>
 
 <!-- Super Spot -->
