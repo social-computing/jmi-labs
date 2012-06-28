@@ -44,7 +44,6 @@ $(document).ready(function() {
 	var map = JMI.Map({
 				parent: 'map', 
 				clientUrl: '../jmi-client/', 
-				server: 'http://server.just-map-it.com' 
 				//server: 'http://localhost:8080/jmi-server/'
 				//client: JMI.Map.SWF
 			});
@@ -68,7 +67,7 @@ $(function() {
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
-		 breadcrumb.flush();
+		 breadcrumb.reset();
 		 breadcrumbTitles.shortTitle = $('#filter option:selected').get(0).label;
 		 breadcrumbTitles.longTitle = $('#filter option:selected').get(0).label + ' - ' + $('#kind option:selected').get(0).label;
 		 $('#map').get(0).JMI.compute( parameters);
@@ -77,7 +76,7 @@ $(function() {
 		 var parameters = {};
 		 completeParameters( parameters);
 		 parameters.analysisProfile = "GlobalProfile";
-		 breadcrumb.flush();
+		 breadcrumb.reset();
 		 breadcrumbTitles.shortTitle = $('#filter option:selected').get(0).label;
 		 breadcrumbTitles.longTitle = $('#filter option:selected').get(0).label + ' - ' + $('#kind option:selected').get(0).label;
 		 $('#map').get(0).JMI.compute( parameters);
