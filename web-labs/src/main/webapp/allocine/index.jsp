@@ -22,7 +22,7 @@ img {
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript"> 
-var breadcrumbTitles = { shortTitle: '', longTitle: '' };
+var breadcrumb, breadcrumbTitles = { shortTitle: '', longTitle: '' };
 function JMIF_breadcrumbTitlesFunc(event) {
 	if( event.type === JMI.Map.event.EMPTY) {
 		return {shortTitle: 'Sorry, the map is empty.', longTitle: 'Sorry, the map is empty.'};
@@ -43,9 +43,9 @@ $(document).ready(function() {
 	parameters.analysisProfile = "GlobalProfile";
 	var map = JMI.Map({
 				parent: 'map', 
-				clientUrl: '../jmi-client/', 
-				//server: 'http://localhost:8080/jmi-server/'
-				//client: JMI.Map.SWF
+				//server: 'http://localhost:8080/jmi-server/',
+				//client: JMI.Map.SWF,
+				clientUrl: '../jmi-client/'
 			});
 	map.addEventListener(JMI.Map.event.READY, function(event) {
 	} );
@@ -114,7 +114,6 @@ function same(map, args) {
 	map.compute( parameters);
 }
 function completeParameters(parameters) {
-	parameters.allowDomain = "*";
 	//parameters.allocineserverurl = "http://localhost:8080/web-labs";
 	parameters.allocineserverurl = "http://labs.just-map-it.com";
 	parameters.map = "Allocine";
