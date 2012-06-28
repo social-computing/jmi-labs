@@ -152,7 +152,7 @@ public class AllocineRestProvider {
         UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/similarities");
         urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
         urlHelper.addParameter( "format", "json");
-        urlHelper.addParameter( "count", "10");
+        urlHelper.addParameter( "count", "20");
         urlHelper.addParameter( "code", id);
         urlHelper.openConnections();
         JsonNode similarities = mapper.readTree(urlHelper.getStream());
@@ -166,11 +166,16 @@ public class AllocineRestProvider {
             entity.addProperty("name", similarity.get("title").getTextValue());
             entity.addProperty("poster", similarity.get("href") != null ? similarity.get("href").getTextValue() : "");
             entity.addAttribute(reference, 1);
+
+            Attribute attribute = storeHelper.addAttribute(entity.getId());
+            attribute.addProperty("name", entity.getProperties().get("name"));
+            attribute.addProperty("poster", entity.getProperties().get("poster"));
+            
             for (JsonNode samemovie : (ArrayNode) similarity.get("child")) {
-                Attribute attribute = storeHelper.addAttribute( String.valueOf(samemovie.get("movieid").getLongValue()));
-                entity.addAttribute(attribute, 1);
-                attribute.addProperty("name", samemovie.get("title").getTextValue());
-                attribute.addProperty("poster", samemovie.get("href") != null ? samemovie.get("href").getTextValue() : "");
+                Entity entity2 = storeHelper.addEntity(String.valueOf(samemovie.get("movieid").getLongValue()));
+                entity2.addProperty("name", samemovie.get("title").getTextValue());
+                entity2.addProperty("poster", samemovie.get("href") != null ? samemovie.get("href").getTextValue() : "");
+                entity2.addAttribute(attribute, 1);
             }
         }
         urlHelper.closeConnections();
