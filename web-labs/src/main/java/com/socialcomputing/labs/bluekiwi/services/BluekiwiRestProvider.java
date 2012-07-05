@@ -41,24 +41,32 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper
 @Path("/bluekiwi")
 public class BluekiwiRestProvider {
 
-    public static final String CLIENT_ID = "0093584955edfe9e5312";
+	/* Lecko information */
+	public static final String CLIENT_ID = "0093584955edfe9e5312";
     public static final String CLIENT_SECRET = "5ba5d71d6cbb3fe5a539";
     public static final String SUPER_TOKEN = "e169290f3065894c30e70d8aaa0033f2";
-    //public static final String BK_URL = "http://partners.sandboxbk.net";
     public static final String BK_URL = "https://lecko.bluekiwi.net";
-    
-    
+    // Lecko beta user : justmapit_beta, id = 4293
+    // Spaces of the beta users :
+    //   - 2: Référentiel Lecko 
+    //   - 26: Etudes & tendances
+    public static final int[] SPACES_ID = {2, 26};
+	
+	/* Partners information */
+    /*
+	public static final String CLIENT_ID = "914d4ad0f30e01d3b48c";
+	public static final String CLIENT_SECRET = "c62cee6c330a39f0a786";
+	public static final String SUPER_TOKEN = "f523902728af04407ae2045975bfb0ff";
+	public static final String BK_URL = "http://partners.sandboxbk.net";
+	public static final int[] SPACES_ID = {23};
+	*/
+	
+	
     public static final String CALLBACK_URL = "http://labs.just-map-it.com/bluekiwi/";
     public static final String AUTHORIZE_ENDPOINT = BK_URL + "/oauth2/authorize";
     public static final String TOKEN_ENDPOINT = BK_URL + "/oauth2/token";
     
-    // Lecko beta user : justmapit_beta, id = 4293
-    // Spaces of the beta users :
-    //   - 2: Référentiel Lecko 
-    //   - 26: Etudes & tendances 
-    
-    // public static final int SPACE_ID = 23;
-    public static final int[] SPACES_ID = {2, 26};
+ 
     
     private static final Logger LOG = LoggerFactory.getLogger(BluekiwiRestProvider.class);
     
@@ -70,11 +78,12 @@ public class BluekiwiRestProvider {
     public String kind(@Context HttpServletRequest request, @DefaultValue("") @QueryParam("query") String query, @QueryParam("token") String token) {
         HttpSession session = request.getSession(true);
         String key = query;
-        String result = null;//( String)session.getAttribute( key);
+        String result = (String)session.getAttribute(key);
         if (result == null || result.length() == 0) {
-           result = build(query, token);
-           session.setAttribute( key, result);
+            result = build(query, token);
+            session.setAttribute( key, result);
         }
+        //String result = build(query, token);
         return result;
     }
     
@@ -82,9 +91,15 @@ public class BluekiwiRestProvider {
         StoreHelper storeHelper = new StoreHelper();
         
         try {
+        	
+        	// Preparing query
         	ObjectMapper mapper = new ObjectMapper();
+        
         	ObjectNode q = mapper.createObjectNode();
+        	
+        	// The content of the query is in the text parameter
         	q.put("text", query);
+        	q.put("destinationType", "space");
         	
         	// Filter with a list of spaces ids
         	ArrayNode spaces = q.putArray("destinationIds");
@@ -92,8 +107,11 @@ public class BluekiwiRestProvider {
         		spaces.add(space);	
         	}
         	      
+        	String qString = q.toString();
+        	LOG.debug("Query string before calling URLHelper: {}", qString);
+        	
             UrlHelper bluekiwiClient = new UrlHelper(POST, BluekiwiRestProvider.BK_URL + "/api/v3/post/_search");
-            bluekiwiClient.addParameter("q", q.toString());
+            bluekiwiClient.addParameter("q", qString, false);
             bluekiwiClient.addParameter("access_token", token);
             bluekiwiClient.openConnections();
             
