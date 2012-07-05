@@ -4,16 +4,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <%
-	String token = (String) session.getAttribute("oauth_token");
+String token = (String) session.getAttribute("access_token");
 if(token == null) {
 	token = request.getParameter("access_token");
 	if(token == null) {
 		String code = request.getParameter("code");
 		if(code != null) {
-	token = BluekiwiRestProvider.getAccessToken(code, session);
+		    token = BluekiwiRestProvider.getAccessToken(code, session);
 		}
 		else {
-	response.sendRedirect(BluekiwiRestProvider.AUTHORIZE_ENDPOINT + "?client_id=" + BluekiwiRestProvider.CLIENT_ID + "&response_type=code&redirect_uri=" + URLEncoder.encode(BluekiwiRestProvider.CALLBACK_URL, "UTF-8"));
+		    response.sendRedirect(BluekiwiRestProvider.AUTHORIZE_ENDPOINT + "?client_id=" + BluekiwiRestProvider.CLIENT_ID 
+		    		+ "&response_type=code&redirect_uri=" + URLEncoder.encode(BluekiwiRestProvider.CALLBACK_URL, "UTF-8"));
 		}
 	}
 }

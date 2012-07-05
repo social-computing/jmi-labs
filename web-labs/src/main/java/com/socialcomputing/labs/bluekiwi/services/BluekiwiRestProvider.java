@@ -41,15 +41,24 @@ import com.socialcomputing.wps.server.planDictionnary.connectors.utils.UrlHelper
 @Path("/bluekiwi")
 public class BluekiwiRestProvider {
 
-    public static final String CLIENT_ID = "914d4ad0f30e01d3b48c";
-    public static final String CLIENT_SECRET = "c62cee6c330a39f0a786";
-    public static final String SUPER_TOKEN = "f523902728af04407ae2045975bfb0ff";
-    public static final String BK_URL = "http://partners.sandboxbk.net";
+    public static final String CLIENT_ID = "0093584955edfe9e5312";
+    public static final String CLIENT_SECRET = "5ba5d71d6cbb3fe5a539";
+    public static final String SUPER_TOKEN = "e169290f3065894c30e70d8aaa0033f2";
+    //public static final String BK_URL = "http://partners.sandboxbk.net";
+    public static final String BK_URL = "https://lecko.bluekiwi.net";
+    
     
     public static final String CALLBACK_URL = "http://labs.just-map-it.com/bluekiwi/";
     public static final String AUTHORIZE_ENDPOINT = BK_URL + "/oauth2/authorize";
     public static final String TOKEN_ENDPOINT = BK_URL + "/oauth2/token";
-    public static final int SPACE_ID = 23;
+    
+    // Lecko beta user : justmapit_beta, id = 4293
+    // Spaces of the beta users :
+    //   - 2: Référentiel Lecko 
+    //   - 26: Etudes & tendances 
+    
+    // public static final int SPACE_ID = 23;
+    public static final int[] SPACES_ID = {2, 26};
     
     private static final Logger LOG = LoggerFactory.getLogger(BluekiwiRestProvider.class);
     
@@ -76,12 +85,16 @@ public class BluekiwiRestProvider {
         	ObjectMapper mapper = new ObjectMapper();
         	ObjectNode q = mapper.createObjectNode();
         	q.put("text", query);
+        	
+        	// Filter with a list of spaces ids
         	ArrayNode spaces = q.putArray("destinationIds");
-        	spaces.add(SPACE_ID);
+        	for(int space: SPACES_ID) {
+        		spaces.add(space);	
+        	}
         	      
             UrlHelper bluekiwiClient = new UrlHelper(POST, BluekiwiRestProvider.BK_URL + "/api/v3/post/_search");
             bluekiwiClient.addParameter("q", q.toString());
-            bluekiwiClient.addParameter("oauth_token", token);
+            bluekiwiClient.addParameter("access_token", token);
             bluekiwiClient.openConnections();
             
             JsonNode response = mapper.readTree(bluekiwiClient.getStream());
@@ -111,7 +124,7 @@ public class BluekiwiRestProvider {
             	
 	            	// Author
 	                UrlHelper urlPost = new UrlHelper(BluekiwiRestProvider.BK_URL + "/api/v3/post/" + att.getId());
-	                urlPost.addParameter("oauth_token", token);
+	                urlPost.addParameter("access_token", token);
 	                urlPost.openConnections();
 	                JsonNode cpost = mapper.readTree(urlPost.getStream());
 	                addAuthor(storeHelper, cpost, att);
@@ -120,7 +133,7 @@ public class BluekiwiRestProvider {
 	                
 	                // Comments authors 
 	                UrlHelper urlComments = new UrlHelper(BluekiwiRestProvider.BK_URL + "/api/v3/post/" + att.getId() + "/_reactions");
-	                urlComments.addParameter("oauth_token", token);
+	                urlComments.addParameter("access_token", token);
 	                urlComments.openConnections();
 	                JsonNode commentsResponse = mapper.readTree(urlComments.getStream());
 	                if(commentsResponse.has("items")) {
@@ -200,7 +213,7 @@ public class BluekiwiRestProvider {
     	urlHelper.openConnections();
     	JsonNode tokenData = mapper.readTree(urlHelper.getStream());
     	String token = tokenData.get("access_token").getTextValue();
-    	session.setAttribute("oauth_token", token);
+    	session.setAttribute("access_token", token);
     	return token;
     }
     
@@ -221,9 +234,9 @@ public class BluekiwiRestProvider {
     	// Get a copy of urlHelper parameters
     	List<NameValuePair> parameters = new ArrayList<NameValuePair>(urlHelper.getParameters());
     	
-    	// Add oauth_timestamp and oauth_token to the list
+    	// Add oauth_timestamp and access_token to the list
     	NameValuePair timestamp = new NameValuePair("oauth_timestamp", String.valueOf(now));
-    	NameValuePair token = new NameValuePair("oauth_token", superToken);
+    	NameValuePair token = new NameValuePair("access_token", superToken);
     	parameters.add(timestamp);
     	parameters.add(token);
     	
