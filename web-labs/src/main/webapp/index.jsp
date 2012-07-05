@@ -33,8 +33,7 @@ img
 <table width="100%" border="0">
 	<tr>
 		<td><a title="Just Map It! Labs" href="./"><img alt="Just Map It! Labs" src="./images/justmapit_labs.png" /></a></td>
-		<td align="right"><a title="Social Computing" href="http://www.just-map-it.com" target="_blank"><img
-			alt="Just Map It!" src="./images/justmapit_www.png" /></a></td>
+		<td align="right"><a title="Just Map It!" href="http://www.just-map-it.com" target="_blank"><img alt="Just Map It!" src="./images/justmapit_www.png" /></a></td>
 	</tr>
 </table>
 <table width="60%" border="0" style="padding: 100px 0 0 200px">

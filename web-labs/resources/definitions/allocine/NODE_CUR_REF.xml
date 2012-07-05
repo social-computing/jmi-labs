@@ -104,10 +104,10 @@
 
 	<menu id="menu" font="menuFnt">
 		<item label="Afficher" font="nameFnt" url="javascript:navigate({sID})" />
-		<item label="Centrer" font="nameFnt" url="javascript:center({sID},{sNAME})" />
-		<item label="Similaires" font="nameFnt" url="javascript:same({sID},{sNAME})" />
+		<!--item label="Centrer" font="nameFnt" url="javascript:center({sID},{sNAME})" /-->
+		<item label="Centrer" font="nameFnt" url="javascript:same({sID},{sNAME})" />
 		<separator />
-		<item label="[+30sPOSS_NAME]" url="javascript:focus([sPOSS_ID],[sPOSS_NAME])" />
+		<item label="[+30sPOSS_NAME]" url="javascript:same([sPOSS_ID],[sPOSS_NAME])" />
 	</menu>
 
 	<font id="menuFnt" name="Arial" size="11" style="plain" />

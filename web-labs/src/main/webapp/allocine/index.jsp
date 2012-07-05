@@ -1,4 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page import="java.net.URLEncoder"%>
+<%@page import="com.socialcomputing.labs.allocine.AllocineRestProvider"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Just Map It! Allocine</title>
@@ -13,6 +15,7 @@ html, body {
 	width: 100%;
 	height: 80%;
 	background-color: #FFFFFF;
+	text-align: center;
 }
 img {
 	border: 0;
@@ -36,11 +39,9 @@ function JMIF_breadcrumbTitlesFunc(event) {
 		}
 	}
 	return breadcrumbTitles;
-}
-$(document).ready(function() {
-	var parameters = {};
-	completeParameters( parameters);
-	parameters.analysisProfile = "GlobalProfile";
+};
+
+function GoMap(id, name) {
 	var map = JMI.Map({
 				parent: 'map', 
 				//server: 'http://localhost:8080/jmi-server/',
@@ -56,32 +57,41 @@ $(document).ready(function() {
 	} );
 	map.addEventListener(JMI.Map.event.ERROR, function(event) {
 	} );
-	breadcrumbTitles.shortTitle = $('#filter option:selected').get(0).label;
-	breadcrumbTitles.longTitle = $('#filter option:selected').get(0).label + ' - ' + $('#kind option:selected').get(0).label;
 	breadcrumb = new JMI.extensions.Breadcrumb('breadcrumb',map,{'namingFunc':JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
 	new JMI.extensions.Slideshow(map);
-	map.compute( parameters);
-});
+	same(map, [id,name]);
+};
 $(function() {
-	$('#kind').change(function(){
-		 var parameters = {};
-		 completeParameters( parameters);
-		 parameters.analysisProfile = "GlobalProfile";
-		 breadcrumb.reset();
-		 breadcrumbTitles.shortTitle = $('#filter option:selected').get(0).label;
-		 breadcrumbTitles.longTitle = $('#filter option:selected').get(0).label + ' - ' + $('#kind option:selected').get(0).label;
-		 $('#map').get(0).JMI.compute( parameters);
-	});
 	$('#filter').change(function(){
-		 var parameters = {};
-		 completeParameters( parameters);
-		 parameters.analysisProfile = "GlobalProfile";
-		 breadcrumb.reset();
-		 breadcrumbTitles.shortTitle = $('#filter option:selected').get(0).label;
-		 breadcrumbTitles.longTitle = $('#filter option:selected').get(0).label + ' - ' + $('#kind option:selected').get(0).label;
-		 $('#map').get(0).JMI.compute( parameters);
+		breadcrumb.reset();
+		fillFilter($('#filter option:selected').get(0).value);
 	}); 
+	fillFilter($('#filter option:selected').get(0).value);
 });
+
+function fillFilter(filter) {
+	var i, movie, html='';
+	$.ajax({
+		  type: "GET",
+		  dataType: 'json',
+		  url: "<%=AllocineRestProvider.API_URL%>/rest/v3/movieList?partner=<%=AllocineRestProvider.API_KEY%>&format=json&count=50&filter=" + escape(filter)
+	}).done(function( jso ) {
+		/*if( typeof jso === "string")
+			jso = jQuery.parseJSON(jso);*/
+		if( jso && jso.feed && jso.feed.movie) {
+			for( i = 0 ; i < jso.feed.movie.length; ++i) {
+				movie = jso.feed.movie[i];
+				html += '<a class="maplink" href="' + movie.code + '" >' + movie.title + '</a><br/>';
+			}
+			$('#map').get(0).innerHTML = html;
+			$('.maplink').click(function( event){
+				event.preventDefault();
+				$('#map').get(0).innerHTML = '';
+				GoMap(event.target.href.substr(event.target.href.lastIndexOf("/")+1), event.target.innerHTML);
+			}); 
+		}
+	});
+}
 function navigate(map, id) {
 	 window.open( "http://www.allocine.fr/film/fichefilm_gen_cfilm=" + id + ".html", "_blank");
 }
@@ -117,7 +127,6 @@ function completeParameters(parameters) {
 	//parameters.allocineserverurl = "http://localhost:8080/web-labs";
 	parameters.allocineserverurl = "http://labs.just-map-it.com";
 	parameters.map = "Allocine";
-	parameters.kind = $('#kind option:selected').get(0).value;
 	parameters.filter = $('#filter option:selected').get(0).value;
 	parameters.jsessionid = '<%=session.getId()%>';
 }
@@ -127,7 +136,7 @@ function completeParameters(parameters) {
 <body>
 <table width="100%" border="0">
 	<tr>
-		<td><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
+		<td align="left"><a title="Just Map It! Allocine" href="./"><img alt="Just Map It! Allocine" src="../images/justmapit_allocine.png" /></a></td>
 		<td>
 		<select id="filter">
 		<option value="outthisweek">Sorties de la semaine</option>
@@ -138,16 +147,10 @@ function completeParameters(parameters) {
 		<option value="top:alltimes" >Meilleurs films</option>
 		<option value="worst" >Les pires films</option>
 		</select>
-		<select id="kind">
-		<option value="film_gender">Film / genre</option>
-		<option value="film_tag" >Film / tag</option>
-		<option value="film_casting" >Film / casting</option>
-		</select>
 		</td>
-		<td align="right"><a title="Just Map It! Allocine" href="./"><img alt="Just Map It! Allocine" src="../images/justmapit_allocine.png" /></a></td>
+		<td align="right"><a title="Just Map It! Labs" href=".."><img alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
 	</tr>
 </table>
-<div id="message">&nbsp;</div>
 <div id="breadcrumb">&nbsp;</div>
 <div id="map"></div>
 </body>

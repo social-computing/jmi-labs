@@ -152,7 +152,7 @@ public class AllocineRestProvider {
         UrlHelper urlHelper = new UrlHelper( AllocineRestProvider.API_URL + "/rest/v3/similarities");
         urlHelper.addParameter( "partner", AllocineRestProvider.API_KEY);
         urlHelper.addParameter( "format", "json");
-        urlHelper.addParameter( "count", "20");
+        urlHelper.addParameter( "count", "7");
         urlHelper.addParameter( "code", id);
         urlHelper.openConnections();
         JsonNode similarities = mapper.readTree(urlHelper.getStream());
@@ -170,12 +170,18 @@ public class AllocineRestProvider {
             Attribute attribute = storeHelper.addAttribute(entity.getId());
             attribute.addProperty("name", entity.getProperties().get("name"));
             attribute.addProperty("poster", entity.getProperties().get("poster"));
+            entity.addAttribute(attribute, 1);//tricky
             
             for (JsonNode samemovie : (ArrayNode) similarity.get("child")) {
                 Entity entity2 = storeHelper.addEntity(String.valueOf(samemovie.get("movieid").getLongValue()));
                 entity2.addProperty("name", samemovie.get("title").getTextValue());
                 entity2.addProperty("poster", samemovie.get("href") != null ? samemovie.get("href").getTextValue() : "");
                 entity2.addAttribute(attribute, 1);
+
+                Attribute attribute2 = storeHelper.addAttribute(entity2.getId());
+                attribute2.addProperty("name", entity2.getProperties().get("name"));
+                attribute2.addProperty("poster", entity2.getProperties().get("poster"));
+                entity.addAttribute(attribute2, 1);
             }
         }
         urlHelper.closeConnections();

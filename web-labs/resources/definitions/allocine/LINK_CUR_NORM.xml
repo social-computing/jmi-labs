@@ -37,7 +37,7 @@
     </event>
     
     <menu id="menu" font="menuFnt">
-        <item label="[sREC_NAME]" url="javascript:focus([sREC_ID],[sREC_NAME])" />
+        <item label="[sREC_NAME]" url="javascript:same([sREC_ID],[sREC_NAME])" />
     </menu>
 
     <font id="menuFnt" name="Arial" size="11" style="plain" />

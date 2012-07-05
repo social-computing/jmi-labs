@@ -125,7 +125,7 @@ function search(value) {
 <table width="100%" border="0">
 	<tr>
 		<td><a title="Just Map It! Labs" href="../"><img border="0" alt="Just Map It! Labs" src="../images/justmapit_labs.png" /></a></td>
-		<td align="right"><a title="Social Computing" href="http://www.social-computing.com" target="_blank"><img border="0" alt="Social Computing" src="../images/logo-sc-white.jpg" /></a></td>
+		<td align="right"><a title="Just Map It!" href="http://www.just-map-it.com" target="_blank"><img alt="Just Map It!" src="../images/justmapit_www.png" /></a></td>
 	</tr>
 </table>
 <div>Search: <input onkeyup="search(this.value)"/><span id="res"></span></div>
