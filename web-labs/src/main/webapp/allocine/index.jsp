@@ -63,7 +63,8 @@ function GoMap(id, name) {
 };
 $(function() {
 	$('#filter').change(function(){
-		breadcrumb.reset();
+		if( breadcrumb)
+			breadcrumb.reset();
 		fillFilter($('#filter option:selected').get(0).value);
 	}); 
 	fillFilter($('#filter option:selected').get(0).value);
