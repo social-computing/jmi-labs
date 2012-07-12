@@ -16,10 +16,7 @@
     </sat>
 
 <!-- References -->
-    <shape id="edgeShp" scale="1" anchor="center">
-        <!--point      x="0" y="0"/>
-        <point      x="1" y="0"/-->
-    </shape>
+    <shape id="edgeShp" scale="1" anchor="center" />
 
     <shape id="voidShp" scale="0" anchor="center" />
 
@@ -32,5 +29,4 @@
 
     <font id="selFnt" name="SansSerif" size="10" style="plain" />
     <transfo id="noTrf" scale="0" map="absolute" />
-
 </swatch>

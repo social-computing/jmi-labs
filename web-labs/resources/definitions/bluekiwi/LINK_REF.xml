@@ -16,8 +16,6 @@
     </sat>
 
 <!-- References -->
-    <shape id="edgeShp" scale="1" anchor="center">
-    </shape>
+    <shape id="edgeShp" scale="1" anchor="center" />
     <transfo id="noTrf" scale="0" map="absolute" />
-
 </swatch>

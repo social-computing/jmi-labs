@@ -39,17 +39,9 @@
 			<polar dir="0" rad="1.2" />
 		</transfo>
 		<slice alpha="1" linewidth="1">
-			<tip font="selFnt" label="{sNAME}" inCol="@whiteCol" textCol="34 34 34" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
+			<tip font="selFnt" label="{+60.1sNAME}" inCol="@whiteCol" textCol="34 34 34" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
 		</slice>
 	</sat>
-
-<!-- Cur Image -->
-	<!--sat shape="voidShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
-		<transfo map="interpol" scale="0">
-			<polar dir="180" rad="0" />
-		</transfo>
-		<slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={$POSTER}" transfo="imgTrf" alpha="1" linewidth="1" />
-	</sat-->
 
 <!-- Cur Title -->
 	<sat shape="voidShp" click="clickEvt" dblClk="dblClkEvt" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
@@ -57,7 +49,7 @@
 			<polar dir="0" rad="1.2" />
 		</transfo>
 		<slice alpha="1" linewidth="1">
-			<tip font="nameFnt" label="{sNAME}" inCol="34 34 34" textCol="@whiteCol" rounded="10" isCorner="true" blur="-1" dir="SW" align="left" isFloating="false" />
+			<tip font="nameFnt" label="{+60.1sNAME}" inCol="34 34 34" textCol="@whiteCol" rounded="10" isCorner="true" blur="-1" dir="SW" align="left" isFloating="false" />
 		</slice>
 	</sat>
 
@@ -92,21 +84,10 @@
 
 	<tip id="textTip" font="nameFnt" label="@nameStr" textCol="@blackCol" isCorner="true" blur="-1" rounded="-1" dir="SW" align="left" isFloating="false" />
 
-	<!--tooltip    id="tooltip"
-				delay="500"
-				length="30000">
-		<tip 	font="nameFnt"
-				url="{s$web_context}/facebook/people.jsp?id={sID}&code={s$fbauthcode}"
-				inCol="63 127 223"
-				textCol="@whiteCol"
-				align="center"
-				isFloating="true"/>
-	</tooltip-->
 
 	<!-- Hover event -->
 	<event id="hoverEvt">
 		<show status="Cliquez pour afficher le menu de '{sNAME}'. Double-cliquez pour afficher sa fiche." />
-		<!--pop        tooltip="tooltip"/-->
 	</event>
 
 	<!-- Click event -->
@@ -114,18 +95,21 @@
 		<popup menu="menu" />
 	</event>
 
-	<menu id="menu" font="menuFnt">
-		<item label="Display" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
-		<item label="Center" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
-		<separator />
-		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
-	</menu>
 
-		<font id="menuFnt" name="Arial" size="11" style="plain" />
+	<menu id="menu" font="menuFnt">
+		<item label="Afficher" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
+		<item label="Centrer sur la carte" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
+		<separator />
+        <menu id="submenu" label="[+30sPOSS_NAME]" font="menuFnt">
+            <item label="Afficher" url="javascript:JMIF_Navigate([sPOSS_URL])" />
+            <item label="Mettre en avant sur la carte" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
+        </menu>
+	</menu>
+	
+	<font id="menuFnt" name="Arial" size="11" style="plain" />
 
 	<!-- DblClkEvt event -->
 	<event id="dblClkEvt">
 		<open url="javascript:center({sID},{sNAME})" />
 	</event>
-	
 </swatch>

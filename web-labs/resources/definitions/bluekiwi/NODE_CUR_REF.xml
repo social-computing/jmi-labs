@@ -39,17 +39,10 @@
             <polar dir="0" rad="1.2" />
         </transfo>
         <slice alpha="1" linewidth="1">
-            <tip font="selFnt" label="{sNAME}" inCol="241 27 63" textCol="@whiteCol" isCorner="true" blur="-1" rounded="-1" dir="SW" align="left" isFloating="false" />
+            <tip font="selFnt" label="{+60.1sNAME}" inCol="241 27 63" textCol="@whiteCol" isCorner="true" blur="-1" rounded="-1" dir="SW" align="left" isFloating="false" />
         </slice>
     </sat>
-    
-<!-- Cur Image -->
-	<!--sat shape="voidShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
-		<transfo map="interpol" scale="0">
-			<polar dir="180" rad="0" />
-		</transfo>
-		<slice image="{s$allocineserverurl}/rest/allocine/image-proxy?url={$POSTER}" transfo="imgTrf" alpha="1" linewidth="1" />
-	</sat-->
+
 
 <!-- Cur Title -->
     <sat shape="voidShp" click="clickEvt" dblClk="dblClkEvt" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
@@ -57,7 +50,7 @@
             <polar dir="0" rad="1.2" />
         </transfo>
         <slice alpha="1" linewidth="1">
-            <tip font="nameFnt" label="@nameStr" inCol="34 34 34" textCol="255 182 0" rounded="10" isCorner="true" blur="-1" dir="SW" align="left" isFloating="false" />
+            <tip font="nameFnt" label="{+60.1sNAME}" inCol="34 34 34" textCol="255 182 0" rounded="10" isCorner="true" blur="-1" dir="SW" align="left" isFloating="false" />
         </slice>
     </sat>
 <!-- References -->
@@ -103,10 +96,13 @@
     </event>
 
 	<menu id="menu" font="menuFnt">
-		<item label="Display" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
-		<item label="Center" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
+		<item label="Afficher" font="nameFnt" url="javascript:JMIF_Navigate({sURL})" />
+		<item label="Centrer sur la carte" font="nameFnt" url="javascript:JMIF_Center({sID},{sNAME})" />
 		<separator />
-		<item label="[+30sPOSS_NAME]" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
+        <menu id="submenu" label="[+30sPOSS_NAME]" font="menuFnt">
+            <item label="Afficher" url="javascript:JMIF_Navigate([sPOSS_URL])" />
+            <item label="Mettre en avant sur la carte" url="javascript:JMIF_Focus([sPOSS_ID],[sPOSS_NAME])" />
+        </menu>
 	</menu>
 
 	<font id="menuFnt" name="Arial" size="11" style="plain" />

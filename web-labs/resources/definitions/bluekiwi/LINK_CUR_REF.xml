@@ -27,7 +27,7 @@
 
     <!-- Hover event -->
     <event id="hoverEvt">
-        <show status="Click to show this link menu" />
+        <show status="Cliquez pour afficher le menu de ce lien" />
         <pop tooltip="tooltip" />
     </event>
 
@@ -37,10 +37,11 @@
     </event>
 
     <menu id="menu" font="menuFnt">
-        <item label="[sREC_NAME]" url="javascript:JMIF_Focus([sREC_ID],[sREC_NAME],{s$feed})" />
+        <menu id="submenu" label="[+60.1sREC_NAME]" font="menuFnt">
+            <item label="Afficher" url="javascript:JMIF_Navigate([sREC_URL])" />
+            <item label="Mettre en avant sur la carte" url="javascript:JMIF_Focus([sREC_ID],[sREC_NAME])" />
+        </menu>
     </menu>
-
-
-        <font id="menuFnt" name="Monospaced" size="11" style="plain" />
-
+    
+    <font id="menuFnt" name="Monospaced" size="11" style="plain" />
 </swatch>
