@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@page import="java.net.URLEncoder"%>
 <%@page import="com.socialcomputing.labs.bluekiwi.services.BluekiwiRestProvider"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -36,11 +36,13 @@ img {
 	border: 0;
 }
 </style>
-<%Boolean inverse = request.getParameter("Inverse") != null;
+<%
+Boolean inverse = request.getParameter("Inverse") != null;
 String query = request.getParameter("query");
 if( query == null) {
     query = "";
- }%>
+}
+%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript">
@@ -64,7 +66,8 @@ function getParams() {
 		map: 'BlueKiwi',
 		jsessionid: '<%=session.getId()%>',
 		query: '<%=query%>',
-		token: '<%=token%>'
+		token: '<%=token%>',
+		inverted: <%=inverse%>
     };
     return p;
 };
@@ -120,6 +123,7 @@ function JMIF_Center(map, args) {
 		    <input type="hidden" name="access_token" value="<%=token%>" />
 			<input type="text" name="query" title="Query" size="80" value="<%=query%>" />
 			<input type="submit" value="Just Map It!" />
+            <input type="checkbox" id="inverse" name="Inverse" <%=inverse ? "checked" : ""%> onclick="document.getElementById('main').submit();"/>Inverser
 		</td>
 		<td align="right"><a title="Just Map It!" href="http://www.social-computing.com/offre/cartographie-just-map-it/" target="_blank"><img alt="Just Map It!" src="../images/justmapit.png" /></a></td>
 	</tr>
