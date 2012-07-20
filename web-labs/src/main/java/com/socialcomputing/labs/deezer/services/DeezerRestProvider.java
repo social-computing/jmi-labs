@@ -44,9 +44,10 @@ public class DeezerRestProvider {
 	public static final String APP_ID = "101811";
 	public static final String APP_SECRET = "853ab434e362306a6bc84f44afc04b71";
 	public static final String APP_PERMS = "basic_access,email,manage_community,manage_library,delete_library";
-	public static final String CALLBACK_URL = "http://labs.just-map-it.com/deezer/";
+	public static final String ROOT_URL = "http://labs.just-map-it.com/deezer/";
+	public static final String CALLBACK_URL = ROOT_URL + "v2.jsp";
 
-    public static final String DEEZER_CONNECT_URL = "http://connect.deezer.com";
+    public static final String DEEZER_CONNECT_URL = "https://connect.deezer.com";
     public static final String DEEZER_API_URL = "http://api.deezer.com/2.0";
     public static final String AUTHORIZE_ENDPOINT = DEEZER_CONNECT_URL + "/oauth/auth.php";
     public static final String TOKEN_ENDPOINT = DEEZER_CONNECT_URL + "/oauth/access_token.php";

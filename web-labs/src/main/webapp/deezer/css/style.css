@@ -1,0 +1,19 @@
+/* CSS Reset */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td{margin:0;padding:0;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;}
+ul{list-style:none; list-style-position:outside;}
+a {outline: none;}
+
+/* Deezer page definitions */
+html, body {
+    height: 100%;
+}
+#jmi-map {
+    width: 800px;
+    height: 600px;
+    background-color: #FFFFFF;
+}
+img {
+    border: 0;
+}
