@@ -182,11 +182,20 @@ public class BluekiwiRestProvider {
      */
     public static void addAuthor(StoreHelper storeHelper, JsonNode content, Attribute att) {
     	JsonNode author = content.get("author");
-    	LOG.debug("author found with id = {}", author.get("id").getTextValue());
-        Entity ent = storeHelper.addEntity(author.get("id").getTextValue());
-        ent.addProperty("name", "" + author.get("firstName").getTextValue() + " " + author.get("lastName").getTextValue());
-        ent.addProperty("url", author.get("url").getTextValue());
-        ent.addAttribute(att, 1); 
+    	if(author.has("id")) {
+    		// 05/09/2012 : Jonathan Dray
+    		// Found some artists values in Integer values instead of String in the JSON response 
+    		String authorId = author.get("id").getValueAsText();
+    	    
+	    	LOG.debug("author found with id = {}", authorId);
+	        Entity ent = storeHelper.addEntity(authorId);
+	        ent.addProperty("name", "" + author.get("firstName").getTextValue() + " " + author.get("lastName").getTextValue());
+	        ent.addProperty("url", author.get("url").getTextValue());
+	        ent.addAttribute(att, 1); 
+    	}
+    	else {
+    		LOG.debug("Author id not found, skipping...");
+    	}
     }
     
     /**
