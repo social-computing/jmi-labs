@@ -53,7 +53,7 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
 	  id = id.trim();
 	  if( id.length > 0) {
 		  if( !attributes0[id]) {
-			  attributes0[id] = {id: row, name: id};
+			  attributes0[id] = {id: id, name: id};
 		  }
 		  id2 = data.getFormattedValue(row, 1);
 		  id2 = id2.trim();
