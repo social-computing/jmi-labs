@@ -6,7 +6,8 @@ JMI.google.Visualization = function(container) {
   this.selection = [];
   this.map = JMI.Map({
 		  parent: this.container, 
-		  clientUrl: 'http://visualization.just-map-it.com/jmi-client/', 
+		  clientUrl: '../jmi-client/', 
+		  //server: 'https://server.just-map-it.com',
 		  //server: 'http://localhost:8080/jmi-server',
 		  method: 'POST'
 		});

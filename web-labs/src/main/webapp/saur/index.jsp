@@ -52,10 +52,16 @@ function display(data) {
     table.draw(data, {});
     
     google.visualization.events.addListener(table, 'select', function() {
-		var row = table.getSelection()[0].row , pattern= new RegExp('^' + data.getFormattedValue(row, 2) + ' ' + data.getFormattedValue(row, 3) + '$'), 
-			attribute = map.map.attributes.match(pattern,['ID']);	
-    	if( attribute.length > 0)
-    		JMI.google.Visualization.JMIF_Center(map.map, [attribute[0].ID, attribute[0].NAME]);	
+    	if( table.getSelection().length > 0) {
+			var row = table.getSelection()[0].row, id = data.getFormattedValue(row, 2) + ' ' + data.getFormattedValue(row, 3), 
+				i, attribute;
+			for( i=0; i < map.visualizationDataSaved.attributes.length; ++i ) {
+				if( map.visualizationDataSaved.attributes[i].id === id) {
+		    		JMI.google.Visualization.JMIF_Center(map.map, [id, id]);	
+		    		return;
+				}
+	    	}
+    	}
     });    			
 };
 </script>
