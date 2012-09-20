@@ -29,8 +29,8 @@ import com.sun.jersey.api.Responses;
 @Path("/allocine")
 public class AllocineRestProvider {
 
-    //public static final String API_URL = "http://api.allocine.fr";
-    public static final String API_URL = "http://ext.api.allocine.fr";
+    public static final String API_URL = "http://api.allocine.fr";
+    //public static final String API_URL = "http://ext.api.allocine.fr";
     public static final String API_KEY = "U29jaWFsQ29tcHV0aW5n";
     private static final ObjectMapper mapper = new ObjectMapper();
 

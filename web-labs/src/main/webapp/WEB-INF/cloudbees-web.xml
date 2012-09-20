@@ -22,4 +22,21 @@
 		<param name="validationQuery" value="SELECT 1" />
 		<param name="testOnBorrow" value="true" />
 	</resource>
+
+	<realm>
+		<!-- Fichier a plat -->
+		<!-- <param name="className" value="org.apache.catalina.realm.MemoryRealm" 
+			/> -->
+		<!-- <param name="pathname" value="${catalina.home}/tomcat-users.xml" /> -->
+
+		<!-- Datasource -->
+		<param name="className" value="org.apache.catalina.realm.DataSourceRealm" />
+		<param name="dataSourceName" value="jdbc/labs-db" />
+		<param name="localDataSource" value="true" />
+		<param name="userTable" value="users" />
+		<param name="userNameCol" value="username" />
+		<param name="userCredCol" value="password" />
+		<param name="userRoleTable" value="user_roles" />
+		<param name="roleNameCol" value="role" />
+	</realm>
 </cloudbees-web-app>
