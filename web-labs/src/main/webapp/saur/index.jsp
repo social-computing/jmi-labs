@@ -23,7 +23,7 @@ img {
 String dataFormat = request.getParameter("dataFormat") != null ? request.getParameter("dataFormat") : "matrix";
 String sourceId = "https://docs.google.com/spreadsheet/pub?key=0AlyyavYc1ciUdHJ6enh3R1ZkUXEzM1EySTdFdlBTZWc";%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
-<script type="text/javascript" src="http://www.google.com/jsapi"></script> 
+<script type="text/javascript" src="https://www.google.com/jsapi"></script> 
 <script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 <script type="text/javascript" src="./js/jmi-visualization.js"></script>
 <script type="text/javascript">
