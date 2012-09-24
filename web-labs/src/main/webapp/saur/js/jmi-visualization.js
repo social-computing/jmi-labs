@@ -8,7 +8,7 @@ JMI.google.Visualization = function(container) {
 		  parent: this.container, 
 		  clientUrl: '../jmi-client/', 
 		  //server: 'https://server.just-map-it.com',
-		  //server: 'http://localhost:8080/jmi-server',
+		  server: 'http://localhost:8080/jmi-server',
 		  method: 'POST'
 		});
   this.map.gvisualization = this;
@@ -36,7 +36,7 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
   
   if( options.breadcrumb) {
 	  new JMI.extensions.Breadcrumb(options.breadcrumb,this.map,{'namingFunc':JMI.google.Visualization.JMIF_breadcrumbTitlesFunc,'thumbnail':{}});
-	  this.breadcrumbTitles = { shortTitle: 'Initial map', longTitle: 'Initial map' };
+	  this.breadcrumbTitles = { shortTitle: 'Carte initiale', longTitle: 'Carte initiale' };
   }
   new JMI.extensions.Slideshow(this.map);
 
@@ -47,15 +47,22 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
   this.dataFormat = options.dataFormat || 'matrix';
   var entities = [], entities0 = {}, attributes = [], attributes0 = {};
 
-  var row, firstrow = data.getColumnLabel(0) ? 0 : 1, id, id2;
+  var row, firstrow = data.getColumnLabel(0) ? 0 : 1, id, id2, val;
 
   for (row = firstrow; row < data.getNumberOfRows(); row++) {
 	  id = data.getFormattedValue(row, 2) + ' ' + data.getFormattedValue(row, 3);
 	  id = id.trim();
 	  if( id.length > 0) {
 		  if( !attributes0[id]) {
-			  attributes0[id] = {id: id, name: id};
+			  attributes0[id] = {id: id, name: id, fonction: []};
 		  }
+		  val = data.getFormattedValue(row, 9);
+		  attributes0[id].couleur = '#ffb400';
+		  if( val && val.length > 0) {
+			  attributes0[id].couleur = val === 'g' ? '#F51152' : '#09589D';
+		  } 
+		  attributes0[id].fonction.push(data.getFormattedValue(row, 4) + ', ' + data.getFormattedValue(row, 1));
+		  attributes0[id].appartenance = data.getFormattedValue(row, 8);
 		  id2 = data.getFormattedValue(row, 1);
 		  id2 = id2.trim();
 		  if( id2.length > 0) {//} && id2 !== 'Ville de Marseille') {
@@ -63,6 +70,7 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
 				  entities0[id2] = {id: row, name: id2, attributes: []};
 			  }
 			  entities0[id2].attributes.push({id: attributes0[id].id});
+			  entities0[id2].couleur = '#ffb400';
 		  }
 		  id2 = data.getFormattedValue(row, 8);
 		  id2 = id2.trim();
@@ -71,6 +79,7 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
 				  entities0[id2] = {id: 'p'+ row, name: id2, attributes: []};
 			  }
 			  entities0[id2].attributes.push({id: attributes0[id].id});
+			  entities0[id2].couleur = '#ffb400';
 		  }
 	  }
   }
@@ -148,7 +157,7 @@ JMI.google.Visualization.JMIF_breadcrumbTitlesFunc = function(event) {
 
 JMI.google.Visualization.getParams = function(map) {
   return { 
-	map: 'GoogleVisualization',
+	map: 'Saur',
 	source: map.gvisualization.source,
 	sourceId: map.gvisualization.sourceId,
 	data: map.gvisualization.visualizationData,
@@ -165,7 +174,7 @@ JMI.google.Visualization.JMIF_Focus = function(map, args) {
   parameters.entityId = args[0];
   map.compute( parameters);
   map.gvisualization.breadcrumbTitles.shortTitle = args[1];
-  map.gvisualization.breadcrumbTitles.longTitle = "Focus on: " + args[1];
+  map.gvisualization.breadcrumbTitles.longTitle = "Focus sur : " + args[1];
   map.gvisualization.selection = [ (map.gvisualization.invert || map.gvisualization.dataFormat==='columnLists'  ? {row: args[0]} : {column: args[0]}) ];
   google.visualization.events.trigger(map.gvisualization, 'select', {});
 };
@@ -176,7 +185,7 @@ JMI.google.Visualization.JMIF_Center = function(map, args) {
   parameters.analysisProfile = "DiscoveryProfile";
   map.compute( parameters);
   map.gvisualization.breadcrumbTitles.shortTitle = args[1];
-  map.gvisualization.breadcrumbTitles.longTitle = "Centered on: " + args[1];
+  map.gvisualization.breadcrumbTitles.longTitle = "Centré sur : " + args[1];
   map.gvisualization.selection = [ (map.gvisualization.invert || map.gvisualization.dataFormat==='columnLists' ? {column: args[0]} : {row : args[0]}) ];
   google.visualization.events.trigger(map.gvisualization, 'select', {});
 };   

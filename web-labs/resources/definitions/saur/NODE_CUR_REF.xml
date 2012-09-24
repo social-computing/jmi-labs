@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE swatch SYSTEM "swatch.dtd">
+
+<swatch name="NODE_CUR_REF">
+
+<!-- Base -->
+    <sat shape="diskShp" transfo="baseTrf" hover="hoverEvt" click="clickEvt" dblClk="dblClkEvt" isVisible="true" isSuper="true" isSub="false" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
+        <slice inCol="238 242 245" outCol="255 182 0" alpha="1" linewidth="1" />
+        <slice inCol="34 34 34" outCol="238 242 245" alpha="1" linewidth="1">
+            <transfo scale=".87" map="absolute" />
+        </slice>
+    </sat>
+
+<!-- Rest Spots -->
+    <sat shape="diskShp" isSub="true" isVisible="true" isSuper="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
+        <slice inCol="{scouleur}" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
+    </sat>
+
+<!-- Cur Spot -->
+    <sat shape="diskShp" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
+        <slice inCol="{scouleur}" outCol="238 242 245" transfo="spotTrf" alpha="1" linewidth="1" />
+    </sat>
+
+<!-- Rest Titles -->
+    <sat shape="voidShp" click="clickEvt" dblClk="dblClkEvt" isTip="true" isSub="true" isVisible="true" isSuper="true" isCur="false" isRest="true" isBack="false" isNoSided="false">
+        <transfo map="interpol" scale="0">
+            <polar dir="0" rad="1.3" />
+        </transfo>
+        <slice alpha="1" linewidth="1">
+            <tip font="nameFnt" label="{sname}" inCol="255 255 255" outCol="204 204 204" textCol="34 34 34" isCorner="true" blur="-1" rounded="10" dir="SW" align="left" isFloating="false" />
+        </slice>
+    </sat>
+
+<!-- General purpose Selection -->
+<!-- Sel sats must be declared before the ones they should hides when they'll be activated -->
+    <sat shape="voidShp" isSub="true" selection="search" isVisible="true" isSuper="true" isCur="false" isRest="true" isBack="false" isTip="false" isNoSided="false">
+        <transfo map="interpol" scale="0">
+            <polar dir="0" rad="1.2" />
+        </transfo>
+        <slice alpha="1" linewidth="1">
+            <tip font="selFnt" label="{sname}" inCol="241 27 63" textCol="@whiteCol" isCorner="true" blur="-1" rounded="-1" dir="SW" align="left" isFloating="false" />
+        </slice>
+    </sat>
+    
+<!-- Cur Title -->
+    <sat shape="voidShp" click="clickEvt" dblClk="dblClkEvt" isSub="true" isRest="false" isCur="true" isVisible="true" isSuper="true" isBack="false" isTip="false" isNoSided="false">
+        <transfo map="interpol" scale="0">
+            <polar dir="0" rad="1.2" />
+        </transfo>
+        <slice alpha="1" linewidth="1">
+            <tip font="nameFnt" label="@nameStr" inCol="{scouleur}" textCol="@whiteCol" rounded="10" isCorner="true" blur="-1" dir="SW" align="left" isFloating="false" />
+        </slice>
+    </sat>
+<!-- References -->
+    <string id="nameStr" label="{sname}" />
+
+    <color id="blackCol" rgb="000000" />
+    <color id="whiteCol" rgb="ffffff" />
+    <color id="hLinkDrkCol" rgb="0 0 127" />
+    <color id="hLinkCol" rgb="0 0 255" />
+    <color id="hLinkLitCol" rgb="191 191 255" />
+
+    <shape id="voidShp" scale="0" anchor="center" />
+    <shape id="diskShp" scale="1" anchor="center">
+    </shape>
+    <shape id="spotShp" scale="0.2" anchor="center">
+    </shape>
+
+    <font id="nameFnt" name="Arial" size="12" style="bold" />
+    <font id="italicFnt" name="Arial" size="12" style="italic" />
+    <font id="selFnt" name="Arial" size="12" style="bold" />
+
+    <transfo id="voidTrf" scale="0.01" map="absolute" />
+    <transfo id="spotTrf" scale="0.2" map="absolute" />
+    <transfo id="imgTrf" scale="1.2" map="absolute" />
+    <transfo id="baseTrf" map="interpol" scale="0">
+        <polar dir="90" rad="1" />
+    </transfo>
+    <transfo id="selTrf" map="interpol" scale="0">
+        <polar dir="0" rad="1.4" />
+    </transfo>
+
+    <tip id="textTip" font="nameFnt" label="@nameStr" textCol="@blackCol" isCorner="true" blur="-1" rounded="-1" dir="SW" align="left" isFloating="false" />
+    <font id="tipFnt" name="Arial" size="12" style="plain" />
+
+	<tooltip id="tooltip" delay="1000" length="5000">
+		<tip font="nameFnt" label="[sfonction]" inCol="{scouleur}" textCol="@whiteCol" align="left" rounded="10" isFloating="true" blur="-1" dir="SW" isCorner="false" />
+	</tooltip>
+
+	<!-- Hover event -->
+	<event id="hoverEvt">
+		<!-- show status="Cliquez pour afficher le menu de '{sname}'. Double-cliquez pour afficher sa fiche." /-->
+		<pop tooltip="tooltip" />
+	</event>
+	
+    <!-- Click event -->
+    <event id="clickEvt">
+        <popup menu="menu" />
+    </event>
+
+	<menu id="menu" font="menuFnt">
+		<item label="Centrer" font="nameFnt" url="javascript:JMIF_Center({sid},{sname})" />
+		<separator />
+		<item label="[+30sposs_name]" url="javascript:JMIF_Focus([sposs_id],[sposs_name])" />
+	</menu>
+
+	<font id="menuFnt" name="Arial" size="11" style="plain" />
+
+    <!-- DblClkEvt event -->
+    <event id="dblClkEvt">
+        <open url="javascript:center({sid},{sname})" />
+    </event>
+
+</swatch>

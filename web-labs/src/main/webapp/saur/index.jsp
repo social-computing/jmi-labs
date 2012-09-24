@@ -19,7 +19,7 @@ img {
 	border: 0;
 }
 </style>
-<%Boolean inverse = request.getParameter("Inverse") != null;
+<%Boolean inverse = true; //request.getParameter("Inverse") != null;
 String dataFormat = request.getParameter("dataFormat") != null ? request.getParameter("dataFormat") : "matrix";
 String sourceId = "https://docs.google.com/spreadsheet/pub?key=0AlyyavYc1ciUdHJ6enh3R1ZkUXEzM1EySTdFdlBTZWc";%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
