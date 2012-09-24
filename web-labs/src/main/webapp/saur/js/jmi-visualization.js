@@ -8,8 +8,8 @@ JMI.google.Visualization = function(container) {
 		  parent: this.container, 
 		  clientUrl: '../jmi-client/', 
 		  //server: 'https://server.just-map-it.com',
-		  server: 'http://localhost:8080/jmi-server',
-		  client: JMI.Map.SWF,
+		  //server: 'http://localhost:8080/jmi-server',
+		  //client: JMI.Map.SWF,
 		  method: 'POST'
 		});
   this.map.gvisualization = this;
