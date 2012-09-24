@@ -37,10 +37,12 @@
     </event>
 
     <menu id="menu" font="menuFnt">
-        <item label="[sREC_NAME]" url="javascript:JMIF_Focus([sREC_ID],[sREC_NAME],{s$feed})" />
+     	<menu id="submenu" label="[+30sREC_NAME]" font="menuFnt">
+    		<item label="Centrer" url="javascript:JMIF_InvertAndCenter([sREC_ID],[sREC_NAME])" />
+    		<item label="Focus" url="javascript:JMIF_Focus([sREC_ID],[sREC_NAME])" /> 
+    	</menu>	
     </menu>
 
-
-        <font id="menuFnt" name="Monospaced" size="11" style="plain" />
+    <font id="menuFnt" name="Monospaced" size="11" style="plain" />
 
 </swatch>

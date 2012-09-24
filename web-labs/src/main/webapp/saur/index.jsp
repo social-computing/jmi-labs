@@ -19,7 +19,7 @@ img {
 	border: 0;
 }
 </style>
-<%Boolean inverse = true; //request.getParameter("Inverse") != null;
+<%Boolean inverse = request.getParameter("Inverse") != null;
 String dataFormat = request.getParameter("dataFormat") != null ? request.getParameter("dataFormat") : "matrix";
 String sourceId = "https://docs.google.com/spreadsheet/pub?key=0AlyyavYc1ciUdHJ6enh3R1ZkUXEzM1EySTdFdlBTZWc";%>
 <link rel="stylesheet" type="text/css" href="../jmi-client/css/jmi-client.css" />
@@ -53,10 +53,11 @@ function display(data) {
     
     google.visualization.events.addListener(table, 'select', function() {
     	if( table.getSelection().length > 0) {
-			var row = table.getSelection()[0].row, id = data.getFormattedValue(row, 2) + ' ' + data.getFormattedValue(row, 3), 
-				i, attribute;
+			var i, row = table.getSelection()[0].row, id = data.getFormattedValue(row, 2) + ' ' + data.getFormattedValue(row, 3);
 			for( i=0; i < map.visualizationDataSaved.attributes.length; ++i ) {
 				if( map.visualizationDataSaved.attributes[i].id === id) {
+					if( map.invert)
+						map.invert = false;
 		    		JMI.google.Visualization.JMIF_Center(map.map, [id, id]);	
 		    		return;
 				}

@@ -103,7 +103,10 @@
 	<menu id="menu" font="menuFnt">
 		<item label="Centrer" font="nameFnt" url="javascript:JMIF_Center({sid},{sname})" />
 		<separator />
-		<item label="[+30sposs_name]" url="javascript:JMIF_Focus([sposs-id],[sposs_name])" />
+    	<menu id="submenu" label="[+30sposs_name]" font="menuFnt">
+    		<item label="Centrer" url="javascript:JMIF_InvertAndCenter([sposs_id],[sposs_name])" />
+    		<item label="Focus" url="javascript:JMIF_Focus([sposs_id],[sposs_name])" /> 
+    	</menu>	
 	</menu>
 
 		<font id="menuFnt" name="Arial" size="11" style="plain" />

@@ -9,6 +9,7 @@ JMI.google.Visualization = function(container) {
 		  clientUrl: '../jmi-client/', 
 		  //server: 'https://server.just-map-it.com',
 		  server: 'http://localhost:8080/jmi-server',
+		  client: JMI.Map.SWF,
 		  method: 'POST'
 		});
   this.map.gvisualization = this;
@@ -67,10 +68,11 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
 		  id2 = id2.trim();
 		  if( id2.length > 0) {//} && id2 !== 'Ville de Marseille') {
 			  if( !entities0[id2]) {
-				  entities0[id2] = {id: row, name: id2, attributes: []};
+				  entities0[id2] = {id: row, name: id2, attributes: [], fonction: []};
 			  }
 			  entities0[id2].attributes.push({id: attributes0[id].id});
 			  entities0[id2].couleur = '#ffb400';
+			  //entities0[id2].fonction.push(id + ', ' + data.getFormattedValue(row, 4));
 		  }
 		  id2 = data.getFormattedValue(row, 8);
 		  id2 = id2.trim();
@@ -188,6 +190,11 @@ JMI.google.Visualization.JMIF_Center = function(map, args) {
   map.gvisualization.breadcrumbTitles.longTitle = "Centré sur : " + args[1];
   map.gvisualization.selection = [ (map.gvisualization.invert || map.gvisualization.dataFormat==='columnLists' ? {column: args[0]} : {row : args[0]}) ];
   google.visualization.events.trigger(map.gvisualization, 'select', {});
+};   
+
+JMI.google.Visualization.JMIF_InvertAndCenter = function(map, args) {
+	map.gvisualization.invert = !map.gvisualization.invert;
+	JMI.google.Visualization.JMIF_Center( map, args);
 };   
 
 var JSON = JSON || {};
