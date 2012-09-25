@@ -3,6 +3,7 @@ package com.socialcomputing.labs.deezer.services;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,7 +59,8 @@ public class DeezerRestProvider {
     @Path("maps/map.json")
     @Produces(MediaType.APPLICATION_JSON)
     public Response kind(@Context HttpServletRequest request, @QueryParam("maptype") String maptype, 
-    			                                              @QueryParam("access_token") String access_token) {
+    			                                              @QueryParam("access_token") String access_token,
+    			                                              @QueryParam("selection") String selection) {
     	MapType mapType;
     	try {
     		
@@ -76,14 +78,14 @@ public class DeezerRestProvider {
         String result = (String) session.getAttribute(maptype);
         if (result == null || result.length() == 0) {
         	LOG.debug("Generating map for type = {}", mapType);
-            result = buildMap(mapType, access_token);
+            result = buildMap(mapType, access_token, selection);
             session.setAttribute(maptype, result);
         }
         return Response.ok(result).build(); // result;
     }
     
     
-    String buildMap(MapType maptype, String accessToken) {
+    String buildMap(MapType maptype, String accessToken, String selection) {
     	StoreHelper storeHelper = new StoreHelper();
         try {
         	// Start by getting user id
@@ -110,8 +112,8 @@ public class DeezerRestProvider {
 	        		
 	        	case RELARTIST:
 	        		Collection<Artist> favArtists = dzClient.getMyFavoriteArtists();
-	        		for(Artist favAlbum : favArtists) {
-	        			favIds.add(favAlbum.id);
+	        		for(Artist favArtist : favArtists) {
+	        			favIds.add(favArtist.id);
 	        		}
 	        		int i = 0;
 	        		Iterator<Artist> it = favArtists.iterator();
@@ -122,6 +124,16 @@ public class DeezerRestProvider {
 	        			addRelatedArtists(storeHelper, dzClient, a, favIds, 1);
 	        		}
 	        		break;
+                case RELARTISTSEL:
+	        		String[] selectedIds = selection.split(",");
+	        		Collections.addAll(favIds, selectedIds);
+	        		
+	        		for(String artistId : selectedIds) {
+	        		    Artist artist = dzClient.getArtistInformation(artistId);
+	        		    LOG.debug("Add related artists for user favorite artist = {}", artist);
+	        		    addRelatedArtists(storeHelper, dzClient, artist, favIds, 1);
+	        		}
+	        		break;	        		
         	}
         	
 
@@ -136,7 +148,6 @@ public class DeezerRestProvider {
     
     public static void addRelatedArtists(StoreHelper storeHelper, DeezerClient dzClient, Artist artist, Collection<String> favIds, int level) 
     		throws JsonProcessingException, JMIException, IOException {
-    	
     	/*
     	if(storeHelper.getEntity(artist.id) != null) {
     		LOG.debug("Artist {} was already added, skipping...", artist);

@@ -121,6 +121,20 @@ public class DeezerClient {
 		return mapArtistsFromJSON(response);
 	}
 	
+	public Artist getArtistInformation(String artistId) 
+			throws JMIException, JsonProcessingException, IOException {
+		LOG.debug("Getting artist {} information", artistId);
+		JsonNode response = this.api("/artist/" + artistId);
+		Artist artist = null;
+    	if(response.has("id")) {
+    		artist = new Artist(response.get("id").getTextValue(), 
+    				response.get("name").getTextValue(),
+    				response.get("link").getTextValue(),
+    				response.get("picture").getTextValue());
+    	}
+    	return artist;
+	}
+	
 	
 	private JsonNode api(String path, NameValuePair... parameters) 
 			throws JMIException, JsonProcessingException, IOException {
@@ -181,4 +195,6 @@ public class DeezerClient {
     	}
     	return artists;
 	}
+
+
 }

@@ -40,6 +40,7 @@ img
 	<tr>
 		<td><a title="Just Map It! Html5" href="./html5"><img alt="Just Map It! Html5" src="./images/html5-logo.png" /></a></td>
 		<td><a title="Just Map It! Linkedin" href="./linkedin"><img alt="Just Map It! Linkedin" src="./images/linkedin.jpg" /></a></td>
+		<td><a title="Just Map It! Deezer" href="./deezer"><img alt="Just Map It! Deezer" src="./images/logo-deezer.png" /></a></td>
 	</tr>
 </table>
 

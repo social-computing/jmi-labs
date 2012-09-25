@@ -11,6 +11,7 @@ public enum MapType {
 
 	ALBUM("album"),
 	RELARTIST("relArtist"),
+	RELARTISTSEL("relArtistSel"),
 	ARTIST("artist");
 	
 	public final String type;

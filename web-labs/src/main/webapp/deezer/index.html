@@ -1,0 +1,422 @@
+<!doctype html>
+<!--[if lt IE 9]><html class="ie"><![endif]-->
+<!--[if gte IE 9]><!--><html><!--<![endif]-->
+
+<!--
+	The comment jumble above is handy for targeting old IE with CSS.
+	http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
+-->
+	
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<title>Just Map It! - Deezer</title>
+		
+		<!-- Please don't add "maximum-scale=1" here. It's bad for accessibility. -->
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<!-- Feel free to split the CSS into separate files, if you like. -->
+		<link rel="stylesheet" href="css/GGS.css" type="text/css"/>
+		<link rel="stylesheet" href="../jmi-client/css/jmi-client.css" type="text/css"/>
+		<link rel="stylesheet" href="js/fancybox/source/jquery.fancybox.css?v=2.1.0" type="text/css" media="screen"/>
+		
+		<!-- 
+			This script enables structural HTML5 elements in old IE.
+			http://code.google.com/p/html5shim/
+		-->
+		<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+	</head>
+	
+	<body lang="en">
+        <!-- loading deezer api -->
+		<div id="dz-root"></div>
+
+		<!-- Demo code begins -->
+		<header>
+			<div id="topbar">
+				<div class="wrapper" data-bind="with: userSession">
+					<img src="images/deezer.png" alt="Deezer" style="vertical-align:middle"  />
+					<div id="login-menu" data-bind="html: connectionLink"></div>
+				</div>
+			</div>
+			<div id="logo">
+				<div class="wrapper">
+					<img src="images/logo.png" alt="Social Computing" style="vertical-align:middle" />
+				</div>
+			</div>
+		</header>
+		<div class="header-shadow"></div>
+	    <div id="container">
+			<h1><img src="images/justmapit_deezer.png" alt="Just Map It! Deezer" /></h1>
+			<h2>Discover music from your favorite artists list on deezer</h2>
+		    <p>An interactive map will be generated from your favorite artists list. This map helps you discover new artists from the one you already like. The relations between artists are constructed using deezer recommendation services.</p>
+			
+			
+			<div data-bind="visible: (userSession().connected() !== true)">
+				<h2>Log in with your deezer account</h2>
+				<p>This application queries the Deezer API to get a list of artists that you marked as favorite on your deezer account.<br> 
+				You have to login in order to grant Just Map It! the required permissions to access your data to generate the map.<br>
+				Please note that we don't store any information.</p>
+				<p>Here is a list of permissions that you will be asked for during the authentication process:</p>
+				<ul>
+					<li>basic_access</li>
+					<li>email</li>
+					<li>manage_community</li>
+					<li>manage_library, delete_library</li>
+				</ul>
+				
+				<p>Please <a class="login" onclick="login(); return false;" href="#">login</a> and follow the instructions to continue.</p>
+			</div>
+			
+			<div id="step1" data-bind="visible: userSession().connected">
+				<h2>Step 1: Select artists from your favorite list</h2>
+				<div data-bind="html: selectionMessage"></div>				
+				
+				<article id="fway">
+					<section class="leftcol">
+						<h3>Your favorite artists</h3>
+					
+						<ul class="favartist_list" data-bind="foreach: favoriteArtists">
+							<li class="favartist_item">
+								<span>
+									<a href="#" data-bind="click: $root.toggleArtistSelection, text: name"></a>
+								</span>
+								<div>
+									<a href="#" data-bind="click: $root.toggleArtistSelection" ><img src="" alt="" data-bind="attr: {src: picture, alt: name}, css: {selected: selected() == true}"/></a>
+								</div>
+							</li>
+						</ul>
+						<span style="display:block; clear:both;"></span>
+					</section>
+
+					<section class="rightcol">
+						<h3>Selection</h3>
+						<ul class="selartist_list" data-bind="template: {foreach: selectedArtists, beforeRemove: hideSelectedArtist, afterAdd: showSelectedArtist}">
+							<li class="selartist_item">
+							    <img src="" alt="" data-bind="attr: {src: picture, alt: name}" />
+								<a href="#" data-bind="click: $root.toggleArtistSelection, text: name"></a>
+							</li>
+						</ul>
+					</section>			
+				</article>
+				<span class="clearfix">&nbsp;</span>
+				<div data-bind="visible: selectedArtists().length >= 2">
+					You have selected enough artists to generate the map.<br>
+					You can continue to add more artists or click the next button: <button data-bind='click: generateMap'>Generate the map</button>
+				</div>
+			</div>
+
+			<div id="step2" data-bind="visible: userSession().connected && generatedMap()">
+				<h2>Step 2: Navigate in the artists map</h2>
+				<div id="breadcrumb">&nbsp;</div>
+				<div id="map"></div>
+			</div>
+		</div>
+
+		<div class="footerSeparator"></div>
+		<footer>
+			<div class="finner">
+				<span class="clearfix" style="height:1px">&nbsp;</span>
+				<div class="wrapper">
+					<h3>Social</h3>
+                    <ul class="socialmedia_list">
+                        <li class="socialmedia_item">
+                       		<a target="_blank" rel="nofollow" href="http://www.facebook.com/social.comp">
+								<img height="32" title="Follow us on Facebook" alt="Follow us on Facebook" src="./images/facebook.png">
+								<span>Follow us on Facebook</span>
+							</a>
+						</li>
+						<li class="socialmedia_item">
+							<a target="_blank" rel="nofollow" href="https://plus.google.com/109581729512449572590">
+								<img title="Visit our Google+ page" alt="Visit our Google+ page" src="./images/googleplus.png">
+								<span>Visit our Google+ page</span>
+							</a>
+						</li>
+						<li class="socialmedia_item">
+							<a target="_blank" rel="nofollow" href="http://twitter.com/socomputing">
+								<img title="Follow us on Twitter" alt="Follow us on Twitter" src="./images/twitter.png">
+								<span>Follow us on Twitter</span>
+							</a>
+						</li>
+						<li class="socialmedia_item">
+							<a target="_blank" rel="nofollow" href="http://www.linkedin.com/company/social-computing?trk=fc_badge">
+								<img title="Visit our LinkedIn page" alt="Visit our LinkedIn page" src="./images/linkedin.png">
+								<span>Visit our LinkedIn page</span>
+							</a>
+						</li>
+                    </ul>
+				</div>
+				<div class="wrapper">
+					<h3>Newsletter</h3>
+					<p>Fill up the form below to register to Social Computing newsletter</p>
+                    <form>
+                        <input type="text" value="Email Address">
+                        <input type="submit" value="Sign Up">
+                    </form>
+				</div>
+				<div class="wrapper">
+					<h3>Feedback</h3>
+                    <form>
+                        <input type="text" value="Full Name" name="name">
+                        <input type="text" value="Email Address" name="email">
+                        <textarea name="message">Your message</textarea>
+                        <input type="submit" value="Send Message" class="button_1">
+                    </form>
+				</div>
+				<span class="clearfix"></span>
+				<h3>About</h3>
+				<p>Social Computing is a company of experts in Information Access (Enterprise Search), Dynamic Mapping, Social Networks, Collective Intelligence. We offer professional services all along your projects development. We help you during the choice and specification phase as well as during realization. We distribute and integrate technologies. Have a look at our <a href="http://www.social-computing.com/en/our-offer/" title="Our Offer">our offer</a>.</p>
+			</div>
+			
+			<div id="footer-lower">
+				<div class="finner">
+					© 2012 Social Computing Inc. All rights reserved. <a id="legal-link" href="#legal" class="fancybox">Legal terms</a>
+					<span class="clearfix"></span>
+					<div id="legal" style="display:none;width:300px;">
+					<h2>Social Computing</h2>
+					<p>
+					Société à Responsabilité Limitée au capital de 8.000 €<br>
+					RCS PARIS B 478 719 958 – n° TVA FR02 478 719 958 – APE 5829 C<br>
+					70, rue Cortambert – 75016 PARIS
+					</p>
+					</div>
+				
+				</div>
+				
+			</div>
+		</footer>
+		<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+		<script type="text/javascript" src="js/knockout-2.1.0.js"></script>
+		<script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
+		<script type="text/javascript" src="js/jmi.js"></script>
+		
+		<!-- fancybox -->
+		<script type="text/javascript" src="js/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+		<script type="text/javascript" src="js/fancybox/source/jquery.fancybox.pack.js?v=2.1.0"></script>
+		
+		<!-- ko application specific js -->
+		<script  type="text/javascript">
+			$(document).ready(function() {
+				$(".fancybox").fancybox();
+			});
+		
+			// Knockout ViewModel for our application
+			// Define user and session information
+			function UserSession() {
+				var self = this;
+				
+				// Data
+				self.connected = ko.observable(false);
+				self.user = {};
+				self.login = {};
+				
+				self.connectionLink = ko.computed(function() {
+					if (self.connected() === true) {
+						//return 'connected as <a href="#" data-bind="click: logout">' + self.user.name + '</a>';
+						return '<a href="#">' + self.user.name + '</a><a class="logout" onclick="logout(); return false;" href="#">logout</a>';
+					}				
+					else {
+						return '<a class="login" onclick="login(); return false;" href="#">login</a>';
+					}
+    			});
+    		
+    			
+    			// Behaviour
+				self.getLoginStatus = function() {
+					DZ.getLoginStatus(function(response) {
+						if (response.authResponse) {
+							// logged in and connected user, someone you know
+							console.log('User connected on deezer, fetching login info...');							
+							self.loadLoginInfo(response.authResponse);
+							loadFavArtists();
+						}
+						else {
+							// no user session available, someone you dont know
+							console.log('Not authenticated yet');
+						}
+					});
+				};
+				
+				self.loadLoginInfo = function(auth) {
+					self.login = auth;
+					DZ.api('/user/me', function(response) {
+						console.log('Good to see you, ' + response.name + '.');
+						self.user = response;
+						self.connected(true);
+					});
+				};
+				
+				self.reset = function() {
+					self.connected(false);
+					self.user = {};
+					self.login = {};
+				};
+			}
+			
+
+	        function AppViewModel() {
+	        	
+	        
+	        
+				// Data
+				var self = this;
+				self.userSession = ko.observable(new UserSession()); //  Initially blank
+				self.selectedArtists = ko.observableArray([]); // Initially empty
+				self.favoriteArtists = ko.observableArray([]); // Initially empty
+				self.generatedMap = ko.observable(false);
+				
+				var FavoriteArtist = function(id, name, picture) {
+					var s = this;
+					this.id = id;  
+					this.name = name;  
+					this.picture = picture;
+					this.selected = ko.observable(false);
+					
+					/*
+					this.selected = ko.computed(function() {
+					    return (self.selectedArtists().indexOf(s) !== -1);
+					})
+					*/
+					
+				}
+			
+								
+				// Behaviour
+				self.selectionMessage = ko.computed(function() {
+					var selectedArtists = self.selectedArtists().length;
+    				if (selectedArtists == 0) {
+    					return "Please select at least 2 artists in your favorite artists list.";
+    				}
+    				else if (selectedArtists == 1) {
+    					return "Please select at least one more artist to generate the map.";
+    				}
+    				else {
+    					return "";
+    				}
+    				
+    			});
+				
+				
+				self.addFavoriteArtist = function(id, name, picture) {
+					// self.favoriteArtists.push({"id": id, "name": name, "picture": picture});
+					self.favoriteArtists.push(new FavoriteArtist(id, name, picture));  
+				};
+				
+				self.toggleArtistSelection = function(artist) {
+					// If artist is not already in selection, 
+					if(self.selectedArtists.indexOf(artist) === -1) {
+						console.debug('Adding artist to selection ', artist);
+				    	artist.selected(true);
+				    	self.selectedArtists.push(artist);
+				    	
+					}
+					// Otherwise, remove it from selection
+					else {
+						console.debug('Removing artist from selection ', artist);
+				    	artist.selected(false);
+						self.selectedArtists.remove(artist);
+					}
+				};
+
+				// Animation callbacks for the favorite list
+			    self.showSelectedArtist = function(elem) { 
+			    	if (elem.nodeType === 1) {
+				    	var test = $(elem).hide().slideDown();
+			    	}
+			    };
+                self.hideSelectedArtist = function(elem) {
+	                if (elem.nodeType === 1) {
+	                	$(elem).slideUp(function() { $(elem).remove(); });
+	                }
+                };
+				
+    			self.generateMap = function() {
+    				self.generatedMap(true);
+    				var computedWidth = $("#map").width() * (3 / 4); 
+    				$("#map").css("height", computedWidth + "px");
+    				// Reset div content
+    				$("#map").html('');
+    				
+    				var selectedIds = new Array();
+					self.selectedArtists().forEach(function(i) {
+						selectedIds.push(i.id);
+					});    				
+    				
+    				// Just map it! map creation
+					var map = new JMI.deezer.map('map', 'breadcrumb', {
+						clientUrl: '../jmi-client/',
+						serverURL: 'http://server.just-map-it.com',
+						map: {
+							jsessionid: '',
+							map: 'Deezer',
+							analysisProfile: 'GlobalProfile',
+							maptype: 'relArtistSel',
+	    					access_token: self.userSession().login.accessToken,
+	    					selection: selectedIds.join()
+						}
+					});
+    				map.draw();
+    			};
+    			
+    			self.reset = function() {
+    				self.userSession().reset();
+    				self.selectedArtists([]);
+    				self.favoriteArtists([]);
+    				self.generatedMap(false);
+    			};
+			}
+			
+			var appViewModel = new AppViewModel();
+			ko.applyBindings(appViewModel);
+
+
+			// Deezer async loading
+	        window.dzAsyncInit = function() {
+	            DZ.init({
+	                appId : '101811',
+	                channelUrl : 'http://labs.just-map-it.com/deezer/channel.html'
+	            });
+	            appViewModel.userSession().getLoginStatus();
+	        };
+	        (function() {
+	        	     var e = document.createElement('script');
+	                 e.src = 'http://cdn-files.deezer.com/js/min/dz.js';
+	                 e.async = true;
+	                 document.getElementById('dz-root').appendChild(e);
+	             }()
+	        );
+		    
+		    function login() {
+				DZ.login(function(response) {
+					var authResponse = response.authResponse;
+					if (authResponse) {
+						console.log('Welcome! Fetching your information....', authResponse);
+						appViewModel.userSession().loadLoginInfo(authResponse);
+						loadFavArtists();
+					} 
+					else {
+						console.log('User cancelled login or did not fully authorize.');
+					}
+				}, {perms: 'basic_access,email,manage_community,manage_library,delete_library'});		    
+		    }
+		    
+		    function logout() {
+		    	DZ.logout();
+		    	appViewModel.reset();
+		    }
+		
+			function loadFavArtists() {
+				DZ.api('/user/me/artists', function(response) {
+					if(response.data) {
+						console.log(response.data);
+						response.data.forEach(function(i) {
+							appViewModel.addFavoriteArtist(i.id, i.name, i.picture);
+						});
+					}
+				});
+			}
+	    </script>
+	</body>
+</html>
