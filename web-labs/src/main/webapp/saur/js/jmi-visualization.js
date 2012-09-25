@@ -7,7 +7,6 @@ JMI.google.Visualization = function(container) {
   this.map = JMI.Map({
 		  parent: this.container, 
 		  clientUrl: '../jmi-client/', 
-		  //server: 'https://server.just-map-it.com',
 		  //server: 'http://localhost:8080/jmi-server',
 		  //client: JMI.Map.SWF,
 		  method: 'POST'
@@ -47,41 +46,56 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
   }
   this.dataFormat = options.dataFormat || 'matrix';
   var entities = [], entities0 = {}, attributes = [], attributes0 = {};
-
+  var entitiesInv = [], entities1 = {}, attributesInv = [], attributes1 = {};
   var row, firstrow = data.getColumnLabel(0) ? 0 : 1, id, id2, val;
 
+  // Le invert ne marche pas avec Flash et c'est un mystère
+  // Les data inversées sont donc calculées
+  
   for (row = firstrow; row < data.getNumberOfRows(); row++) {
 	  id = data.getFormattedValue(row, 2) + ' ' + data.getFormattedValue(row, 3);
 	  id = id.trim();
 	  if( id.length > 0) {
 		  if( !attributes0[id]) {
 			  attributes0[id] = {id: id, name: id, fonction: []};
+			  entities1[id] = {id: id, name: id, fonction: [], attributes: []};
 		  }
 		  val = data.getFormattedValue(row, 9);
 		  attributes0[id].couleur = '#ffb400';
+		  entities1[id].couleur = '#ffb400';
 		  if( val && val.length > 0) {
 			  attributes0[id].couleur = val === 'g' ? '#F51152' : '#09589D';
+			  entities1[id].couleur = val === 'g' ? '#F51152' : '#09589D';
 		  } 
 		  attributes0[id].fonction.push(data.getFormattedValue(row, 4) + ', ' + data.getFormattedValue(row, 1));
 		  attributes0[id].appartenance = data.getFormattedValue(row, 8);
+		  entities1[id].fonction.push(data.getFormattedValue(row, 4) + ', ' + data.getFormattedValue(row, 1));
+		  entities1[id].appartenance = data.getFormattedValue(row, 8);
+		  
 		  id2 = data.getFormattedValue(row, 1);
 		  id2 = id2.trim();
 		  if( id2.length > 0) {//} && id2 !== 'Ville de Marseille') {
 			  if( !entities0[id2]) {
-				  entities0[id2] = {id: row, name: id2, attributes: [], fonction: []};
+				  entities0[id2] = {id: row + '', name: id2, attributes: []}; //, fonction: []};
+				  attributes1[id2] = {id: row + '', name: id2}; //, fonction: []};
 			  }
 			  entities0[id2].attributes.push({id: attributes0[id].id});
 			  entities0[id2].couleur = '#ffb400';
 			  //entities0[id2].fonction.push(id + ', ' + data.getFormattedValue(row, 4));
+			  entities1[id].attributes.push({id: attributes1[id2].id});
+			  attributes1[id2].couleur = '#ffb400';
 		  }
 		  id2 = data.getFormattedValue(row, 8);
 		  id2 = id2.trim();
 		  if( id2.length > 0) {
 			  if( !entities0[id2]) {
 				  entities0[id2] = {id: 'p'+ row, name: id2, attributes: []};
+				  attributes1[id2] = {id: 'p'+ row, name: id2, attributes: []};
 			  }
 			  entities0[id2].attributes.push({id: attributes0[id].id});
 			  entities0[id2].couleur = '#ffb400';
+			  entities1[id].attributes.push({id: attributes1[id2].id});
+			  attributes1[id2].couleur = '#ffb400';
 		  }
 	  }
   }
@@ -91,6 +105,12 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
   for( id in entities0) {
 	  entities.push(entities0[id]);
   }
+  for( id in attributes1) {
+	  attributesInv.push(attributes1[id]);
+  }
+  for( id in entities1) {
+	  entitiesInv.push(entities1[id]);
+  }
 	  
   this.source = options.source || 'GSPREADSHEET';
   if( !options.sourceId) {
@@ -99,8 +119,8 @@ JMI.google.Visualization.prototype.draw = function(data, options) {
   }
   this.sourceId = options.sourceId;
   this.invert = options.invert || false;
-  this.visualizationDataSaved = {"entities": entities, "attributes": attributes};
-  this.visualizationData = JSON.stringify({"entities": entities, "attributes": attributes});
+  this.visualizationData = {"entities": entities, "attributes": attributes};
+  this.visualizationDataInv = {"entities": entitiesInv, "attributes": attributesInv};
   
   var parameters = JMI.google.Visualization.getParams(this.map);
   parameters.analysisProfile='GlobalProfile';
@@ -162,8 +182,8 @@ JMI.google.Visualization.getParams = function(map) {
 	map: 'Saur',
 	source: map.gvisualization.source,
 	sourceId: map.gvisualization.sourceId,
-	data: map.gvisualization.visualizationData,
-	inverted: map.gvisualization.invert
+	data: map.gvisualization.invert ? JSON.stringify({"entities": map.gvisualization.visualizationDataInv.entities, "attributes": map.gvisualization.visualizationDataInv.attributes}) : JSON.stringify({"entities": map.gvisualization.visualizationData.entities, "attributes": map.gvisualization.visualizationData.attributes}),
+	inverted: false//map.gvisualization.invert
 	};
 };
 
@@ -195,6 +215,11 @@ JMI.google.Visualization.JMIF_Center = function(map, args) {
 JMI.google.Visualization.JMIF_InvertAndCenter = function(map, args) {
 	map.gvisualization.invert = !map.gvisualization.invert;
 	JMI.google.Visualization.JMIF_Center( map, args);
+};   
+
+JMI.google.Visualization.JMIF_InvertAndFocus = function(map, args) {
+	map.gvisualization.invert = !map.gvisualization.invert;
+	JMI.google.Visualization.JMIF_Focus( map, args);
 };   
 
 var JSON = JSON || {};

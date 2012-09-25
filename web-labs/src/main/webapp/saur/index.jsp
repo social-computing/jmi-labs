@@ -54,8 +54,8 @@ function display(data) {
     google.visualization.events.addListener(table, 'select', function() {
     	if( table.getSelection().length > 0) {
 			var i, row = table.getSelection()[0].row, id = data.getFormattedValue(row, 2) + ' ' + data.getFormattedValue(row, 3);
-			for( i=0; i < map.visualizationDataSaved.attributes.length; ++i ) {
-				if( map.visualizationDataSaved.attributes[i].id === id) {
+			for( i=0; i < map.visualizationData.attributes.length; ++i ) {
+				if( map.visualizationData.attributes[i].id === id) {
 					if( map.invert)
 						map.invert = false;
 		    		JMI.google.Visualization.JMIF_Center(map.map, [id, id]);	
