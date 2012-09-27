@@ -220,31 +220,90 @@ body {
   line-height: 1.091em;
 }
 
+/* 
+ * Buttons defaults
+ */
+/* line 202, ../sass/GGS.scss */
+.btn-primary {
+  background-color: #006DCC;
+  background-image: -moz-linear-gradient(center top, #0088cc, #0044cc);
+  background-repeat: repeat-x;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  color: #FFFFFF;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* line 210, ../sass/GGS.scss */
+.btn {
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-image: none;
+  border-radius: 4px 4px 4px 4px;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 0;
+  padding: 4px 14px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/*
+ * Forms defaults
+ */
+/* line 233, ../sass/GGS.scss */
+input[type="email"] {
+  border-radius: 3px 3px 3px 3px;
+  font-size: 14px;
+  height: 20px;
+  line-height: 20px;
+  padding: 4px 6px;
+  -moz-transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+  background-color: #FFFFFF;
+  border: 1px solid #666666;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+  margin: 5px;
+}
+
+/* 
+ * Captcha
+ */
+/* line 249, ../sass/GGS.scss */
+#signup-captcha {
+  margin: 3px 0;
+}
+
 /*
  * Social Media
  * Text With image bullet
  *
  */
-/* line 207, ../sass/GGS.scss */
+/* line 259, ../sass/GGS.scss */
 .socialmedia_list {
   list-style: none outside none;
   margin: 0 auto;
   padding: 0;
 }
 
-/* line 214, ../sass/GGS.scss */
+/* line 266, ../sass/GGS.scss */
 .socialmedia_item {
   margin: 10px 0;
 }
 
-/* line 218, ../sass/GGS.scss */
+/* line 270, ../sass/GGS.scss */
 .socialmedia_item a {
   border: medium none;
   padding-bottom: 15px;
   text-decoration: none;
 }
 
-/* line 224, ../sass/GGS.scss */
+/* line 276, ../sass/GGS.scss */
 .socialmedia_item img {
   vertical-align: middle;
   margin-right: 10px;
@@ -258,19 +317,19 @@ body {
 *  5.55555% | %  25  50  75  100 | 5.55555%
 *
 */
-/* line 240, ../sass/GGS.scss */
+/* line 292, ../sass/GGS.scss */
 body {
   background-color: #EAEAEA;
 }
 
-/* line 244, ../sass/GGS.scss */
+/* line 296, ../sass/GGS.scss */
 #map {
   width: 100%;
   background-color: #FFFFFF;
 }
 
 /* Container */
-/* line 251, ../sass/GGS.scss */
+/* line 303, ../sass/GGS.scss */
 #container {
   background-color: white;
   border: 1px solid #cccccc;
@@ -280,7 +339,7 @@ body {
 /*
  * Footer general style
  */
-/* line 260, ../sass/GGS.scss */
+/* line 312, ../sass/GGS.scss */
 footer {
   /* clear:both; */
   /* position: relative; */
@@ -289,7 +348,7 @@ footer {
   font-size: 90%;
 }
 
-/* line 268, ../sass/GGS.scss */
+/* line 320, ../sass/GGS.scss */
 .footerSeparator {
   height: 2em;
   background: url("../images/bg-decoupe.gif") repeat-x scroll 0 0 transparent;
@@ -297,14 +356,14 @@ footer {
   margin: 25px 0 0;
 }
 
-/* line 275, ../sass/GGS.scss */
+/* line 327, ../sass/GGS.scss */
 footer h3 {
   color: #303030;
   border-bottom: thin solid #E1E1E1;
   padding-bottom: 5px;
 }
 
-/* line 281, ../sass/GGS.scss */
+/* line 333, ../sass/GGS.scss */
 #footer-lower {
   background: url("../images/bg-footer-lower.gif") repeat scroll 0 0 transparent;
   margin-top: 1em;
@@ -313,21 +372,21 @@ footer h3 {
   color: #505050;
 }
 
-/* line 289, ../sass/GGS.scss */
+/* line 341, ../sass/GGS.scss */
 #footer-lower a {
   color: #505050;
   border-bottom: 1px dotted #505050;
   text-decoration: none;
 }
 
-/* line 295, ../sass/GGS.scss */
+/* line 347, ../sass/GGS.scss */
 #footer-lower a:hover {
   color: #707070;
   border-bottom: 1px dotted #707070;
   text-decoration: none;
 }
 
-/* line 301, ../sass/GGS.scss */
+/* line 353, ../sass/GGS.scss */
 #legal-link {
   float: right;
 }
@@ -335,13 +394,13 @@ footer h3 {
 /*
  * Header general style
  */
-/* line 308, ../sass/GGS.scss */
+/* line 360, ../sass/GGS.scss */
 header {
   margin: 0;
   padding: 0;
 }
 
-/* line 313, ../sass/GGS.scss */
+/* line 365, ../sass/GGS.scss */
 header #logo {
   background: url("../images/header.jpg") no-repeat scroll center top #122d45;
   height: 136px;
@@ -350,14 +409,14 @@ header #logo {
   border-top: 1px solid #777777;
 }
 
-/* line 321, ../sass/GGS.scss */
+/* line 373, ../sass/GGS.scss */
 .header-shadow {
   background: url("../images/header-shadow.png") repeat-x scroll 0 0 transparent;
   height: 2em;
 }
 
 /* Topbar */
-/* line 328, ../sass/GGS.scss */
+/* line 380, ../sass/GGS.scss */
 #topbar {
   background: url("../images/bg-topbar.png") repeat-x scroll center top black;
   height: 50px;
@@ -367,7 +426,7 @@ header #logo {
 /*
  * Login menu and user information
  */
-/* line 337, ../sass/GGS.scss */
+/* line 389, ../sass/GGS.scss */
 #login-menu {
   float: right;
   font-size: 80%;
@@ -376,18 +435,18 @@ header #logo {
   line-height: 50px;
 }
 
-/* line 346, ../sass/GGS.scss */
+/* line 398, ../sass/GGS.scss */
 #login-menu a {
   color: #B7B9C6;
   vertical-align: middle;
 }
 
-/* line 351, ../sass/GGS.scss */
+/* line 403, ../sass/GGS.scss */
 #login-menu a:hover {
   color: #D7D9E6;
 }
 
-/* line 355, ../sass/GGS.scss */
+/* line 407, ../sass/GGS.scss */
 #login-menu a.logout {
   display: block;
   float: right;
@@ -402,7 +461,7 @@ header #logo {
   margin-left: 5px;
 }
 
-/* line 369, ../sass/GGS.scss */
+/* line 421, ../sass/GGS.scss */
 #login-menu a.logout:hover {
   background-image: url("../images/logout-hover.png");
   background-position: center center;
@@ -413,24 +472,24 @@ header #logo {
 /*
  * Favorite artists list
  */
-/* line 379, ../sass/GGS.scss */
+/* line 431, ../sass/GGS.scss */
 .favartist_list {
   list-style: none outside none;
   margin: 0;
 }
 
-/* line 384, ../sass/GGS.scss */
+/* line 436, ../sass/GGS.scss */
 .favartist_list li {
   float: left;
   border-bottom: 1px dashed #BEBEBE;
 }
 
-/* line 389, ../sass/GGS.scss */
+/* line 441, ../sass/GGS.scss */
 .favartist_item {
   margin: 0.5em 2.778%;
 }
 
-/* line 393, ../sass/GGS.scss */
+/* line 445, ../sass/GGS.scss */
 .favartist_item img {
   padding: 0px;
   margin-bottom: 1.5em;
@@ -440,7 +499,7 @@ header #logo {
 }
 
 /* style bordure active */
-/* line 403, ../sass/GGS.scss */
+/* line 455, ../sass/GGS.scss */
 .favartist_item img.selected {
   border: 1px solid green;
   -webkit-box-shadow: 10px 10px 10px rgba(0, 100, 0, 0.5);
@@ -448,19 +507,19 @@ header #logo {
   box-shadow: 10px 10px 10px rgba(0, 100, 0, 0.5);
 }
 
-/* line 410, ../sass/GGS.scss */
+/* line 462, ../sass/GGS.scss */
 .favartist_item span {
   text-align: center;
   display: block;
 }
 
-/* line 415, ../sass/GGS.scss */
+/* line 467, ../sass/GGS.scss */
 .favartist_item a {
   text-decoration: none;
   color: #303030;
 }
 
-/* line 420, ../sass/GGS.scss */
+/* line 472, ../sass/GGS.scss */
 .favartist_item a:hover {
   color: #606060;
 }
@@ -468,13 +527,13 @@ header #logo {
 /*
  * Selected artists list
  */
-/* line 428, ../sass/GGS.scss */
+/* line 480, ../sass/GGS.scss */
 .selartist_list {
   list-style: none outside none;
   margin: 0;
 }
 
-/* line 433, ../sass/GGS.scss */
+/* line 485, ../sass/GGS.scss */
 .selartist_item {
   border: 1px solid #cccccc;
   border-radius: 3px;
@@ -482,7 +541,7 @@ header #logo {
   margin: 1em 0;
 }
 
-/* line 440, ../sass/GGS.scss */
+/* line 492, ../sass/GGS.scss */
 .selartist_item img {
   width: 50px;
   height: 50px;
@@ -491,7 +550,7 @@ header #logo {
   border: 1px solid #E0E0E0;
 }
 
-/* line 448, ../sass/GGS.scss */
+/* line 500, ../sass/GGS.scss */
 .selartist_item a {
   color: #303030;
   padding-right: 32px;
@@ -502,7 +561,7 @@ header #logo {
   text-decoration: none;
 }
 
-/* line 458, ../sass/GGS.scss */
+/* line 510, ../sass/GGS.scss */
 .selartist_item a:hover {
   color: #333333;
   padding-right: 32px;
@@ -513,29 +572,29 @@ header #logo {
 }
 
 /* Float specific */
-/* line 469, ../sass/GGS.scss */
+/* line 521, ../sass/GGS.scss */
 .clearfix {
   display: block;
   clear: both;
 }
 
-/* line 476, ../sass/GGS.scss */
+/* line 528, ../sass/GGS.scss */
 header .wrapper, #twoway, #container, .finner {
   margin: 0 5.556%;
 }
 
-/* line 483, ../sass/GGS.scss */
+/* line 535, ../sass/GGS.scss */
 h1, h2 {
   /*margin: (24/26*1em) 0 (36/26*1em);*/
   margin: 0.923em 0 0.615em;
 }
 
-/* line 488, ../sass/GGS.scss */
+/* line 540, ../sass/GGS.scss */
 h2 {
   font-weight: normal;
 }
 
-/* line 492, ../sass/GGS.scss */
+/* line 544, ../sass/GGS.scss */
 h3 {
   margin: 1.5em 0 1em;
 }
@@ -544,7 +603,7 @@ h3 {
 *  Simple elastic gutters
 *  Note: box-sizing will not work in IE6-7
 */
-/* line 501, ../sass/GGS.scss */
+/* line 553, ../sass/GGS.scss */
 .wrapper {
   padding: 0 0.75em;
   -webkit-box-sizing: border-box;
@@ -559,32 +618,32 @@ h3 {
 *  http://jonikorpi.com/leaving-old-IE-behind/
 *
 */
-/* line 517, ../sass/GGS.scss */
+/* line 569, ../sass/GGS.scss */
 .ie body {
   width: 40em;
   margin: 0 auto;
   font-size: 1.063em;
 }
 
-/* line 523, ../sass/GGS.scss */
+/* line 575, ../sass/GGS.scss */
 .ie h1 {
   margin: 1.143em 0 0.571em;
 }
 
 /* @media screen and (min-width: 640px) */
 @media screen and (min-width: 40em) {
-  /* line 534, ../sass/GGS.scss */
+  /* line 586, ../sass/GGS.scss */
   body {
     /* Zoom baseline grid to 17/16 = 1.0625 */
     font-size: 1.063em;
   }
 
-  /* line 539, ../sass/GGS.scss */
+  /* line 591, ../sass/GGS.scss */
   h1 {
     margin: 1.143em 0 0.571em;
   }
 
-  /* line 544, ../sass/GGS.scss */
+  /* line 596, ../sass/GGS.scss */
   .finner .wrapper {
     float: left;
     width: 33.333%;
@@ -601,31 +660,31 @@ h3 {
 */
 /* @media screen and (min-width: 720px) */
 @media screen and (min-width: 45em) {
-  /* line 565, ../sass/GGS.scss */
+  /* line 617, ../sass/GGS.scss */
   body {
     /* Reset baseline grid to 16/16 = 1 */
     font-size: 1em;
   }
 
-  /* line 570, ../sass/GGS.scss */
+  /* line 622, ../sass/GGS.scss */
   #twoway .wrapper {
     float: left;
     width: 50%;
   }
 
-  /* line 576, ../sass/GGS.scss */
+  /* line 628, ../sass/GGS.scss */
   #fway .leftcol {
     float: left;
     width: 75%;
   }
 
-  /* line 581, ../sass/GGS.scss */
+  /* line 633, ../sass/GGS.scss */
   #fway .rightcol {
     float: left;
     width: 25%;
   }
 
-  /* line 586, ../sass/GGS.scss */
+  /* line 638, ../sass/GGS.scss */
   .finner .wrapper {
     float: left;
     width: 33.333%;
@@ -633,7 +692,7 @@ h3 {
 }
 /* @media screen and (min-width: 888px) */
 @media screen and (min-width: 55.5em) {
-  /* line 596, ../sass/GGS.scss */
+  /* line 648, ../sass/GGS.scss */
   body {
     /* Zoom baseline grid to 17/16 = 1.0625 */
     font-size: 1.063em;
@@ -641,20 +700,20 @@ h3 {
 }
 /* @media screen and (min-width: 984px) */
 @media screen and (min-width: 61.5em) {
-  /* line 606, ../sass/GGS.scss */
+  /* line 658, ../sass/GGS.scss */
   body {
     /* Reset baseline grid to 16/16 = 1.0 */
     font-size: 1em;
   }
 
-  /* line 611, ../sass/GGS.scss */
+  /* line 663, ../sass/GGS.scss */
   header .wrapper, #twoway, #container, .finner {
     margin: 0 5.556%;
   }
 }
 /* @media screen and (min-width: 1200px) */
 @media screen and (min-width: 75em) {
-  /* line 620, ../sass/GGS.scss */
+  /* line 672, ../sass/GGS.scss */
   body {
     /* Zoom baseline grid to 17/16 = 1.0625 */
     font-size: 1.063em;
@@ -662,20 +721,20 @@ h3 {
 }
 /* @media screen and (min-width: 1392px) */
 @media screen and (min-width: 87em) {
-  /* line 631, ../sass/GGS.scss */
+  /* line 683, ../sass/GGS.scss */
   body {
     /* Reset baseline grid to 16/16 = 1.0 */
     font-size: 1em;
   }
 
-  /* line 636, ../sass/GGS.scss */
+  /* line 688, ../sass/GGS.scss */
   header .wrapper, #twoway, #container, .finner {
     margin: 0 16.667%;
   }
 }
 /* @media screen and (min-width: 1680px) */
 @media screen and (min-width: 105em) {
-  /* line 645, ../sass/GGS.scss */
+  /* line 697, ../sass/GGS.scss */
   body {
     /* Zoom baseline grid to 17/16 = 1.0625 */
     font-size: 1.063em;
@@ -692,24 +751,24 @@ h3 {
 */
 /* @media screen and (min-width: 1872px) */
 @media screen and (min-width: 117em) {
-  /* line 665, ../sass/GGS.scss */
+  /* line 717, ../sass/GGS.scss */
   header .wrapper, #twoway {
     margin: 0 5.556%;
   }
 
-  /* line 669, ../sass/GGS.scss */
+  /* line 721, ../sass/GGS.scss */
   #twoway .wrapper {
     width: 25%;
   }
 
-  /* line 673, ../sass/GGS.scss */
+  /* line 725, ../sass/GGS.scss */
   #twoway .wrapper:first-child {
     margin-left: 25%;
   }
 }
 /* @media screen and (min-width: 2080px) */
 @media screen and (min-width: 130em) {
-  /* line 683, ../sass/GGS.scss */
+  /* line 735, ../sass/GGS.scss */
   body {
     /* Zoom baseline grid to 18/16 = 1.125 */
     font-size: 1.125em;

@@ -149,22 +149,21 @@
                     </ul>
 				</div>
 				<div class="wrapper">
-					<h3>Newsletter</h3>
-					<p>Fill up the form below to register to Social Computing newsletter</p>
-                    <form>
-                        <input type="text" value="Email Address">
-                        <input type="submit" value="Sign Up">
+                    <h3>Newsletter</h3>
+                    <p>Fill in the form below to register to Social Computing newsletter</p>
+                    <form id="signup-form" data-bind="submit: subscribeNewsletter">
+                        <input id="signup-mail" type="email" autofocus="" required="" placeholder="your email address" maxlength="100" size="30" name="signup-mail">
+                        <div id="signup-captcha-message"></div>
+                        <div id="signup-captcha"></div>
+                        <input class="btn btn-primary" type="submit" value="Sign Up">
                     </form>
-				</div>
-				<div class="wrapper">
-					<h3>Feedback</h3>
-                    <form>
-                        <input type="text" value="Full Name" name="name">
-                        <input type="text" value="Email Address" name="email">
-                        <textarea name="message">Your message</textarea>
-                        <input type="submit" value="Send Message" class="button_1">
-                    </form>
-				</div>
+                </div>
+                <div class="wrapper">
+                    <h3>Feedback</h3>
+                    <p>Tell us what your think about this application.</p>
+                    <p>Please complete the <a href="http://www.social-computing.com/en/contact/" title="application feedback form">contact form</a> on our blog and leave a message.</p>
+                    <p>Thank you</p>
+                </div>
 				<span class="clearfix"></span>
 				<h3>About</h3>
 				<p>Social Computing is a company of experts in Information Access (Enterprise Search), Dynamic Mapping, Social Networks, Collective Intelligence. We offer professional services all along your projects development. We help you during the choice and specification phase as well as during realization. We distribute and integrate technologies. Have a look at our <a href="http://www.social-computing.com/en/our-offer/" title="Our Offer">our offer</a>.</p>
@@ -188,6 +187,7 @@
 			</div>
 		</footer>
 		<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>		
 		<script type="text/javascript" src="js/knockout-2.1.0.js"></script>
 		<script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
 		<script type="text/javascript" src="js/jmi.js"></script>
@@ -196,11 +196,39 @@
 		<script type="text/javascript" src="js/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
 		<script type="text/javascript" src="js/fancybox/source/jquery.fancybox.pack.js?v=2.1.0"></script>
 		
+		<!-- recaptcha -->
+        <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+        
 		<!-- ko application specific js -->
 		<script  type="text/javascript">
 			$(document).ready(function() {
 				$(".fancybox").fancybox();
+				
+                // Signup form validation rules
+                $("#signup-form").validate({
+                    rules: {
+                        'signup-mail': {
+                            required: true,
+                            email: true
+                        }
+                    }
+                });
 			});
+			
+	        function ModalDialog(title, content) {
+                $.fancybox.open("#modal",
+                    {
+                        openEffect  : 'none',
+                        closeEffect : 'none',
+                        afterLoad   : function() {
+                            // this.inner.prepend( '<h1>1. My custom title</h1>' );
+                            this.content = '' 
+                                + '<h1>' + title + '</h1>'
+                                + content;
+                        }
+                    }
+                );
+            }
 		
 			// Knockout ViewModel for our application
 			// Define user and session information
@@ -257,29 +285,25 @@
 			
 
 	        function AppViewModel() {
-	        	
-	        
-	        
 				// Data
 				var self = this;
 				self.userSession = ko.observable(new UserSession()); //  Initially blank
 				self.selectedArtists = ko.observableArray([]); // Initially empty
 				self.favoriteArtists = ko.observableArray([]); // Initially empty
 				self.generatedMap = ko.observable(false);
-				
+                self.newsCaptcha = false;
+                
 				var FavoriteArtist = function(id, name, picture) {
 					var s = this;
 					this.id = id;  
 					this.name = name;  
 					this.picture = picture;
 					this.selected = ko.observable(false);
-					
 					/*
 					this.selected = ko.computed(function() {
 					    return (self.selectedArtists().indexOf(s) !== -1);
 					})
 					*/
-					
 				}
 			
 								
@@ -366,6 +390,96 @@
     				self.favoriteArtists([]);
     				self.generatedMap(false);
     			};
+    			
+                self.showNewsCaptcha = function() {
+                    var captcha = Recaptcha.create("6LcS6tYSAAAAAKVtuLBpHkEDpiNEz8PN2wkf0-U3", "signup-captcha", {
+                          theme: "white",
+                          callback: Recaptcha.focus_response_field
+                        }
+                    );
+                    $("#signup-captcha-message").text("Please fill in the following captcha: ");
+                    self.newsCaptcha = true;
+                };
+                
+                self.resetNewsForm = function() {
+                    $("#signup-captcha-message").css({color: "black"});
+                    $("#signup-captcha-message").empty();
+                    Recaptcha.destroy();
+                    self.newsCaptcha = false;                   
+                };
+                
+                self.subscribeNewsletter = function(formElement) {
+                    if(!$("#signup-form").valid()) {
+                        return false;
+                    }
+                    if(!self.newsCaptcha) {
+                        self.showNewsCaptcha();
+                    }
+                    else {
+                        // cors : implemented server side : working
+                        $.post("https://www.social-computing.com/newsletter/services/subscribe.php", {
+                                mail: $("#signup-mail").val(),
+                                recaptcha_challenge_field: Recaptcha.get_challenge(),
+                                recaptcha_response_field: Recaptcha.get_response()
+                            },
+                            function(message, status, response) {
+                                self.resetNewsForm();
+                                switch(response.status) {
+                                    case 201:
+                                        ModalDialog("Thank you", 
+                                              "<p>You have sucessfully subscribed to Social Computing newsletter.</p>" +
+                                              "<p>A confirmation email will be sent to your email address in a few minutes.<br>" +
+                                              "You can manage your subscription options <a href=\"https://www.social-computing.com/newsletter/subscribe.php\">here</a></p>");
+                                        break;
+                                    case 204:
+                                        ModalDialog("Thank you", 
+                                              "<p>You have already subscribed with this email address to the Social Computing newsletter.</p>" +
+                                              "<p>An interface to manage your subscription is available <a href=\"https://www.social-computing.com/newsletter/subscribe.php\">here</a></p>");
+                                        break;
+                                }
+                            
+                            }
+                        )
+                        .error(function(response, status, error) {
+                            switch(response.status) {
+                                case 403:
+                                case 400:
+                                    $("#signup-captcha-message").css({color: "red"});
+                                    $("#signup-captcha-message").text(response.responseText);
+                                    Recaptcha.reload();
+                                    break;
+                                default:
+                                    ModalDialog("Sorry, an error occured", 
+                                              "<p>The newsletter subscription service is not available now.<br>" +
+                                              "Please try again later.</p>");
+                                    self.resetNewsForm();
+                                    break;
+                                
+                            }
+                        });
+                        
+                        
+                    }
+                /*
+                    $.fancybox.open("#signup",
+                        {
+                            openEffect  : 'none',
+                            closeEffect : 'none',
+                            afterLoad   : function() {
+                                // this.inner.prepend( '<h1>1. My custom title</h1>' );
+                                this.content = '' 
+                                    + this.content.html() 
+                                    + '<p>Your email adress: ' + $("#signup-mail").val() + '</p>' 
+                                    // +  $("#signup-mail").value + '</p><br>'
+                                    + '<div id="captchadiv"></div>';
+                                
+                            }
+                        }                   
+                    );
+                    */
+
+                };    			
+    			
 			}
 			
 			var appViewModel = new AppViewModel();
