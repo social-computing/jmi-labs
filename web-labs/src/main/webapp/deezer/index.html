@@ -66,13 +66,12 @@
 					<li>manage_community</li>
 					<li>manage_library, delete_library</li>
 				</ul>
-				
 				<p>Please <a class="login" onclick="login(); return false;" href="#">login</a> and follow the instructions to continue.</p>
 			</div>
 			
 			<div id="step1" data-bind="visible: userSession().connected">
 				<h2>Step 1: Select artists from your favorite list (minimum 2)</h2>
-				<div data-bind="html: selectionMessage"></div>		
+				<!-- <div data-bind="html: selectionMessage"></div> -->		
 				
 				<article id="fway">
 					<section class="leftcol">
@@ -93,6 +92,7 @@
 
 					<section class="rightcol">
 						<h3>Selection</h3>
+						<div class="nbselected" data-bind="html: nbSelectedMessage"></div>
 						<ul class="selartist_list" data-bind="template: {foreach: selectedArtists, beforeRemove: hideSelectedArtist, afterAdd: showSelectedArtist}">
 							<li class="selartist_item">
 							    <img src="" alt="" data-bind="attr: {src: picture, alt: name}" />
@@ -102,10 +102,13 @@
 					</section>			
 				</article>
 				<span class="clearfix">&nbsp;</span>
+				<!--  
 				<div data-bind="visible: selectedArtists().length >= 2">
 					You have selected enough artists to generate the map.<br>
 					You can continue to add more artists or click the next button: <button data-bind='click: generateMap'>Generate the map</button>
 				</div>
+				-->
+				<div id="generateMsg" data-bind="html: generateMapMessage"></div>
 			</div>
 
 			<div id="step2" data-bind="visible: userSession().connected && generatedMap()">
@@ -174,19 +177,19 @@
 					© 2012 Social Computing Inc. All rights reserved. <a id="legal-link" href="#legal" class="fancybox">Legal terms</a>
 					<span class="clearfix"></span>
 					<div id="legal" style="display:none;width:300px;">
-					<h2>Social Computing</h2>
-					<p>
-					Société à Responsabilité Limitée au capital de 8.000 €<br>
-					RCS PARIS B 478 719 958 – n° TVA FR02 478 719 958 – APE 5829 C<br>
-					70, rue Cortambert – 75016 PARIS
-					</p>
+						<h2>Social Computing</h2>
+	                    <p>Société à Responsabilité Limitée au capital de 8.000 €<br>
+	                       RCS PARIS B 478 719 958 – n° TVA FR02 478 719 958 – APE 5829 C<br>
+	                       70, rue Cortambert – 75016 PARIS</p>
 					</div>
-				
 				</div>
-				
 			</div>
 		</footer>
+        <div id="modal" style="display:none;"></div>		
+		
 		<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" src="js/jquery.color.min.js"></script>
+        <script type="text/javascript" src="js/jquery.scrollTo-1.4.3.1-min.js"></script>		
         <script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>		
 		<script type="text/javascript" src="js/knockout-2.1.0.js"></script>
 		<script type="text/javascript" src="../jmi-client/jmi-client.js"></script>
@@ -291,6 +294,7 @@
 				self.selectedArtists = ko.observableArray([]); // Initially empty
 				self.favoriteArtists = ko.observableArray([]); // Initially empty
 				self.generatedMap = ko.observable(false);
+                self.selectionChanged = ko.observable(false);				
                 self.newsCaptcha = false;
                 
 				var FavoriteArtist = function(id, name, picture) {
@@ -299,28 +303,22 @@
 					this.name = name;  
 					this.picture = picture;
 					this.selected = ko.observable(false);
-					/*
-					this.selected = ko.computed(function() {
-					    return (self.selectedArtists().indexOf(s) !== -1);
-					})
-					*/
 				}
 			
 								
 				// Behaviour
-				self.selectionMessage = ko.computed(function() {
-					var selectedArtists = self.selectedArtists().length;
-    				if (selectedArtists == 0) {
-    					return "Please select at least 2 artists in your favorite artists list.";
-    				}
-    				else if (selectedArtists == 1) {
-    					return "Please select at least one more artist to generate the map.";
-    				}
-    				else {
-    					return "";
-    				}
-    				
-    			});
+                self.nbSelectedMessage = ko.computed(function() {
+                    var selectedArtists = self.selectedArtists().length;
+                    if (selectedArtists == 0) {
+                        return "No artists selected yet";
+                    }
+                    else if (selectedArtists == 1) {
+                        return "One artist selected";
+                    }
+                    else {
+                        return selectedArtists + " artists selected";
+                    }
+                });
 				
 				
 				self.addFavoriteArtist = function(id, name, picture) {
@@ -342,6 +340,7 @@
 				    	artist.selected(false);
 						self.selectedArtists.remove(artist);
 					}
+					self.selectionChanged(true);
 				};
 
 				// Animation callbacks for the favorite list
@@ -355,9 +354,50 @@
 	                	$(elem).slideUp(function() { $(elem).remove(); });
 	                }
                 };
+                
+                self.animateGenerateMsg = function() {
+                    /*
+                    $("#generateMsg").hide();
+                    $("#generateMsg").css({"background-color": "rgba(0, 110, 0, 0.2)"});
+                    $("#generateMsg").fadeIn(1500, function () {
+                        $("#generateMsg").css({background: "none"});
+                    });
+                    */
+                    $("#generateMsg").animate({
+                        backgroundColor: "rgba(0, 0, 255, 0.7)",
+                    }, 50)
+                    .animate({
+                        backgroundColor:"rgba(255, 255, 255, 0)",
+                    }, 1000);
+                };
+                
+                self.generateMapMessage = ko.computed(function() {
+                    var selectedArtists = self.selectedArtists().length;
+                
+                    if (selectedArtists == 0) {
+                        self.animateGenerateMsg();
+                        return "Please select at least 2 artists in your favorite artists list.";
+                    }
+                    else if (selectedArtists == 1) {
+                        self.animateGenerateMsg();
+                        return "Please select one more artist to generate the map.";
+                    }
+                    else {                
+                        if(self.generatedMap() && self.selectionChanged()) {
+                            self.animateGenerateMsg();
+                            return "You have modified your artists selection <button class=\"btn btn-info\" onClick=\"appViewModel.generateMap()\">Update the map</button>";
+                        }
+                        else {
+                            if(selectedArtists == 2) self.animateGenerateMsg();
+                            return "You have selected enough artists to generate the map <button class=\"btn btn-primary\" onClick=\"appViewModel.generateMap()\">Generate the map</button>";
+                        }
+                    }
+
+                });                
 				
     			self.generateMap = function() {
     				self.generatedMap(true);
+                    self.selectionChanged(false);    				
     				var computedWidth = $("#map").width() * (3 / 4); 
     				$("#map").css("height", computedWidth + "px");
     				// Reset div content
@@ -382,6 +422,7 @@
 						}
 					});
     				map.draw();
+                    $.scrollTo("#step2");    				
     			};
     			
     			self.reset = function() {
@@ -389,6 +430,7 @@
     				self.selectedArtists([]);
     				self.favoriteArtists([]);
     				self.generatedMap(false);
+                    self.selectionChanged(false);    				
     			};
     			
                 self.showNewsCaptcha = function() {
@@ -457,29 +499,8 @@
                                 
                             }
                         });
-                        
-                        
                     }
-                /*
-                    $.fancybox.open("#signup",
-                        {
-                            openEffect  : 'none',
-                            closeEffect : 'none',
-                            afterLoad   : function() {
-                                // this.inner.prepend( '<h1>1. My custom title</h1>' );
-                                this.content = '' 
-                                    + this.content.html() 
-                                    + '<p>Your email adress: ' + $("#signup-mail").val() + '</p>' 
-                                    // +  $("#signup-mail").value + '</p><br>'
-                                    + '<div id="captchadiv"></div>';
-                                
-                            }
-                        }                   
-                    );
-                    */
-
-                };    			
-    			
+                };
 			}
 			
 			var appViewModel = new AppViewModel();
