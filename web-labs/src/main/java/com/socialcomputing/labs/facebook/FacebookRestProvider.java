@@ -201,7 +201,7 @@ public class FacebookRestProvider {
 
             for (JsonNode friend : friends) {
                 Attribute attribute = storeHelper.addAttribute(friend.get("id").getTextValue());
-                attribute.addProperty("name", friend.get("name").getTextValue());
+                attribute.addProperty("name", friend.get("name") != null ? friend.get("name").getTextValue() : " ");
 
                 UrlHelper urlHelper2 = new UrlHelper();
                 urlHelper2.setUrl("https://graph.facebook.com/" + friend.get("id").getTextValue() + "/" + kind);
