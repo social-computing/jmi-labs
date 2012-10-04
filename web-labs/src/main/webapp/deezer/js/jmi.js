@@ -135,7 +135,7 @@ JMI.deezer.events.AddFavorites = function(map, args) {
 
                 query_params['artist_id'] = args[0];
 
-            console.log("calling deezer api %s service with %s request method and %s parameters", service_uri, action, query_params);
+            //console.log("calling deezer api %s service with %s request method and %s parameters", service_uri, action, query_params);
             DZ.api(service_uri,
                    action,
                    query_params,
@@ -148,9 +148,9 @@ JMI.deezer.events.AddFavorites = function(map, args) {
                            } else {
                                msg += "was sucessfully removed from your favorite list";
                            }
-                           console.debug("Attribute infavlist value before setProperty call : %s", attribute[0].INFAVLIST);
+                           //console.debug("Attribute infavlist value before setProperty call : %s", attribute[0].INFAVLIST);
                            attribute[0].setProperty('INFAVLIST', !attribute[0].INFAVLIST);
-                           console.debug("Attribute infavlist value after setProperty call : %s", attribute[0].INFAVLIST);
+                           //console.debug("Attribute infavlist value after setProperty call : %s", attribute[0].INFAVLIST);
                            alert(msg);
                            break;
                        case false:
@@ -162,7 +162,7 @@ JMI.deezer.events.AddFavorites = function(map, args) {
                            alert(msg);
                            break;
                        default:
-                           console.debug(response);
+                           //console.debug(response);
                            var err_msg = "sorry an error occured";
                            
                            if(response.error) err_msg += ': ' + response.error.type + ', ' + response.error.message;

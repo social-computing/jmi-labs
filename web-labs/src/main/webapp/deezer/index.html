@@ -256,21 +256,21 @@
 					DZ.getLoginStatus(function(response) {
 						if (response.authResponse) {
 							// logged in and connected user, someone you know
-							console.log('User connected on deezer, fetching login info...');							
+							// console.log('User connected on deezer, fetching login info...');							
 							self.loadLoginInfo(response.authResponse);
 							loadFavArtists();
 						}
-						else {
+						//else {
 							// no user session available, someone you dont know
-							console.log('Not authenticated yet');
-						}
+							// console.log('Not authenticated yet');
+						//}
 					});
 				};
 				
 				self.loadLoginInfo = function(auth) {
 					self.login = auth;
 					DZ.api('/user/me', function(response) {
-						console.log('Good to see you, ' + response.name + '.');
+						//console.log('Good to see you, ' + response.name + '.');
 						self.user = response;
 						self.connected(true);
 					});
@@ -331,14 +331,14 @@
 				self.toggleArtistSelection = function(artist) {
 					// If artist is not already in selection, 
 					if(self.selectedArtists.indexOf(artist) === -1) {
-						console.debug('Adding artist to selection ', artist);
+						//console.debug('Adding artist to selection ', artist);
 				    	artist.selected(true);
 				    	self.selectedArtists.push(artist);
 				    	
 					}
 					// Otherwise, remove it from selection
 					else {
-						console.debug('Removing artist from selection ', artist);
+						//console.debug('Removing artist from selection ', artist);
 				    	artist.selected(false);
 						self.selectedArtists.remove(artist);
 					}
@@ -506,13 +506,15 @@
 				DZ.login(function(response) {
 					var authResponse = response.authResponse;
 					if (authResponse) {
-						console.log('Welcome! Fetching your information....', authResponse);
+						//console.log('Welcome! Fetching your information....', authResponse);
 						appViewModel.userSession().loadLoginInfo(authResponse);
 						loadFavArtists();
-					} 
+					}
+					/*
 					else {
 						console.log('User cancelled login or did not fully authorize.');
 					}
+					*/
 				}, {perms: 'basic_access,email,manage_community,manage_library,delete_library'});		    
 		    }
 		    
@@ -524,7 +526,7 @@
 			function loadFavArtists() {
 				DZ.api('/user/me/artists', function(response) {
 					if(response.data) {
-						console.log(response.data);
+						//console.log(response.data);
 						response.data.forEach(function(i) {
 							appViewModel.addFavoriteArtist(i.id, i.name, i.picture);
 						});
