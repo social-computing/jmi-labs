@@ -419,6 +419,12 @@ header #logo {
   border-top: 1px solid #777777;
 }
 
+/* line 380, ../sass/GGS.scss */
+header a {
+  outline-style: none;
+  text-decoration: none;
+}
+
 /* line 383, ../sass/GGS.scss */
 .header-shadow {
   background: url("../images/header-shadow.png") repeat-x scroll 0 0 transparent;
