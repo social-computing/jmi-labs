@@ -13,18 +13,6 @@
   </modules>
 
   <repositories>
-    <!-- Social computing 3rd party repository -->
-	<repository>
-      <id>adobe-3rd-party</id>
-      <url>http://dev.centreressources.com:8081/nexus/content/repositories/thirdparty</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-
     <repository>
       <id>sonatype-repository</id>
       <url>http://repository.sonatype.org/content/groups/public/</url>
