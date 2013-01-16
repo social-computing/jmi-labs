@@ -1,0 +1,22 @@
+*.class
+.metadata
+
+# Eclipse files #
+.classpath
+.settings
+.project
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Maven directories #
+target
+build
+libs
+
+# Backup files / users specific #
+*~
+.DS_Store
+.orig
